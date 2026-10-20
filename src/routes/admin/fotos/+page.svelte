@@ -68,6 +68,7 @@
 			<li>Standort und andere versteckte Angaben im Foto entfernt die Website beim Hochladen.</li>
 			<li>Schreib zu jedem Foto einen kurzen Satz, was man sieht. Das hilft Gästen mit Screenreader und bei Google.</li>
 			<li>Die Gruppe bestimmt, unter welchem Knopf das Foto in der Galerie erscheint.</li>
+			<li>Tipp: Heisst die Datei schon wie die Beschreibung, zum Beispiel «Stube mit Holzherd [drinnen].jpg», übernimmt die Website Text und Gruppe beim Hochladen.</li>
 			<li>Englisch, Französisch und Italienisch übersetzt die Website automatisch, meist innert einer Minute.</li>
 			<li>Gelöschte Fotos liegen 30 Tage im Papierkorb ganz unten. Von dort holst du sie zurück.</li>
 		</ul>

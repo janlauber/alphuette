@@ -3,6 +3,7 @@ import { sql } from '#lib/server/db.ts';
 import { addPhoto } from '#lib/server/images.ts';
 import { changeRow, done, log } from '#lib/server/activity.ts';
 import { syncTranslations } from '#lib/server/sitetexts.ts';
+import { fromFileName } from '#lib/photoName.ts';
 
 type Photo = { id: number; key: string; width: number; height: number; widths: number[]; lqip: string; altDe: string; hero: boolean; category: string; deletedAt: Date | null };
 
@@ -29,7 +30,10 @@ export const actions = {
 				continue;
 			}
 			try {
-				await addPhoto(new Uint8Array(await file.arrayBuffer()));
+				// a descriptive file name fills in "Was sieht man?" and the group
+				const { alt, category } = fromFileName(file.name);
+				const pid = await addPhoto(new Uint8Array(await file.arrayBuffer()), { de: alt, en: '' });
+				if (category) await sql`update photos set category = ${category} where id = ${pid}`;
 			} catch (e) {
 				console.error('photo upload failed', file.name, e);
 				failed.push(file.name);
@@ -37,6 +41,7 @@ export const actions = {
 		}
 		const n = files.length - failed.length;
 		if (n) await log({ actor: locals.admin!, area: AREA, title: n === 1 ? '1 Foto hochgeladen' : `${n} Fotos hochgeladen`, link });
+		if (n) void syncTranslations();
 		if (failed.length) return fail(400, { failed });
 		return { uploaded: n, ...done(n === 1 ? 'Foto hochgeladen. Es steht jetzt zuunterst.' : `${n} Fotos hochgeladen. Sie stehen jetzt zuunterst.`) };
 	},
