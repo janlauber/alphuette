@@ -6,7 +6,6 @@ import { loadSigningKey } from '#lib/server/signing.ts';
 import { record } from '#lib/server/analytics.ts';
 import { maintenance } from '#lib/server/maintenance.ts';
 import { seedEnglish } from '#lib/server/sitetexts.ts';
-import { copyToBucket } from '#lib/server/storage.ts';
 import { report } from '#lib/server/monitor.ts';
 
 export const init: ServerInit = async () => {
@@ -14,9 +13,6 @@ export const init: ServerInit = async () => {
 	await migrate();
 	await loadSigningKey();
 	await seedEnglish();
-	void copyToBucket()
-		.then((n) => n && console.log(`storage: ${n} Dateien vom Volume in den Bucket kopiert`))
-		.catch((e) => report(e, 'Fotos in den Bucket kopieren', { alert: false }));
 	maintenance();
 	setInterval(maintenance, 3600_000);
 };
