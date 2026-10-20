@@ -29,6 +29,9 @@ if (s3) {
 	s3.fetch(`${endpoint}/${BUCKET_NAME}?list-type=2&max-keys=1`)
 		.then(async (r) => console.log(`storage: bucket ${BUCKET_NAME} at ${endpoint}: list ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
 		.catch((e) => console.error('storage: bucket unreachable', e));
+	s3.fetch(`${endpoint}/${BUCKET_NAME}/probe.txt`, { method: 'PUT', body: 'ok' })
+		.then(async (r) => console.log(`storage: probe put ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
+		.catch((e) => console.error('storage: probe failed', e));
 }
 const url = (key: string) => `${endpoint}/${BUCKET_NAME}/${key}`;
 const local = (key: string) => `.data/uploads/${key}`;
