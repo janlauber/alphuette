@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import Undo2 from '@lucide/svelte/icons/undo-2';
 	import AdminPage from '#lib/components/admin/AdminPage.svelte';
@@ -38,11 +39,11 @@
 					<li class="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 {e.undoneAt ? 'text-off-text' : ''}">
 						<span class="w-12 shrink-0 tabular-nums text-muted">{time(e.at)}</span>
 						<span class="min-w-0 flex-1">
-							{#if e.link && !e.undoneAt}<a href={e.link} class="font-semibold text-ink no-underline hover:underline">{e.title}</a>{:else}<span class="font-semibold {e.undoneAt ? 'line-through' : ''}">{e.title}</span>{/if}
-							<span class="block text-sm text-muted">{e.area} · {who(e.actor)}{e.undoneAt ? ' · rückgängig gemacht' : ''}</span>
+							{#if e.link && !e.undoneAt && !e.gone}<a href={e.link} class="font-semibold text-ink no-underline hover:underline">{e.title}</a>{:else}<span class="font-semibold {e.undoneAt ? 'line-through' : ''}">{e.title}</span>{/if}
+							<span class="block text-sm text-muted">{e.area} · {who(e.actor)}{e.undoneAt ? ' · rückgängig gemacht' : ''}{e.gone ? ' · gibt es nicht mehr' : ''}</span>
 						</span>
 						{#if e.undoable && !e.undoneAt}
-							<form method="POST" action="?/undo" use:enhance={({ cancel }) => { if (!confirm(`«${e.title}» rückgängig machen?`)) cancel(); }}>
+							<form method="POST" action="?/undo" use:enhance={confirmFirst({ title: 'Rückgängig machen?', text: `«${e.title}» wird auf den Stand davor zurückgesetzt.`, ok: 'Rückgängig machen' })}>
 								<input type="hidden" name="id" value={e.id} />
 								<button class="btn-line !min-h-0 !px-3 !py-1 text-sm"><Undo2 size={15} aria-hidden="true" />Rückgängig</button>
 							</form>

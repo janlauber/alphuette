@@ -204,6 +204,9 @@ const de = {
 		packingHint: 'Abhaken geht nur auf diesem Gerät.',
 		withdraw: 'Anfrage zurückziehen',
 		withdrawConfirm: 'Willst du die Anfrage wirklich zurückziehen?',
+		withdrawText: 'Die Daten werden wieder frei, und Tom sieht, dass du nicht kommst.',
+		withdrawYes: 'Ja, zurückziehen',
+		withdrawNo: 'Nein, behalten',
 		saveLink: 'Speichere diesen Link. Damit kommst du jederzeit zurück zu deiner Buchung.'
 	},
 	invoice: {
@@ -529,6 +532,9 @@ const en: Dict = {
 		packingHint: 'Ticks are saved on this device only.',
 		withdraw: 'Withdraw request',
 		withdrawConfirm: 'Do you really want to withdraw your request?',
+		withdrawText: 'The dates become free again, and Tom sees that you are not coming.',
+		withdrawYes: 'Yes, withdraw',
+		withdrawNo: 'No, keep it',
 		saveLink: 'Keep this link. It takes you back to your booking at any time.'
 	},
 	invoice: {

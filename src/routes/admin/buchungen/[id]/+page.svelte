@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Check from '@lucide/svelte/icons/check';
@@ -28,9 +29,6 @@
 	const swiss = (iso: string) => iso.split('-').reverse().join('.');
 	const paidOn = $derived(b.paidAt ? long(new Date(b.paidAt).toISOString().slice(0, 10)) : '');
 
-	const ask = (msg: string) => ({ cancel }: { cancel: () => void }) => {
-		if (!confirm(msg)) cancel();
-	};
 
 	// copy buttons: which one was just used
 	let copied = $state('');
@@ -92,10 +90,10 @@
 			</p>
 		{/if}
 		<div class="mt-5 flex flex-wrap gap-3">
-			<form method="POST" action="?/confirm" use:enhance={ask(`Anfrage von ${b.name} bestätigen? ${b.name} bekommt sofort eine Mail.`)}>
+			<form method="POST" action="?/confirm" use:enhance={confirmFirst({ title: `Anfrage von ${b.name} bestätigen?`, text: `${b.name} bekommt sofort eine Mail mit der Bestätigung und der QR-Rechnung über ${chf(b.totalRp ?? 0)}.`, ok: 'Ja, bestätigen' })}>
 				<button class="btn-primary">Bestätigen</button>
 			</form>
-			<form method="POST" action="?/decline" use:enhance={ask(`Anfrage von ${b.name} ablehnen? ${b.name} bekommt eine Mail und die Daten sind wieder frei.`)}>
+			<form method="POST" action="?/decline" use:enhance={confirmFirst({ title: `Anfrage von ${b.name} ablehnen?`, text: `${b.name} bekommt eine Mail, und die Daten sind wieder frei. Das lässt sich nicht rückgängig machen.`, ok: 'Ablehnen', danger: true })}>
 				<button class="btn-line">Ablehnen</button>
 			</form>
 		</div>
@@ -124,7 +122,7 @@
 			Bezahlt am {paidOn}.
 			{past ? 'Der Aufenthalt ist vorbei.' : `${b.name} kommt am ${long(b.checkIn)}.`}
 		</p>
-		<form method="POST" action="?/paid" use:enhance={ask('Wirklich wieder als nicht bezahlt markieren?')} class="mt-3">
+		<form method="POST" action="?/paid" use:enhance={confirmFirst({ title: 'Wieder als nicht bezahlt markieren?', text: 'Die Rechnung zählt dann wieder als offen.', ok: 'Als offen markieren' })} class="mt-3">
 			<button name="paid" value="0" class="min-h-11 text-sm font-semibold text-brand underline">Doch noch nicht bezahlt</button>
 		</form>
 	{:else}
@@ -206,7 +204,9 @@
 <section id="nachrichten" class="mt-10 scroll-mt-24">
 	<h2 class="text-2xl">Nachrichten</h2>
 	<p class="hint mt-1">
-		{#if b.lang === 'de'}
+		{#if b.status === 'unbestaetigt'}
+			Schreiben geht erst, wenn {b.name} die E-Mail-Adresse bestätigt hat. Sonst verfällt die Anfrage nach 30 Minuten, mit allen Nachrichten.
+		{:else if b.lang === 'de'}
 			{b.name} bekommt deine Nachricht per Mail.
 		{:else}
 			Schreib auf Deutsch. {b.name} bekommt deine Nachricht per Mail auf {LANGUAGE[b.lang] ?? b.lang}, das Original steht darunter.
@@ -220,6 +220,7 @@
 			placeholder="Nachricht an {b.name}"
 			send="Nachricht senden"
 			empty="Noch keine Nachrichten."
+			readonly={b.status === 'unbestaetigt'}
 			labels={{
 				translated: 'Automatisch übersetzt',
 				original: 'Original anzeigen',
@@ -235,7 +236,7 @@
 	<section class="mt-14 rounded-[24px] border-2 border-danger/40 p-5">
 		<h2 class="text-xl !text-danger">Buchung stornieren</h2>
 		<p class="mt-1 text-muted">Nur wenn der Aufenthalt nicht stattfindet. Die Daten werden auf der Website wieder frei. Das lässt sich nicht rückgängig machen.</p>
-		<form method="POST" action="?/cancel" use:enhance={ask(`Buchung von ${b.name} wirklich stornieren? Die Daten werden wieder frei.`)} class="mt-4 flex flex-wrap items-center gap-4">
+		<form method="POST" action="?/cancel" use:enhance={confirmFirst({ title: `Buchung von ${b.name} stornieren?`, text: 'Die Daten werden wieder frei. Das lässt sich nicht rückgängig machen.', ok: 'Stornieren', danger: true })} class="mt-4 flex flex-wrap items-center gap-4">
 			<label class="flex min-h-11 items-center gap-2.5"><input type="checkbox" name="notify" checked class="check" />{b.name} per Mail informieren</label>
 			<button class="min-h-11 rounded-full border-2 border-danger px-5 font-semibold text-danger hover:bg-danger-wash">Stornieren</button>
 		</form>

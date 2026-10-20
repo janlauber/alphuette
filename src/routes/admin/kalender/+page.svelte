@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import AdminPage from '#lib/components/admin/AdminPage.svelte';
 	import { addDays, toIso, weekday } from '#lib/booking.ts';
@@ -101,9 +102,7 @@
 						<form
 							method="POST"
 							action="?/unblock"
-							use:enhance={({ cancel }) => {
-								if (!confirm(`Sperre vom ${d(b.checkIn)} bis ${d(b.checkOut)} aufheben? Die Tage sind dann wieder frei. Du kannst es im Verlauf rückgängig machen.`)) cancel();
-							}}
+							use:enhance={confirmFirst({ title: 'Sperre aufheben?', text: `Vom ${d(b.checkIn)} bis ${d(b.checkOut)}. Die Tage sind dann wieder frei für Anfragen. Du kannst es im Verlauf rückgängig machen.`, ok: 'Freigeben' })}
 						>
 							<input type="hidden" name="id" value={b.id} />
 							<button class="btn-line">Freigeben</button>

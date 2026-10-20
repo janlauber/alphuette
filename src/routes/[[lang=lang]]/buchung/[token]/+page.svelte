@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import CalendarPlus from '@lucide/svelte/icons/calendar-plus';
@@ -161,9 +162,7 @@
 		<form
 			method="POST"
 			action="?/withdraw"
-			use:enhance={({ cancel }) => {
-				if (!confirm(t.booking.withdrawConfirm)) cancel();
-			}}
+			use:enhance={confirmFirst({ title: t.booking.withdrawConfirm, text: t.booking.withdrawText, ok: t.booking.withdrawYes, cancel: t.booking.withdrawNo, danger: true })}
 		>
 			<button class="text-sm font-semibold text-danger underline">{t.booking.withdraw}</button>
 		</form>

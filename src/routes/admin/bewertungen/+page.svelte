@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import Eye from '@lucide/svelte/icons/eye';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
@@ -65,9 +66,7 @@
 				method="POST"
 				action="?/delete"
 				class="ml-auto"
-				use:enhance={({ cancel }) => {
-					if (!confirm(`Eintrag von ${r.name} löschen? Du kannst es im Verlauf rückgängig machen.`)) cancel();
-				}}
+				use:enhance={confirmFirst({ title: `Bewertung von ${r.name} löschen?`, text: 'Du kannst es im Verlauf rückgängig machen.', ok: 'Löschen', danger: true })}
 			>
 				<input type="hidden" name="id" value={r.id} />
 				<button class="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-danger underline"><Trash2 size={16} aria-hidden="true" />Löschen</button>

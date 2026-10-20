@@ -194,6 +194,9 @@ export const fr: Dict = {
 		packingHint: 'Les coches restent seulement sur cet appareil.',
 		withdraw: 'Retirer la demande',
 		withdrawConfirm: `Veux-tu vraiment retirer ta demande${_}?`,
+		withdrawText: 'Les dates redeviennent libres, et Tom voit que tu ne viens pas.',
+		withdrawYes: 'Oui, retirer',
+		withdrawNo: 'Non, garder',
 		saveLink: 'Garde ce lien. Il te ramène à ta réservation à tout moment.'
 	},
 	invoice: {

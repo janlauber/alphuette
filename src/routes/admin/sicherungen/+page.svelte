@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import Download from '@lucide/svelte/icons/download';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
@@ -54,10 +55,10 @@
 						method="POST"
 						action="?/restore"
 						class="mt-4 border-t-2 border-line pt-4"
-						use:enhance={(e) => {
-							if (!confirm(`Die gewählten Bereiche auf den Stand vom ${when(b.at)} zurücksetzen?`)) return e.cancel();
-							return wait();
-						}}
+						use:enhance={confirmFirst(
+							{ title: `Auf den Stand vom ${when(b.at)} zurücksetzen?`, text: 'Die gewählten Bereiche bekommen den alten Stand. Der heutige Stand wird vorher gesichert, du kannst also zurück.', ok: 'Zurückholen', danger: true },
+							wait
+						)}
 					>
 						<input type="hidden" name="name" value={b.name} />
 						<fieldset>

@@ -26,6 +26,7 @@
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import Huettli from '#lib/components/Huettli.svelte';
 	import HelpPanel from '#lib/components/admin/HelpPanel.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 
 	let { data, children } = $props();
 
@@ -157,6 +158,7 @@
 	</div>
 
 	<HelpPanel bind:this={help} assistant={data.assistant} />
+	<ConfirmDialog />
 
 	{#if toast}
 		<div class="fixed inset-x-3 bottom-4 z-50 mx-auto flex max-w-xl items-center gap-3 rounded-[18px] border-2 border-brand bg-paper px-4 py-3 shadow-[0_5px_0_var(--color-brand)] sm:bottom-6" role="status">

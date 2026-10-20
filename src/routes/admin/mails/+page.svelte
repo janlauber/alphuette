@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import Plus from '@lucide/svelte/icons/plus';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
@@ -97,10 +98,10 @@
 				</div>
 				<div class="mt-3 flex flex-wrap gap-2">
 					<button type="button" class="btn-line !min-h-0 !px-3 !py-1.5 text-sm" onclick={() => edit(t)} aria-expanded={editing === String(t.id)}>Bearbeiten</button>
-					<form method="POST" action="?/toggle" use:enhance><input type="hidden" name="id" value={t.id} /><button class="btn-line !min-h-0 !px-3 !py-1.5 text-sm">{t.active ? 'Ausschalten' : 'Einschalten'}</button></form>
+					<form method="POST" action="?/toggle" use:enhance={confirmFirst(() => (t.active ? { title: `«${t.label}» ausschalten?`, text: 'Die Website schickt diese Mail dann nicht mehr, bis du sie wieder einschaltest.', ok: 'Ausschalten' } : null))}><input type="hidden" name="id" value={t.id} /><button class="btn-line !min-h-0 !px-3 !py-1.5 text-sm">{t.active ? 'Ausschalten' : 'Einschalten'}</button></form>
 					<form method="POST" action="?/test" use:enhance><input type="hidden" name="id" value={t.id} /><button class="btn-line !min-h-0 !px-3 !py-1.5 text-sm">Testmail an mich</button></form>
 					{#if !t.key}
-						<form method="POST" action="?/delete" use:enhance={({ cancel }) => { if (!confirm(`Mail «${t.label}» löschen? Du kannst es im Verlauf rückgängig machen.`)) cancel(); }}>
+						<form method="POST" action="?/delete" use:enhance={confirmFirst({ title: `Mail «${t.label}» löschen?`, text: 'Sie geht dann nicht mehr raus. Du kannst es im Verlauf rückgängig machen.', ok: 'Löschen', danger: true })}>
 							<input type="hidden" name="id" value={t.id} /><button class="!min-h-0 px-3 py-1.5 text-sm font-semibold text-danger underline">Löschen</button>
 						</form>
 					{/if}

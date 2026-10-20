@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { applyAction, deserialize, enhance } from '$app/forms';
 	import { refreshAll } from '$app/navigation';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
@@ -147,9 +148,7 @@
 							method="POST"
 							action="?/delete"
 							class="ml-auto"
-							use:enhance={({ cancel }) => {
-								if (!confirm('Foto in den Papierkorb legen? Du kannst es im Verlauf rückgängig machen.')) cancel();
-							}}
+							use:enhance={confirmFirst({ title: 'Foto in den Papierkorb legen?', text: 'Es verschwindet von der Website und bleibt 30 Tage im Papierkorb. Mit «Zurückholen» ist es wieder da.', ok: 'In den Papierkorb', danger: true })}
 						>
 							<input type="hidden" name="id" value={p.id} />
 							<button class="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-danger underline"><Trash2 size={16} aria-hidden="true" />In den Papierkorb</button>

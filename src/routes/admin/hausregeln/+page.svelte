@@ -35,40 +35,53 @@
 				busy = false;
 			};
 		}}
-		class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"
+		class="grid gap-8"
 	>
-		<div class="grid content-start gap-2">
+		<div class="grid max-w-3xl content-start gap-3">
 			{#each rules as _, i (i)}
-				<div class="card flex items-center gap-1.5 p-2">
-					<span class="grid size-8 shrink-0 place-items-center rounded-full bg-wash text-sm font-bold text-brand" aria-hidden="true">{i + 1}</span>
-					<label class="sr-only" for="rule-{i}">Regel {i + 1}</label>
-					<input id="rule-{i}" name="rule" bind:value={rules[i]} placeholder="z. B. Rauchen nur draussen." class="field min-w-0 flex-1" />
-					<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-brand hover:bg-wash disabled:opacity-30" disabled={i === 0} onclick={() => move(i, -1)} aria-label="Regel {i + 1} nach oben"><ArrowUp size={18} /></button>
-					<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-brand hover:bg-wash disabled:opacity-30" disabled={i === rules.length - 1} onclick={() => move(i, 1)} aria-label="Regel {i + 1} nach unten"><ArrowDown size={18} /></button>
-					<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-muted hover:bg-danger-wash hover:text-danger" onclick={() => rules.splice(i, 1)} aria-label="Regel {i + 1} entfernen"><Trash2 size={18} /></button>
+				<div class="card p-3">
+					<div class="flex items-start gap-3">
+						<span class="mt-2 grid size-8 shrink-0 place-items-center rounded-full bg-wash text-sm font-bold text-brand" aria-hidden="true">{i + 1}</span>
+						<label class="sr-only" for="rule-{i}">Regel {i + 1}</label>
+						<textarea
+							id="rule-{i}"
+							name="rule"
+							bind:value={rules[i]}
+							rows={Math.max(2, Math.ceil((rules[i]?.length ?? 0) / 60))}
+							placeholder="z. B. Rauchen nur draussen."
+							class="field min-w-0 flex-1 resize-none leading-relaxed [field-sizing:content]"
+						></textarea>
+					</div>
+					<div class="mt-2 flex justify-end gap-1">
+						<button type="button" class="grid size-10 place-items-center rounded-full text-brand hover:bg-wash disabled:opacity-30" disabled={i === 0} onclick={() => move(i, -1)} aria-label="Regel {i + 1} nach oben"><ArrowUp size={18} /></button>
+						<button type="button" class="grid size-10 place-items-center rounded-full text-brand hover:bg-wash disabled:opacity-30" disabled={i === rules.length - 1} onclick={() => move(i, 1)} aria-label="Regel {i + 1} nach unten"><ArrowDown size={18} /></button>
+						<button type="button" class="grid size-10 place-items-center rounded-full text-muted hover:bg-danger-wash hover:text-danger" onclick={() => rules.splice(i, 1)} aria-label="Regel {i + 1} entfernen"><Trash2 size={18} /></button>
+					</div>
 				</div>
 			{/each}
-			<div class="mt-2 flex flex-wrap gap-3">
+			<div class="mt-1 flex flex-wrap gap-3">
 				<button type="button" class="btn-line" onclick={() => add()}><Plus size={18} aria-hidden="true" />Regel hinzufügen</button>
 				<button class="btn-blue" disabled={busy || !dirty}>{busy ? 'Speichert …' : 'Speichern'}</button>
 			</div>
 		</div>
 
-		<aside class="grid content-start gap-4">
+		<div class="grid max-w-3xl gap-6 sm:grid-cols-2">
+			<div>
+				<p class="font-semibold">Ideen zum Antippen</p>
+				<div class="mt-2 flex flex-wrap gap-2">
+					{#each ideas.filter((x) => !rules.includes(x)) as x (x)}
+						<button type="button" class="rounded-full border-2 border-brand px-3 py-1.5 text-left text-sm font-semibold text-brand hover:bg-wash" onclick={() => (rules[rules.length - 1]?.trim() ? add(x) : (rules[rules.length - 1] = x))}>{x}</button>
+					{:else}
+						<p class="text-sm text-muted">Alle Ideen sind schon drin.</p>
+					{/each}
+				</div>
+			</div>
 			<div class="rounded-[14px] border-2 border-dashed border-line bg-paper p-4">
 				<p class="text-xs font-bold uppercase tracking-wider text-muted">So sieht es auf der Website aus</p>
 				<ul class="richtext mt-2">
 					{#each rules.filter((r) => r.trim()) as r, i (i)}<li>{r}</li>{:else}<p class="text-muted">Noch keine Regel.</p>{/each}
 				</ul>
 			</div>
-			<div>
-				<p class="font-semibold">Ideen zum Antippen</p>
-				<div class="mt-2 flex flex-wrap gap-2">
-					{#each ideas.filter((x) => !rules.includes(x)) as x (x)}
-						<button type="button" class="rounded-full border-2 border-brand px-3 py-1.5 text-left text-sm font-semibold text-brand hover:bg-wash" onclick={() => (rules[rules.length - 1]?.trim() ? add(x) : (rules[rules.length - 1] = x))}>{x}</button>
-					{/each}
-				</div>
-			</div>
-		</aside>
+		</div>
 	</form>
 </AdminPage>

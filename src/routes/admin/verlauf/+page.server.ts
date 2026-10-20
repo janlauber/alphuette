@@ -9,7 +9,17 @@ export const load = async ({ url }) => {
 		${area ? sql`where area = ${area}` : sql``}
 		order by at desc limit 300`;
 	const areas = (await sql`select distinct area from activity order by area`).map((r) => r.area as string);
-	return { entries, areas, area };
+	// unconfirmed requests are deleted after 30 minutes; their entries must not link to a 404
+	const ids = [...new Set(entries.flatMap((e) => e.link?.match(/^\/admin\/buchungen\/(\d+)$/)?.[1] ?? []).map(Number))];
+	const alive = new Set((ids.length ? await sql`select id from bookings where id = any(${ids})` : []).map((r) => r.id as number));
+	return {
+		entries: entries.map((e) => {
+			const id = e.link?.match(/^\/admin\/buchungen\/(\d+)$/)?.[1];
+			return { ...e, gone: id ? !alive.has(Number(id)) : false };
+		}),
+		areas,
+		area
+	};
 };
 
 export const actions = {

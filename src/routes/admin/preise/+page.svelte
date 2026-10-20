@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ask } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import CalendarPlus from '@lucide/svelte/icons/calendar-plus';
 	import Pencil from '@lucide/svelte/icons/pencil';
@@ -179,7 +180,12 @@
 								<button
 									formaction="?/deleteSeason"
 									class="ml-auto min-h-11 px-2 font-semibold text-danger underline"
-									onclick={(e) => !confirm(`Saison «${draft?.name}» löschen? Du kannst es im Verlauf rückgängig machen.`) && e.preventDefault()}
+									onclick={async (e) => {
+										e.preventDefault();
+										const button = e.currentTarget;
+										if (await ask({ title: `Saison «${draft?.name}» löschen?`, text: 'In dieser Zeit kann dann niemand mehr anfragen. Du kannst es im Verlauf rückgängig machen.', ok: 'Löschen', danger: true }))
+											button.form?.requestSubmit(button);
+									}}
 								>
 									Saison löschen
 								</button>

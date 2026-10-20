@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import Download from '@lucide/svelte/icons/download';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
@@ -76,12 +77,12 @@
 									</form>
 								{:else}
 									<button type="button" class="btn-blue !min-h-0 !px-4 !py-1.5 text-sm" onclick={() => (paying = r.id)}>Bezahlt</button>
-									<form method="POST" action="?/remind" use:enhance={({ cancel }) => { if (!confirm(`Zahlungserinnerung jetzt an ${r.name} schicken?`)) cancel(); }}>
+									<form method="POST" action="?/remind" use:enhance={confirmFirst({ title: `Zahlungserinnerung an ${r.name} schicken?`, text: `${r.name} bekommt die Erinnerung sofort per Mail, mit dem Link zur QR-Rechnung.`, ok: 'Schicken' })}>
 										<input type="hidden" name="id" value={r.id} /><button class="btn-line !min-h-0 !px-4 !py-1.5 text-sm">Erinnern</button>
 									</form>
 								{/if}
 							{:else}
-								<form method="POST" action="?/unpaid" use:enhance={({ cancel }) => { if (!confirm('Wieder als offen markieren?')) cancel(); }}>
+								<form method="POST" action="?/unpaid" use:enhance={confirmFirst({ title: 'Wieder als offen markieren?', text: 'Die Rechnung zählt dann wieder als nicht bezahlt, und die Zahlungserinnerung kann wieder rausgehen.', ok: 'Als offen markieren' })}>
 									<input type="hidden" name="id" value={r.id} /><button class="text-sm font-semibold text-brand underline">Doch nicht bezahlt</button>
 								</form>
 							{/if}

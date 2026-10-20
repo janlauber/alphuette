@@ -52,7 +52,9 @@ export async function receivedText(emailId: string) {
 	const res = await fetch(`https://api.resend.com/emails/receiving/${encodeURIComponent(emailId)}`, {
 		headers: { authorization: `Bearer ${RESEND_API_KEY}` }
 	});
-	if (!res.ok) throw new Error(`resend receiving ${res.status}`);
+	if (res.status === 401 || res.status === 403)
+		throw new Error(`Resend ${res.status}: Der API-Schlüssel darf empfangene Mails nicht lesen. In Resend einen Schlüssel mit «Full access» erstellen und als RESEND_API_KEY eintragen.`);
+	if (!res.ok) throw new Error(`Resend ${res.status} beim Lesen einer empfangenen Mail`);
 	const mail = await res.json();
 	const text: string =
 		mail.text ??

@@ -190,6 +190,9 @@ export const it: Dict = {
 		packingHint: 'Le spunte restano solo su questo dispositivo.',
 		withdraw: 'Ritira la richiesta',
 		withdrawConfirm: 'Vuoi davvero ritirare la richiesta?',
+		withdrawText: 'Le date tornano libere e Tom vede che non vieni.',
+		withdrawYes: 'Sì, ritirare',
+		withdrawNo: 'No, tenerla',
 		saveLink: 'Salva questo link. Ti riporta alla tua prenotazione in qualsiasi momento.'
 	},
 	invoice: {

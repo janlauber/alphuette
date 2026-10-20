@@ -15,7 +15,8 @@
 		empty,
 		hint = '',
 		labels = { translated: 'Automatisch übersetzt', original: 'Original anzeigen', hideOriginal: 'Original ausblenden' },
-		locale = 'de-CH'
+		locale = 'de-CH',
+		readonly = false
 	}: {
 		messages: Message[];
 		me: 'gast' | 'host';
@@ -26,6 +27,8 @@
 		hint?: string;
 		labels?: Labels;
 		locale?: string;
+		/** no writing, e.g. while the guest has not confirmed the email address */
+		readonly?: boolean;
 	} = $props();
 	let sending = $state(false);
 
@@ -63,6 +66,7 @@
 	{/each}
 </ol>
 
+{#if !readonly}
 <form
 	method="POST"
 	action="?/message"
@@ -82,3 +86,4 @@
 		<button class="btn-primary ml-auto" disabled={sending} aria-busy={sending}>{send}</button>
 	</div>
 </form>
+{/if}

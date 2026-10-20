@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import { refreshAll } from '$app/navigation';
 	import ArrowDown from '@lucide/svelte/icons/arrow-down';
@@ -184,7 +185,7 @@
 								<button class="btn-blue" disabled={busy === 'nr'}>{busy === 'nr' ? 'Lädt …' : 'Route laden'}</button></label>
 						</form>
 					{:else}
-						<form method="POST" action="?/noroute" use:enhance={(e) => { if (h.profile && !confirm('Die Route entfernen? Du kannst es im Verlauf rückgängig machen.')) return e.cancel(); return keep('none')(); }} class="grid gap-2">
+						<form method="POST" action="?/noroute" use:enhance={confirmFirst(() => (h.profile ? { title: 'Route entfernen?', text: 'Karte und Höhenprofil verschwinden von der Website. Du kannst es im Verlauf rückgängig machen.', ok: 'Entfernen', danger: true } : null), keep('none'))} class="grid gap-2">
 							<p class="hint text-sm">Ohne Route zeigt die Website keine Karte und kein Höhenprofil, nur die Wegpunkte als Wegweiser und deine Gehzeit.</p>
 							{#if h.profile}<button class="btn-line justify-self-start">Route entfernen</button>{:else}<p class="text-sm font-semibold">So ist es jetzt.</p>{/if}
 						</form>
@@ -263,7 +264,7 @@
 				<a href="/admin/wanderungen" class="font-semibold">Abbrechen</a>
 			</div>
 			{#if !isNew}
-				<form method="POST" action="?/delete" class="justify-self-start" use:enhance={({ cancel }) => { if (!confirm(`Wanderung «${h.name}» löschen? Du kannst es im Verlauf rückgängig machen.`)) cancel(); }}>
+				<form method="POST" action="?/delete" class="justify-self-start" use:enhance={confirmFirst({ title: `Wanderung «${h.name}» löschen?`, text: 'Sie verschwindet von der Website. Du kannst es im Verlauf rückgängig machen.', ok: 'Löschen', danger: true })}>
 					<button class="min-h-11 font-semibold text-danger underline">Diese Wanderung löschen</button>
 				</form>
 			{/if}

@@ -3,6 +3,7 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Huettli from '#lib/components/Huettli.svelte';
 	import Panorama from '#lib/components/Panorama.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { dict, LANG_NAMES, LANGS, localize, unlocalize } from '#lib/i18n.ts';
 
 	let { data, children } = $props();
@@ -99,3 +100,5 @@
 	</div>
 </footer>
 </div>
+
+<ConfirmDialog />

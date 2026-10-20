@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { confirmFirst } from '#lib/confirm.svelte.ts';
 	import { enhance } from '$app/forms';
 	import AdminPage from '#lib/components/admin/AdminPage.svelte';
 
@@ -21,13 +22,19 @@
 
 	<form
 		method="POST"
-		use:enhance={() => {
-			busy = true;
-			return async ({ update }) => {
-				await update({ reset: false });
-				busy = false;
-			};
-		}}
+		use:enhance={confirmFirst(
+			({ formData }) =>
+				String(formData.get('iban') ?? '').replace(/\s/g, '') !== data.host.iban.replace(/\s/g, '')
+					? { title: 'IBAN ändern?', text: 'Alle QR-Rechnungen zeigen ab jetzt dieses Konto, auch offene, wenn Gäste sie neu öffnen. Prüf die Nummer bitte genau.', ok: 'Ja, IBAN ändern' }
+					: null,
+			() => {
+				busy = true;
+				return async ({ update }) => {
+					await update({ reset: false });
+					busy = false;
+				};
+			}
+		)}
 		class="grid gap-6"
 	>
 		<section class="card grid gap-4 p-4 sm:grid-cols-2 sm:p-5">
