@@ -5,7 +5,9 @@ import { sessionEmail } from '#lib/server/auth.ts';
 import { loadSigningKey } from '#lib/server/signing.ts';
 import { record } from '#lib/server/analytics.ts';
 import { maintenance } from '#lib/server/maintenance.ts';
-import { seedEnglish } from '#lib/server/sitetexts.ts';
+import { seedEnglish, syncTranslations } from '#lib/server/sitetexts.ts';
+import { importSeedPhotos } from '#lib/server/images.ts';
+import { log } from '#lib/server/activity.ts';
 import { report } from '#lib/server/monitor.ts';
 
 export const init: ServerInit = async () => {
@@ -13,6 +15,13 @@ export const init: ServerInit = async () => {
 	await migrate();
 	await loadSigningKey();
 	await seedEnglish();
+	void importSeedPhotos()
+		.then(async (n) => {
+			if (!n) return;
+			await log({ actor: 'website', area: 'Fotos', title: `${n} Drohnenfotos hinzugefügt, neues Titelbild`, link: '/admin/fotos' });
+			await syncTranslations();
+		})
+		.catch((e) => report(e, 'seed photos', { alert: true }));
 	maintenance();
 	setInterval(maintenance, 3600_000);
 };
