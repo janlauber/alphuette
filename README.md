@@ -61,3 +61,8 @@ Mail-Antworten im Nachrichtenverlauf brauchen Resend Inbound:
 1. In Resend eine Empfangs-Domain einrichten, z. B. `antwort.alphuette-kiental.ch` (MX-Record).
 2. Webhook `email.received` auf `https://<domain>/api/mail/inbound` zeigen lassen.
 3. `REPLY_DOMAIN` und `RESEND_WEBHOOK_SECRET` setzen.
+
+## Lizenz
+
+Der Code steht unter der [MIT-Lizenz](LICENSE). Texte, Fotos, Logo und Maskottchen der Alphütte
+sind davon ausgenommen. Wer den Code für eine eigene Unterkunft nutzt, ersetzt sie durch eigene.
