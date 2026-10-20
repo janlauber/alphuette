@@ -20,6 +20,7 @@
 
 <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-white">{t.skip}</a>
 
+<div class="flex min-h-dvh flex-col">
 <header class="sticky top-0 z-30 border-b-2 border-line bg-paper/95 backdrop-blur">
 	<div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
 		<a href={localize(data.lang, '/')} class="group flex items-center gap-2 text-brand no-underline">
@@ -37,12 +38,12 @@
 	</div>
 </header>
 
-<main id="inhalt">
+<main id="inhalt" class="flex-1">
 	{@render children()}
 </main>
 
 <footer class="mt-24 text-brand">
-	<Panorama ground="brand" class="h-28 w-full sm:h-44 lg:h-72" />
+	<Panorama ground="brand" sky={false} class="h-28 w-full sm:h-44 lg:h-72" />
 	<div class="-mt-px bg-brand pb-32 text-white lg:pb-12">
 		<div class="mx-auto grid max-w-6xl gap-10 px-5 pt-6 sm:grid-cols-[auto_1fr_1fr_auto] sm:px-6">
 			<Huettli face="sleep" pose="stand" animate class="w-24 text-white [--paper:var(--color-brand)]" />
@@ -65,3 +66,4 @@
 		</div>
 	</div>
 </footer>
+</div>

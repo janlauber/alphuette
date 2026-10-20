@@ -40,7 +40,7 @@ export const actions = {
 			slug: slugify(str(f, 'slug', 60) || name),
 			alpine: category !== 'wanderweg',
 			category,
-			sac: /^T[1-6](–T[1-6])?$/.test(str(f, 'sac').replace('-', '–')) ? str(f, 'sac').replace('-', '–') : '',
+			sac: /^T[1-6]\+?(–T[1-6]\+?)?$/.test(str(f, 'sac').replace('-', '–')) ? str(f, 'sac').replace('-', '–') : '',
 			durationMin: Number(f.get('duration_min')) || null,
 			seasonDe: str(f, 'season_de', 120),
 			seasonEn: str(f, 'season_en', 120),

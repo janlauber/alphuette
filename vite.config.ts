@@ -15,7 +15,7 @@ export default defineConfig({
 					'script-src': ['self'],
 					// Svelte sets dynamic style attributes
 					'style-src': ['self', 'unsafe-inline'],
-					'img-src': ['self', 'data:', 'blob:'],
+					'img-src': ['self', 'data:', 'blob:', 'https://wmts.geo.admin.ch'],
 					'font-src': ['self'],
 					'connect-src': ['self'],
 					'frame-src': ['https://map.geo.admin.ch'],

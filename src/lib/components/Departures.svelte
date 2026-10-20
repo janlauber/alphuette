@@ -6,6 +6,12 @@
 	let { list, winter, lang, route }: { list: Departure[]; winter: boolean; lang: Lang; route: 'toHut' | 'fromHut' } = $props();
 	const t = $derived(dict[lang]);
 	const title = $derived(winter ? t.transit[route === 'toHut' ? 'toWinter' : 'fromWinter'] : t.transit[route]);
+	// SBB timetable with both stops filled in
+	const sbb = $derived.by(() => {
+		const valley = 'Reichenbach im Kandertal', hut = winter ? 'Kiental, Ramslauenen' : 'Kiental, Abzw. Spiggengrund';
+		const [von, nach] = route === 'toHut' ? [valley, hut] : [hut, valley];
+		return `https://www.sbb.ch/${lang === 'en' ? 'en/buying' : 'de/kaufen'}/pages/fahrplan/fahrplan.xhtml?von=${encodeURIComponent(von)}&nach=${encodeURIComponent(nach)}`;
+	});
 </script>
 
 <div>
@@ -27,7 +33,7 @@
 		<p class="mt-2 text-muted">{t.transit.none}</p>
 	{/if}
 	<p class="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted">
-		<a href="https://www.sbb.ch/" class="underline" target="_blank" rel="noopener">{t.transit.timetable}</a>
+		<a href={sbb} class="font-semibold text-brand underline" target="_blank" rel="noopener">{t.transit.timetable}</a>
 		<span>{t.transit.source}</span>
 	</p>
 </div>

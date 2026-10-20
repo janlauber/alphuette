@@ -1,0 +1,363 @@
+{
+  "_legend": {
+    "elevSrc": "SAC, ALK, interlaken, Post, SchweizMobil = Wert steht in dieser Quelle; DHM = swisstopo-Höhenabfrage (swissALTI3D) am Routenpunkt, gerundet, abgeleitet",
+    "lv95": "Routenpunkt aus dem GPX der jeweiligen Tourenseite, der dem swisstopo-Namen am nächsten liegt (zum Zeichnen der Route)",
+    "timeFromStartMin": "nur wenn eine Quelle die Zeit nennt",
+    "timeGpxMin": "aus den Zeitstempeln im GPX der Tourenseite berechnet, keine offizielle Wegweiserzeit",
+    "km": "aus dem GPX berechnet, ausser anders vermerkt"
+  },
+  "hikes": [
+    {
+      "slug": "gspaltenhornhuette",
+      "name": "Griesalp–Gamchi–Gspaltenhornhütte SAC",
+      "outAndBack": true,
+      "distanceKm": 7.1,
+      "distanceKmNote": "einfach (ALK); hin und zurück auf gleichem Weg rund 14,2 km (verdoppelt, nicht publiziert)",
+      "durationMin": 210,
+      "durationNote": "Aufstieg 3:30 h (SAC); ALK 3:15 h im Datenblatt, im Text rund 4 h; interlaken rund 3,5 h; Abstiegszeit in keiner Quelle",
+      "descentDurationMin": null,
+      "ascentM": 1100,
+      "ascentNote": "SAC 1100 Hm; ALK 1061 m (ohne Beschriftung)",
+      "descentM": null,
+      "highestPoint": { "name": "Gspaltenhornhütte SAC", "elevationM": 2455, "elevSrc": "SAC" },
+      "lowestPoint": { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": "T3",
+      "difficulty": "schwer (ALK: difficult)",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "nur über den Talweg Bir Alperue–Tschingel–Griesalp (Route griesalp-kiental in Gegenrichtung), sonst Bus ab Kiental, Faulbrunni" },
+      "end": { "place": "Griesalp (Rückweg auf gleichem Weg)", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)" },
+      "waypoints": [
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "lv95": [2624853, 1155251], "km": 0.0 },
+        { "name": "Berggasthaus Golderli", "elevationM": 1440, "elevSrc": "DHM", "lv95": [2624983, 1155513], "km": 0.4 },
+        { "name": "Steineberg", "elevationM": 1467, "elevSrc": "SAC", "lv95": [2625187, 1155261], "km": 0.7 },
+        { "name": "Bürgli (Alp)", "elevationM": 1616, "elevSrc": "SAC", "lv95": [2626143, 1154125], "km": 2.4 },
+        { "name": "Gamchi (Alphütte Gamchi)", "elevationM": 1669, "elevSrc": "SAC", "lv95": [2626748, 1153277], "km": 3.5 },
+        { "name": "Sillere", "elevationM": 1948, "elevSrc": "DHM", "lv95": [2627431, 1152229], "km": 5.0 },
+        { "name": "Seitenmoräne Gamchigletscher, Wegweiser P. 2106", "elevationM": 2106, "elevSrc": "SAC (ALK: P. 2107)", "lv95": null, "km": null },
+        { "name": "Gspaltenhornhütte SAC", "elevationM": 2455, "elevSrc": "SAC", "lv95": [2628515, 1151343], "km": 7.1 }
+      ],
+      "gpx": "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/griesalp-gamchi-gspaltenhornhuette",
+      "hut": {
+        "name": "Gspaltenhornhütte SAC",
+        "owner": "SAC Sektion Bern",
+        "beds": 60,
+        "staffed": "bewartet Juli bis September, teilweise Juni und Oktober, November bis Mai geschlossen (SAC); Bergwelten: Mitte Juni bis Mitte Oktober bewartet"
+      },
+      "season": "Juli bis September sicher (Hütte bewartet), Juni und Oktober teilweise; Bus bis Griesalp 23.5.–18.10.2026",
+      "highlights": [
+        "Alpweiden von Steineberg und Bürgli",
+        "Talkessel Gamchi mit Wasserfall (SAC: Schirm mitnehmen, wer keine Dusche will)",
+        "Felswand und zwei Metallbrücken",
+        "Seitenmoräne des Gamchigletschers",
+        "ALK: Gamchi als Teil des UNESCO-Welterbes"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Start" },
+        { "name": "Berggasthaus Golderli", "onRoute": true },
+        { "name": "Gspaltenhornhütte SAC", "onRoute": true, "where": "Ziel, bewartet Juli bis September" }
+      ],
+      "familyFriendly": false,
+      "familyNote": "ALK: Kinder an der Hand führen, eventuell mit Sicherungsseil",
+      "pramFriendly": false,
+      "exposedParts": "ALK: Felsweg teils nass, rund 100 m mit Seilen gesichert. SAC nennt keine Sicherungen.",
+      "variants": [
+        { "name": "Von der Griesalp über die Bundalp", "sacScale": "T3+", "durationMin": 240, "ascentM": 1240, "descentM": 190, "source": "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/gspaltenhornhuette-sac-2147000127/berg-und-alpinwandern/von-der-griesalp-ueber-die-bundalp-476/" }
+      ],
+      "sources": [
+        "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/gspaltenhornhuette-sac-2147000127/",
+        "https://sac-cas.ch/en/huts-and-tours/sac-route-portal/gspaltenhornhuette-sac-2147000127/mountain-hiking/from-griesalp-via-steineberg-475",
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/griesalp-gamchi-gspaltenhornhuette",
+        "https://www.interlaken.swiss/erlebnisse/tour/der-steinige-weg-ueber-die-sefinafurgga",
+        "https://www.bergwelten.com/h/gspaltenhornhuette"
+      ],
+      "notes": [
+        "Wegkategorie aus interlaken (Griesalp–Gspaltenhornhütte–Sefinafurgga): ganz oder teilweise Bergwanderweg; SAC T3.",
+        "Ein Rundweg ist nicht die Normalroute. Die SAC-Variante über Bundalp ist T3+.",
+        "Biker dürfen laut ALK bis Bürgli fahren, Geübte bis Gamchi."
+      ]
+    },
+    {
+      "slug": "sefinenfurgge",
+      "name": "Griesalp–Sefinafurgga–Rotstockhütte–Mürren",
+      "officialStage": {
+        "route": "Via Alpina, nationale Route 1 (Vaduz–Montreux)",
+        "stage": "Etappe 12/20 Lauterbrunnen–Griesalp (Wanderland-ID 1.12)",
+        "direction": "offiziell Lauterbrunnen → Griesalp; ab Griesalp also Gegenrichtung",
+        "distanceKm": 22,
+        "durationMin": 540,
+        "ascentM": 2000,
+        "descentM": 1400,
+        "lowestM": 797,
+        "highestM": 2613,
+        "rating": "Technik mittel, Kondition schwierig",
+        "season": "Juni bis September",
+        "sources": ["https://search.ch/libero/attraction/339ede8c014d0195455fbea634ea92c2/via-alpina,stage-12-20.en.html", "https://www.myswitzerland.com/en/experiences/route/via-alpina-1_12/"]
+      },
+      "distanceKm": 16.58,
+      "durationMin": 400,
+      "ascentM": 1430,
+      "descentM": 1200,
+      "figuresSource": "interlaken «Klassischer Passübergang: die Sefinenfurgge» (Griesalp–Mürren); Höhenzahlen ohne Beschriftung, Zuordnung nach Reihenfolge",
+      "highestPoint": { "name": "Sefinafurgga (Sefinenfurgge)", "elevationM": 2613, "elevSrc": "SchweizMobil und interlaken (DHM 2612)" },
+      "lowestPoint": { "name": "Griesalp", "elevationM": 1408, "elevSrc": "interlaken" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": "T3 bis T3+",
+      "sacScaleNote": "SAC: Schilthorn–Sefinafurgga–Gspaltenhornhütte T3, Mürren–Rotstockhütte–Sefinafurgga–Gspaltenhornhütte T3+; keine T-Stufe für genau diese Route",
+      "difficulty": "schwer (interlaken: Schwierigkeit schwer, Kondition schwer)",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "nur über Talweg bis Griesalp, sonst Bus ab Kiental, Faulbrunni" },
+      "end": { "place": "Mürren", "elevationM": 1634, "elevSrc": "DHM (Haltestelle Mürren BLM)", "stop": "Mürren BLM", "line": "BLM Mürren–Grütschalp (Bahn) und Grütschalp–Lauterbrunnen (Seilbahn), BOB Lauterbrunnen–Interlaken Ost, weiter über Spiez nach Reichenbach i. K. und PostAuto 220 nach Kiental" },
+      "returnToHut": "Fahrplanabfrage 21.10.2026 Mürren BLM → Kiental, Ramslauenen: 2 h 14 min mit 6 Umstiegen (an diesem Tag mit Bahnersatz zwischen Wilderswil und Interlaken)",
+      "waypoints": [
+        { "name": "Griesalp (Hotel Griesalp)", "elevationM": 1408, "elevSrc": "SAC", "lv95": [2624759, 1155171], "km": 0.0, "timeGpxMin": 0 },
+        { "name": "Dündenessli", "elevationM": 1458, "elevSrc": "DHM", "lv95": [2624879, 1154880], "km": 0.4, "timeGpxMin": 9 },
+        { "name": "Bundstäg (Gamchibach)", "elevationM": 1513, "elevSrc": "DHM", "lv95": [2625450, 1154526], "km": 1.3, "timeGpxMin": 31 },
+        { "name": "Bürgli (Sennhütte)", "elevationM": 1616, "elevSrc": "SAC", "lv95": [2626147, 1154151], "km": 2.3, "timeGpxMin": 56 },
+        { "name": "Uf de Hüble", "elevationM": 1854, "elevSrc": "DHM", "lv95": [2626661, 1153775], "km": 3.6, "timeGpxMin": 87 },
+        { "name": "Dürrebüel (Obere Dürreberg)", "elevationM": 2416, "elevSrc": "DHM", "lv95": [2628339, 1153604], "km": 6.2, "timeGpxMin": 148 },
+        { "name": "Sefinafurgga", "elevationM": 2613, "elevSrc": "SchweizMobil", "lv95": [2628715, 1153431], "km": 6.8, "timeGpxMin": 164 },
+        { "name": "Hundshubel", "elevationM": 2290, "elevSrc": "DHM", "lv95": [2629596, 1154531], "km": 8.4, "timeGpxMin": 202 },
+        { "name": "Rotstockhütte (Poganggen)", "elevationM": 2032, "elevSrc": "DHM", "lv95": [2630627, 1154960], "km": 9.9, "timeGpxMin": 237 },
+        { "name": "Bryndli", "elevationM": 2022, "elevSrc": "DHM", "lv95": [2632894, 1155056], "km": 12.4, "timeGpxMin": 298 },
+        { "name": "Spilboden (Restaurant Spielbodenalp)", "elevationM": 1792, "elevSrc": "DHM", "lv95": [2633383, 1155385], "km": 13.7, "timeGpxMin": 330 },
+        { "name": "Gimmelen (Restaurant Gimmelen)", "elevationM": 1798, "elevSrc": "DHM", "lv95": [2633897, 1155571], "km": 14.4, "timeGpxMin": 346 },
+        { "name": "Mürren BLM", "elevationM": 1634, "elevSrc": "DHM", "lv95": [2635145, 1157060], "km": 16.6, "timeGpxMin": 400 }
+      ],
+      "gpx": "https://www.interlaken.swiss/?ndsajax=destination-data-proxy&template=gpx&limit=1&mkt=de&q=globalid%3AoaTour_8483600&elevations=true&times=true&no_cache=1",
+      "season": "Juni bis September (SchweizMobil, Etappe 12); Bus ab Griesalp 23.5.–18.10.2026",
+      "highlights": [
+        "Passübergang vom hinteren Kiental ins hintere Lauterbrunnental",
+        "Hundsflüe an der Flanke des Hundshorns",
+        "Bryndli als Aussichtskanzel",
+        "Mürren gegenüber von Eiger, Mönch und Jungfrau (SchweizMobil)"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Start" },
+        { "name": "Rotstockhütte", "onRoute": true, "where": "Saison laut unterwegs.sob.ch Anfang/Mitte Juni bis Ende September" },
+        { "name": "Restaurant Spielbodenalp", "onRoute": true, "where": "swisstopo-Gebäudename, Öffnungszeiten nicht geprüft" },
+        { "name": "Restaurant Gimmelen", "onRoute": true, "where": "swisstopo-Gebäudename, Öffnungszeiten nicht geprüft" },
+        { "name": "Gastronomie in Mürren", "onRoute": true, "where": "Ziel" },
+        { "name": "Gspaltenhornhütte SAC", "onRoute": false, "where": "Variante über die Hütte (interlaken «Der steinige Weg über die Sefinafurgga»)" }
+      ],
+      "familyFriendly": false,
+      "pramFriendly": false,
+      "exposedParts": "interlaken: auf der Kientaler Seite Drahtseile; im sehr steilen Abschnitt zur Passhöhe Sicherungsseile und leiterartige Treppen; schiefrig-rutschiger Pfad vor und nach dem Pass; Geröll und Lawinenreste im Aufstieg.",
+      "alternativeFigures": [
+        { "source": "https://www.interlaken.swiss/erlebnisse/tour/der-steinige-weg-ueber-die-sefinafurgga", "distanceKm": 20.52, "durationMin": 530, "ascentM": 1650, "descentM": 1400, "highestM": 2679, "note": "Variante über die Gspaltenhornhütte; schwer, Kondition sehr schwer; Zahlen ohne Beschriftung" }
+      ],
+      "sources": [
+        "https://www.interlaken.swiss/erlebnisse/tour/klassischer-passuebergang-die-sefinenfurgge",
+        "https://www.interlaken.swiss/erlebnisse/tour/der-steinige-weg-ueber-die-sefinafurgga",
+        "https://search.ch/libero/attraction/339ede8c014d0195455fbea634ea92c2/via-alpina,stage-12-20.en.html",
+        "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/gspaltenhornhuette-sac-2147000127/",
+        "https://unterwegs.sob.ch/en/tour/rotstock-hut-5h",
+        "https://api3.geo.admin.ch (Layer ch.astra.wanderland, Feature 1.12)",
+        "https://transport.opendata.ch/v1/connections"
+      ],
+      "notes": [
+        "swisstopo schreibt Sefinafurgga, die Tourismusseiten meist Sefinenfurgge.",
+        "Offizielle Etappenwerte gelten für Lauterbrunnen → Griesalp. Für Griesalp → Mürren gibt es keine SchweizMobil-Werte, deshalb die interlaken-Tour als Hauptwert.",
+        "Die Etappendaten stammen von search.ch (Daten SchweizMobil), weil myswitzerland.com beim Abruf nicht lud."
+      ]
+    },
+    {
+      "slug": "tschingelsee",
+      "name": "Vom Hüttli zum Rastplatz am ehemaligen Tschingelsee",
+      "distanceKm": 2.3,
+      "distanceNote": "abgeleitet: Guggerwäg Lengschwendi–Bir Alperue 1,74 km (GPX) + Bir Alperue–Rastplatz 0,51 km (GPX); einfach",
+      "durationMin": null,
+      "durationDerivedMin": 38,
+      "durationNote": "28 min Lengschwendi–Bir Alperue (GPX Guggerwäg) + 10 min Bir Alperue–Ehemaliger Tschingelsee (Post-PDF); Rückweg leicht aufwärts, keine Quellenzeit",
+      "ascentM": null,
+      "descentM": null,
+      "highestPoint": { "name": "Lengschwendi (am Guggerwäg)", "elevationM": 1184, "elevSrc": "DHM" },
+      "lowestPoint": { "name": "Bir Alperue", "elevationM": 1141, "elevSrc": "DHM" },
+      "trailCategory": "wanderweg",
+      "sacScale": "T1",
+      "sacScaleNote": "T1 gilt im Post-PDF für den Talweg Griesalp–Kiental mit dem Abschnitt Bir Alperue–Tschingelsee; der Guggerwäg ist teils Bergwanderweg (ALK)",
+      "difficulty": "leicht",
+      "start": { "place": "Hüttli Lengschwendi", "elevationM": 1184, "elevSrc": "DHM am Guggerwäg", "stop": "Kiental, Faulbrunni (rund 630 m Luftlinie, nur Griesalp-Saison)", "line": "PostAuto 220", "onFootFromHut": "ja" },
+      "end": { "place": "Rastplatz Tschingel (Picknickzone mit Feuerstellen)", "elevationM": 1152, "elevSrc": "DHM", "lv95": [2623250, 1155950], "lv95Note": "aus dem Schutzplan 1:5000 abgelesen, Genauigkeit etwa ±25 m; liegt am Nordwestrand des Schutzgebiets beim Parkplatz", "stop": "Kiental, Rest. Alpenruhe (rund 0,8 km, nur Griesalp-Saison)", "line": "PostAuto 220" },
+      "waypoints": [
+        { "name": "Lengschwendi (Hüttli)", "elevationM": 1184, "elevSrc": "DHM", "lv95": [2622173, 1157571], "timeGpxMin": 0 },
+        { "name": "Gürmschi", "elevationM": 1185, "elevSrc": "DHM", "lv95": [2622359, 1156944], "timeGpxMin": 13 },
+        { "name": "Bir Alperue (Restaurant Alpenruh)", "elevationM": 1141, "elevSrc": "DHM", "lv95": [2622997, 1156525], "timeGpxMin": 28 },
+        { "name": "Rastplatz Tschingel / Ehemaliger Tschingelsee", "elevationM": 1152, "elevSrc": "DHM", "lv95": [2623250, 1155950], "timeFromStartMin": null, "timeNote": "Post-PDF: Ehemaliger Tschingelsee–Bir Alperue 10 min" }
+      ],
+      "gpx": [
+        "https://www.interlaken.swiss/?ndsajax=destination-data-proxy&template=gpx&limit=1&mkt=de&q=globalid%3AoaTour_8483350&elevations=true&times=true&no_cache=1",
+        "https://www.interlaken.swiss/?ndsajax=destination-data-proxy&template=gpx&limit=1&mkt=de&q=globalid%3AoaTour_804069577&elevations=true&times=true&no_cache=1"
+      ],
+      "fireplace": {
+        "official": true,
+        "rule": "Feuer nur am bezeichneten Rastplatz (Schutzbeschluss NSG Tschingel, Ziff. 4 j)",
+        "count": null,
+        "countNote": "Motion 2021: «Picknickzone im vorderen Teil des Perimeters mit verschiedenen Feuerstellen»; plattformj 2023 nennt zwei Grillstellen, eine am Tschingelsee und eine in Pochten",
+        "woodProvided": null,
+        "woodNote": "keine Quelle sagt, ob Holz bereitliegt; das Angebot «Knisterndes Kiental» (Rucksack CHF 26, Abholung Bäckerei Aellig, Kiental) enthält Anzünder und Holzstecken, laut plattformj auch Holz",
+        "winter": "Grillstellen auch im Winter nutzbar (freizeit.ch)"
+      },
+      "rules": {
+        "source": "Schutzbeschluss Naturschutzgebiet «Tschingel» NSG Nr. 156, Wirtschafts-, Energie- und Umweltdirektion, 1. März 2022",
+        "dogs": "an der Leine führen (Ziff. 4 f)",
+        "fire": "nur am bezeichneten Rastplatz (Ziff. 4 j)",
+        "bathing": "nicht erlaubt: Kanton untersagt das Eindringen in Ufervegetation und Wasserfläche; die Betretverbotszone ist mit rot/schwarzen Pfählen markiert",
+        "paths": "kein generelles Weggebot, aber Betretverbot für die Zone gemäss Schutzplan (sie deckt den grössten Teil der Schwemmebene)",
+        "other": [
+          "keine Zelte, Wohnwagen oder Biwak (Ziff. 4 h)",
+          "keine Drohnen oder Modellflugzeuge (Ziff. 4 n)",
+          "nicht fischen (Ziff. 4 p)",
+          "keine Pflanzen pflücken, keine Beeren, Pilze oder Moose sammeln (Ziff. 4 k, l)",
+          "Tiere nicht stören (Ziff. 4 m)",
+          "keine Abfälle (Ziff. 4 d)",
+          "Fahrzeuge nur auf der geteerten Strasse (Ziff. 4 g)",
+          "Widerhandlungen werden mit Busse bestraft (Ziff. 13)"
+        ],
+        "ranger": "Von Frühling bis Herbst ist unregelmässig eine Rangerin oder ein Ranger im Gebiet unterwegs."
+      },
+      "protection": [
+        "Kantonales Naturschutzgebiet Tschingel, NSG Nr. 156 (seit 12.8.1987, revidiert 1.3.2022)",
+        "Auengebiet von nationaler Bedeutung Nr. 326 «Tschingel» (Typ Fliessgewässer, seit 2003)",
+        "Trockenweide von nationaler Bedeutung auf der Nordseite (seit 2017)",
+        "Eidgenössisches Jagdbanngebiet Nr. 3 «Kiental»"
+      ],
+      "season": "ganzjährig; im Winter Schneeschuhroute nur auf der signalisierten Route (Ziff. 8); Zufahrt im Winter nur mit 4x4 oder Ketten (freizeit.ch)",
+      "highlights": [
+        "Schwemmebene mit mäandrierenden Bächen, entstanden durch einen unwetterbedingten Aufstau des Gornerenbaches im Juli 1972",
+        "Wasservögel (Post)",
+        "Ab Lengschwendi Blick ins hintere Kiental und auf die Gamchilücke (interlaken, Guggerwäg)"
+      ],
+      "refreshments": [
+        { "name": "Restaurant Alpenruh", "onRoute": true, "where": "Bir Alperue" }
+      ],
+      "parking": "Parkplatz beim Rastplatz, öffentlich und kostenpflichtig (ALK)",
+      "familyFriendly": null,
+      "familyNote": "Keine Quelle bewertet genau diesen Weg; Bergwelten nennt den angrenzenden Abschnitt Tschingelsee–Bärepfad–Gorneren familienfreundlich",
+      "pramFriendly": null,
+      "sources": [
+        "https://oerebfiles.apps.be.ch/9986/4500/156_Sb_Tschingel_2022.pdf",
+        "https://oerebfiles.apps.be.ch/9986/plan/156_Schutzplan_Tschingel_60x30.pdf",
+        "https://www.naturschutzgebiete.sites.be.ch/de/start/schutzgebiete/tschingel.html",
+        "https://ogd.parl.apps.be.ch/pdf-upload/e86b47c7cb3c4ab884d99f7462d73aa5-332.pdf",
+        "https://www.plattformj.ch/artikel/198001/",
+        "https://www.plattformj.ch/artikel/206023/",
+        "https://www.freizeit.ch/freizeit/23942/kniesterndes-kiental",
+        "https://api3.geo.admin.ch/featureattachments/ch.bafu.bundesinventare-auen/objectsheets/2017revision/nr326.pdf",
+        "https://wandern.post.ch/-/media/post-maxisites/wandern/wanderungen/kiental-be/Kiental-BE-DE.pdf",
+        "https://www.interlaken.swiss/erlebnisse/tour/auf-dem-kientaler-guggerwaeg",
+        "https://adelboden-lenk-kandersteg.ch/aktivitaeten/tour/detail/alpenruhe-baerenpfad-wildwasserweg-tschingel"
+      ],
+      "notes": [
+        "Konflikt Baden/Wasser: plattformj (2022) schreibt, der Kanton verzichte auf ein Weggebot, um «das Spielen am Wasser» zu ermöglichen. Die Kantonsseite verbietet das Eindringen in die Wasserfläche. Für die Website die Kantonsregel nehmen.",
+        "Wikipedia nennt 1972 und 1987 ebenfalls; belegt sind die Daten durch den Schutzbeschluss."
+      ]
+    },
+    {
+      "slug": "gehrihorn",
+      "name": "Ramslauenen–Gehrihorn–Grathütte–Ramslauenen",
+      "distanceKm": 8.1,
+      "durationMin": 230,
+      "ascentM": 754,
+      "descentM": 754,
+      "highestPoint": { "name": "Gehrihore", "elevationM": 2130, "elevSrc": "SAC (ALK: 2129)" },
+      "lowestPoint": { "name": "bei Obers Chüematti", "elevationM": 1376, "elevSrc": "ALK" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": null,
+      "difficulty": "mittel (ALK, englische Seite: moderate)",
+      "start": { "place": "Ramslauenen (Bergstation Sesselbahn)", "elevationM": 1404, "elevSrc": "SAC", "stop": "Kiental, Ramslauenen, dann rund 150 m zur Talstation und 15 min Sesselbahn", "line": "PostAuto 220 (ganzjährig bis Kiental, Ramslauenen) + Sesselbahn Kiental–Ramslauenen", "onFootFromHut": "ja, Guggerwäg aufwärts (Lengschwendi–Ramslauenen rund 3,2 km)" },
+      "end": { "place": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC", "stop": "Sesselbahn Ramslauenen", "line": "Sesselbahn Kiental–Ramslauenen" },
+      "waypoints": [
+        { "name": "Ramslauenen (Berghaus Ramslauenen)", "elevationM": 1404, "elevSrc": "SAC", "lv95": [2620688, 1158799], "km": 0.0 },
+        { "name": "Undere Rüederigs", "elevationM": 1630, "elevSrc": "DHM", "lv95": [2620212, 1158718], "km": 1.0 },
+        { "name": "Obere Rüederigs", "elevationM": 1898, "elevSrc": "DHM", "lv95": [2619747, 1158570], "km": 2.1 },
+        { "name": "Gehrihore", "elevationM": 2130, "elevSrc": "SAC", "lv95": [2619419, 1158090], "km": 2.9, "timeGpxMin": 77, "timeSrc": "GPX interlaken Gehrihorn-Überschreitung" },
+        { "name": "Grathütte (Giesigrat)", "elevationM": 2071, "elevSrc": "DHM", "lv95": [2619552, 1157090], "km": 4.0, "timeGpxMin": 106, "timeSrc": "GPX interlaken Gehrihorn-Überschreitung" },
+        { "name": "Innere Rüederigsgrat", "elevationM": 2034, "elevSrc": "DHM", "lv95": [2619634, 1157113], "km": 4.2 },
+        { "name": "Obers Bachli", "elevationM": 1824, "elevSrc": "DHM", "lv95": [2619951, 1157003], "km": 5.2 },
+        { "name": "Unders Bachli", "elevationM": 1530, "elevSrc": "DHM", "lv95": [2620410, 1157771], "km": 6.8 },
+        { "name": "Obers Chüematti", "elevationM": 1375, "elevSrc": "DHM", "lv95": [2620711, 1158326], "km": 7.7 },
+        { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC", "lv95": [2620685, 1158770], "km": 8.1 }
+      ],
+      "gpx": "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/ramslauenen-gehrihorn-grathuette-ramslauenen",
+      "season": "an die Sesselbahn gebunden (Sommer 2026: 9.5.–11.10. mit wechselnden Betriebstagen)",
+      "highlights": [
+        "Gipfelsicht auf Thunersee, Niesenkette, unteres Kandertal und Kiental",
+        "Blick auf das Blüemlisalp-Massiv und das Gspaltenhorn",
+        "Ab Giesigrat Tiefblick nach Kandersteg (interlaken, Überschreitung)"
+      ],
+      "refreshments": [
+        { "name": "Berghaus Ramslauenen", "onRoute": true, "where": "Start und Ziel; Saison 2026 beendet (kiental-sesselbahn.ch)" },
+        { "name": "Grathütte", "onRoute": true, "where": "interlaken: bewartete Grathütte zum Imbiss; mountain-forecast.com: private Hütte, 10 Plätze, bewartet Mitte Juni bis Mitte September (keine offizielle Quelle)" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": false,
+      "sources": [
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/ramslauenen-gehrihorn-grathuette-ramslauenen",
+        "https://www.interlaken.swiss/erlebnisse/tour/katzensprung-vom-rummel-in-die-einsamkeit",
+        "https://www.sac-cas.ch/en/huts-and-tours/sac-route-portal/gehrihore-gehrihorn-761/ski-touring/de-ramslauenen-kiental-1021/",
+        "https://www.kiental-sesselbahn.ch/",
+        "https://www.mountain-forecast.com/huts-and-lodges/Grathutte"
+      ],
+      "notes": [
+        "ALK nennt 754 m zweimal ohne Beschriftung.",
+        "Wegkategorie von der interlaken-Überschreitung: Bergwanderweg, nur für trittsichere und schwindelfreie Wanderer; steiler Aufstieg ab der Sesselbahnstation. Die heiklen Stellen dort liegen nach dem Gehrihorn-Abstieg und am Giesigrat; ob sie auf der Rundtour liegen, ist nicht belegt.",
+        "Öffnungszeiten der Grathütte nicht offiziell bestätigt."
+      ]
+    },
+    {
+      "slug": "ramslauenen-griesalp",
+      "name": "Heiteres Auf und Ab im Kiental (Ramslauenen–Griesalp)",
+      "distanceKm": 8.75,
+      "durationMin": 180,
+      "ascentM": 540,
+      "descentM": 530,
+      "highestPoint": { "name": "bei Mittelberg-Schwand", "elevationM": 1511, "elevSrc": "interlaken (Beschriftung abgeleitet)" },
+      "lowestPoint": { "name": "bei Ballenewald", "elevationM": 1201, "elevSrc": "interlaken (Beschriftung abgeleitet)" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": null,
+      "difficulty": "leicht (Kondition sehr leicht)",
+      "start": { "place": "Ramslauenen (Bergstation Sesselbahn)", "elevationM": 1404, "elevSrc": "SAC", "stop": "Kiental, Ramslauenen, dann rund 150 m zur Talstation und 15 min Sesselbahn", "line": "Bahn bis Reichenbach i. K., PostAuto 220 bis Kiental, Ramslauenen, Sesselbahn Kiental–Ramslauenen", "onFootFromHut": "ja: die Route führt bei Schwand rund 240 m Luftlinie am Punkt Lengschwendi vorbei; Einstieg dort statt in Ramslauenen möglich (Verbindungsweg nicht geprüft)" },
+      "end": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 nach Reichenbach i. K. (23.5.–18.10.2026), Halt auch in Kiental, Faulbrunni" },
+      "waypoints": [
+        { "name": "Ramslauenen (Berghaus Ramslauenen)", "elevationM": 1404, "elevSrc": "SAC", "lv95": [2620701, 1158761], "km": 0.0, "timeGpxMin": 0 },
+        { "name": "Obers Chüematti", "elevationM": 1373, "elevSrc": "DHM", "lv95": [2620738, 1158312], "km": 0.5, "timeGpxMin": 10 },
+        { "name": "Ballenewald", "elevationM": 1220, "elevSrc": "DHM", "lv95": [2621563, 1158439], "km": 2.0, "timeGpxMin": 41 },
+        { "name": "Bärtis", "elevationM": 1251, "elevSrc": "DHM", "lv95": [2621815, 1157902], "km": 2.7, "timeGpxMin": 54 },
+        { "name": "Schwand", "elevationM": 1298, "elevSrc": "DHM", "lv95": [2621908, 1157574], "km": 3.0, "timeGpxMin": 62 },
+        { "name": "Obers Brend", "elevationM": 1334, "elevSrc": "DHM", "lv95": [2621936, 1157278], "km": 3.3, "timeGpxMin": 68 },
+        { "name": "Houssener", "elevationM": 1420, "elevSrc": "DHM", "lv95": [2621963, 1156671], "km": 4.3, "timeGpxMin": 88 },
+        { "name": "Brüggerbärgli", "elevationM": 1407, "elevSrc": "DHM", "lv95": [2622257, 1156037], "km": 5.1, "timeGpxMin": 104 },
+        { "name": "Schwendeli", "elevationM": 1375, "elevSrc": "DHM", "lv95": [2622674, 1155582], "km": 5.8, "timeGpxMin": 120 },
+        { "name": "Gure", "elevationM": 1410, "elevSrc": "DHM", "lv95": [2622970, 1155349], "km": 6.2, "timeGpxMin": 128 },
+        { "name": "Mittelberg-Schwand (interlaken: Mittelberg)", "elevationM": 1497, "elevSrc": "DHM", "lv95": [2623329, 1154943], "km": 6.9, "timeGpxMin": 142 },
+        { "name": "Gwindli-Mittelberg", "elevationM": 1474, "elevSrc": "DHM", "lv95": [2623921, 1154825], "km": 7.6, "timeGpxMin": 156 },
+        { "name": "Dündefall (Steg)", "elevationM": 1489, "elevSrc": "DHM", "lv95": [2624415, 1154809], "km": 8.1, "timeGpxMin": 167 },
+        { "name": "Griesalp (Hotel Griesalp)", "elevationM": 1408, "elevSrc": "SAC", "lv95": [2624759, 1155171], "km": 8.7, "timeGpxMin": 180 }
+      ],
+      "officialWaypointsInterlaken": ["Ramslauenen", "Brüggerbärgli", "Gure", "Mittelberg", "Griesalp"],
+      "gpx": "https://www.interlaken.swiss/?ndsajax=destination-data-proxy&template=gpx&limit=1&mkt=de&q=globalid%3AoaTour_31091256&elevations=true&times=true&no_cache=1",
+      "season": "Sesselbahn 9.5.–11.10.2026 und Bus ab Griesalp 23.5.–18.10.2026, also praktisch 23.5.–11.10. an Betriebstagen der Sesselbahn",
+      "highlights": [
+        "Infotafeln des Guggerwägs zu einheimischen Tieren wie dem Kuckuck",
+        "Blick auf die Blüemlisalp-Kette, den Tschingelsee, den Thunersee und den Niesen",
+        "Dündefall: kräftiger Wasserfall, der Steg führt nahe vorbei",
+        "Rückfahrt über die steilste Postautostrecke"
+      ],
+      "refreshments": [
+        { "name": "Berghaus Ramslauenen", "onRoute": true, "where": "Start" },
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Ziel" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": false,
+      "sources": [
+        "https://www.interlaken.swiss/erlebnisse/tour/heiteres-auf-und-ab-im-kiental",
+        "https://www.kiental-sesselbahn.ch/betriebsinfo",
+        "https://www.postauto.ch/de/freizeitangebote/ausflugstipps/kiental-griesalp-linie"
+      ],
+      "notes": [
+        "interlaken: ganz oder teilweise auf Bergwanderwegen; Belag 57 % Pfad, 25 % Weg, 16 % Strasse, 2 % Schotter.",
+        "interlaken nennt unterwegs keine Einkehr und empfiehlt Picknick und genug Getränke.",
+        "Zwischenpunkte stammen aus dem GPX der Tourenseite und der swisstopo-Namensabfrage; interlaken selbst listet nur fünf Punkte."
+      ]
+    }
+  ]
+}

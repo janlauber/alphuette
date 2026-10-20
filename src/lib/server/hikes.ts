@@ -1,5 +1,5 @@
 import { sql } from './db.ts';
-import { toLv95 } from '#lib/geo.ts';
+import { toLv95, toWgs84 } from '#lib/geo.ts';
 
 type Waypoint = { name: string; elev: number; min?: number | null; distM?: number | null; e?: number; n?: number };
 type Row = {
@@ -149,4 +149,21 @@ export async function fillProfiles() {
 			console.error('hike profile', h.id, e);
 		}
 	}
+}
+
+/** The full route in WGS84 with heights from the profile, for GPX and KML downloads. */
+export async function hikeTrack(slug: string) {
+	const [h] = await sql<Row[]>`select name, geometry, profile, source from hikes where slug = ${slug}`;
+	if (!h?.geometry?.length || h.source === 'wegpunkte') return null;
+	const prof = h.profile ?? [];
+	let dist = 0;
+	return {
+		name: h.name,
+		points: h.geometry.map(([e, n], i, g) => {
+			if (i) dist += Math.hypot(e - g[i - 1][0], n - g[i - 1][1]);
+			const j = prof.findIndex((p) => p[0] >= dist);
+			const ele = j < 0 ? prof.at(-1)?.[1] : prof[j][1];
+			return { ...toWgs84(e, n), ele: ele == null ? null : Math.round(ele) };
+		})
+	};
 }

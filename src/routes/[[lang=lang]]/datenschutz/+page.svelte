@@ -11,7 +11,7 @@
 <div class="richtext mx-auto max-w-[62ch] px-4 pt-8 sm:px-6 [&_h2]:mt-10 [&_h2]:text-[1.6rem] [&_h2+p]:mt-3">
 	{#if en}
 		<h1 class="text-[2.6rem]">Privacy policy</h1>
-		<p class="mt-6">This website collects the data needed to handle your stay and counts visits anonymously. There is no advertising, no third-party tracking and no cookie on the public pages.</p>
+		<p class="mt-6">This website collects the data needed to handle your stay and counts visits anonymously. There is no advertising, no third-party tracking and no cookies.</p>
 		<h2>Who is responsible</h2>
 		<p>{contact}</p>
 		<h2>What we collect</h2>
@@ -19,7 +19,7 @@
 		<p>Booking records are kept as long as Swiss accounting law requires (10 years). Messages and contact details you can have deleted earlier unless they belong to an invoice.</p>
 		<h2>Who processes data for us</h2>
 		<p>The website and database run on klickops. Emails are sent with Resend (Resend, Inc., USA). Resend stores emails in the USA; the transfer is based on the EU standard contractual clauses with the Swiss amendments.</p>
-		<p>The map on the home page is loaded from swisstopo (Federal Office of Topography, Switzerland), which sees your IP address. If you use the WhatsApp link, WhatsApp (Meta) processes your message under its own terms.</p>
+		<p>The map on the home page and the maps on the hiking pages are loaded from swisstopo (Federal Office of Topography, Switzerland), which sees your IP address. If you use the WhatsApp link, WhatsApp (Meta) processes your message under its own terms.</p>
 		<h2>Visitor statistics</h2>
 		<p>We count visits ourselves, without cookies and without third-party services. We store the page, time, referring website, device type, browser, loading times and the approximate place (town) derived from the IP address with the DB-IP database on our own server. We do not store the IP address. Together with the browser it becomes a hash with a random value that changes every day, so visits cannot be linked across days. Raw data is deleted after 13 months.</p>
 		<h2>Spam protection, weather and buses</h2>
@@ -27,12 +27,12 @@
 		<h2>Guest book</h2>
 		<p>If you write an entry after your stay, it is published with the name you choose once the host has approved it. You can have it removed at any time.</p>
 		<h2>Cookies</h2>
-		<p>The public website sets no cookies. The host's admin area uses one technically necessary login cookie.</p>
+		<p>The website sets no cookies for visitors.</p>
 		<h2>Your rights</h2>
 		<p>You can ask what data we hold about you, have it corrected or deleted, by writing to {data.host.email}. You can also complain to the Federal Data Protection and Information Commissioner (FDPIC).</p>
 	{:else}
 		<h1 class="text-[2.6rem]">Datenschutz</h1>
-		<p class="mt-6">Diese Website sammelt die Daten, die es für deinen Aufenthalt braucht, und zählt Besuche anonym. Es gibt keine Werbung, kein Tracking von Drittanbietern und auf den öffentlichen Seiten kein Cookie.</p>
+		<p class="mt-6">Diese Website sammelt die Daten, die es für deinen Aufenthalt braucht, und zählt Besuche anonym. Es gibt keine Werbung, kein Tracking von Drittanbietern und keine Cookies.</p>
 		<h2>Verantwortlich</h2>
 		<p>{contact}</p>
 		<h2>Welche Daten</h2>
@@ -40,7 +40,7 @@
 		<p>Buchungen bewahren wir so lange auf, wie es das Buchführungsrecht verlangt (10 Jahre). Nachrichten und Kontaktdaten löschen wir auf Wunsch früher, sofern sie nicht zu einer Rechnung gehören.</p>
 		<h2>Wer Daten für uns bearbeitet</h2>
 		<p>Website und Datenbank laufen bei klickops. Mails verschicken wir mit Resend (Resend, Inc., USA). Resend speichert Mails in den USA. Grundlage für die Übermittlung sind die Standardvertragsklauseln der EU mit den Anpassungen für die Schweiz.</p>
-		<p>Die Karte auf der Startseite lädt von swisstopo (Bundesamt für Landestopografie). swisstopo sieht dabei deine IP-Adresse. Wenn du den WhatsApp-Link benutzt, bearbeitet WhatsApp (Meta) deine Nachricht nach eigenen Regeln.</p>
+		<p>Die Karte auf der Startseite und die Karten bei den Wanderungen laden von swisstopo (Bundesamt für Landestopografie). swisstopo sieht dabei deine IP-Adresse. Wenn du den WhatsApp-Link benutzt, bearbeitet WhatsApp (Meta) deine Nachricht nach eigenen Regeln.</p>
 		<h2>Besuchsstatistik</h2>
 		<p>Wir zählen Besuche selbst, ohne Cookies und ohne Drittanbieter. Gespeichert werden die aufgerufene Seite, der Zeitpunkt, die Herkunftsseite, Gerätetyp, Browser, Ladezeiten und der ungefähre Ort (Gemeinde), den wir mit der Datenbank von DB-IP auf unserem eigenen Server aus der IP-Adresse ableiten. Die IP-Adresse selbst speichern wir nicht. Zusammen mit dem Browser wird sie zu einem Hash mit einem täglich wechselnden Zufallswert, sodass sich Besuche nicht über mehrere Tage verbinden lassen. Rohdaten löschen wir nach 13 Monaten.</p>
 		<h2>Spamschutz, Wetter und Postauto</h2>
@@ -48,7 +48,7 @@
 		<h2>Gästebuch</h2>
 		<p>Schreibst du nach deinem Aufenthalt einen Eintrag, erscheint er nach der Freigabe durch den Gastgeber öffentlich, mit dem Namen, den du angibst. Du kannst ihn jederzeit löschen lassen.</p>
 		<h2>Cookies</h2>
-		<p>Die öffentliche Website setzt keine Cookies. Im Admin-Bereich des Gastgebers gibt es ein technisch nötiges Login-Cookie.</p>
+		<p>Für Besucherinnen und Besucher setzt die Website keine Cookies.</p>
 		<h2>Deine Rechte</h2>
 		<p>Du kannst Auskunft über deine Daten verlangen und sie berichtigen oder löschen lassen. Schreib dafür an {data.host.email}. Beschweren kannst du dich beim Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB).</p>
 	{/if}

@@ -67,7 +67,12 @@ const de = {
 		title: 'Freie Wochen',
 		free: 'frei',
 		taken: 'belegt',
-		hint: 'Tippe auf eine freie Woche. Für mehrere Wochen tippst du danach auf die letzte.',
+		hint: 'Tippe auf die Woche, in der du anreist.',
+		length: 'Wie lange bleibst du?',
+		weeks: 'Wochen',
+		range: (a: string, b: string) => `${a} bis ${b}`,
+		maxed: 'Danach ist das Hüttli schon belegt.',
+		arrival: 'Anreise',
 		count: (n: number) => (n === 1 ? '1 Woche' : `${n} Wochen`),
 		until: (d: string) => `bis ${d}`,
 		none: 'Für diese Saison sind keine Wochen mehr frei.'
@@ -233,6 +238,8 @@ const de = {
 		at: (km: string, m: number) => `${km} km, ${m} m ü. M.`,
 		mapNote: 'Karte: Wanderwegnetz © swisstopo. Norden ist oben.',
 		openMap: 'Auf der swisstopo-Karte öffnen',
+		gpx: 'GPX herunterladen',
+		gpxHint: 'Für Uhr, Handy oder Wander-App.',
 		finder: 'Welche Wanderung passt?',
 		maxTime: 'Gehzeit',
 		any: 'Egal',
@@ -255,7 +262,7 @@ const de = {
 		winter: 'Ausserhalb der Saison fährt das Postauto nur bis zur Ramslauenen, von dort sind es gut 2 km zu Fuss.',
 		source: 'Fahrplandaten: opentransportdata.swiss',
 		none: 'Heute fährt kein Postauto mehr.',
-		timetable: 'Ganzer Fahrplan auf sbb.ch',
+		timetable: 'Diese Verbindung auf sbb.ch',
 		late: (m: number) => `+${m}′`
 	},
 	footer: { contact: 'Kontakt', imprint: 'Impressum', privacy: 'Datenschutz', whatsapp: 'WhatsApp' }
@@ -319,7 +326,12 @@ const en: typeof de = {
 		title: 'Free weeks',
 		free: 'free',
 		taken: 'booked',
-		hint: 'Tap a free week. For several weeks, tap the last one next.',
+		hint: 'Tap the week you arrive in.',
+		length: 'How long do you stay?',
+		weeks: 'Weeks',
+		range: (a, b) => `${a} to ${b}`,
+		maxed: 'The hut is booked after that.',
+		arrival: 'Arrival',
 		count: (n) => (n === 1 ? '1 week' : `${n} weeks`),
 		until: (d) => `to ${d}`,
 		none: 'No weeks are free this season.'
@@ -471,6 +483,8 @@ const en: typeof de = {
 		at: (km, m) => `${km} km, ${m} m above sea level`,
 		mapNote: 'Map: hiking trail network © swisstopo. North is up.',
 		openMap: 'Open on the swisstopo map',
+		gpx: 'Download GPX',
+		gpxHint: 'For your watch, phone or hiking app.',
 		finder: 'Which hike suits you?',
 		maxTime: 'Walking time',
 		any: 'Any',
@@ -493,7 +507,7 @@ const en: typeof de = {
 		winter: 'Outside the season the bus only goes to Ramslauenen, about 2 km on foot from the hut.',
 		source: 'Timetable data: opentransportdata.swiss',
 		none: 'No more buses today.',
-		timetable: 'Full timetable on sbb.ch',
+		timetable: 'This connection on sbb.ch',
 		late: (m) => `+${m}′`
 	},
 	footer: { contact: 'Contact', imprint: 'Legal notice', privacy: 'Privacy', whatsapp: 'WhatsApp' }

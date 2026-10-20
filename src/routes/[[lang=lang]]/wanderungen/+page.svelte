@@ -24,19 +24,38 @@
 		const xMax = Math.max(2, Math.ceil(Math.max(...hs.map((h) => h.durationMin!)) / 60));
 		const yMax = Math.max(500, Math.ceil(Math.max(...hs.map((h) => h.ascentM!)) / 250) * 250);
 		const x = (min: number) => L + (min / 60 / xMax) * (CW - L - Rm);
-		const y = (m: number) => CH - B - (m / yMax) * (CH - B - T);
-		const dots = hs.map((h) => ({ h, x: x(h.durationMin!), y: y(h.ascentM!), r: Math.min(22, 7 + (h.distanceM ?? 0) / 1200), ly: 0 }));
-		// labels sit right of their dot; close ones get pushed apart vertically
-		const placed: typeof dots = [];
-		for (const d of [...dots].sort((a, b) => b.y - a.y)) {
-			d.ly = d.y + 5;
-			for (const p of placed) if (Math.abs(p.x - d.x) < 150 && Math.abs(p.ly - d.ly) < 17) d.ly = p.ly - 17;
-			placed.push(d);
+		// square-root scale: spreads out the many short hikes with little climbing
+		const y = (m: number) => CH - B - Math.sqrt(m / yMax) * (CH - B - T);
+		const dots = hs.map((h) => ({ h, x: x(h.durationMin!), y: y(h.ascentM!), r: Math.min(22, 7 + (h.distanceM ?? 0) / 1200), lx: 0, ly: 0, anchor: 'start' }));
+		// Labels: try right, left, above and below each dot; take the first spot that hits no dot,
+		// no other label and stays inside the chart.
+		type Box = [number, number, number, number];
+		const hit = (a: Box, b: Box) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
+		const taken: Box[] = dots.map((d) => [d.x - d.r, d.y - d.r, d.x + d.r, d.y + d.r]);
+		for (const d of [...dots].sort((a, b) => b.r - a.r)) {
+			const w = d.h.name.length * 7.6, g = d.r + 5;
+			const tries: [number, number, string][] = [
+				[d.x + g, d.y + 5, 'start'],
+				[d.x - g, d.y + 5, 'end'],
+				[d.x - w / 2, d.y - g - 2, 'start'],
+				[d.x - w / 2, d.y + g + 12, 'start'],
+				[d.x + g, d.y - g, 'start'],
+				[d.x - g, d.y - g, 'end'],
+				[d.x - w / 2, d.y - g - 20, 'start'],
+				[d.x + g, d.y - g - 20, 'start'],
+				[d.x - g, d.y - g - 20, 'end']
+			];
+			const box = ([lx, ly, an]: [number, number, string]): Box => (an === 'end' ? [lx - w, ly - 13, lx, ly + 3] : [lx, ly - 13, lx + w, ly + 3]);
+			const fits = (b: Box) => b[0] >= L - 10 && b[2] <= CW - 4 && b[1] >= T && b[3] <= CH - B && !taken.some((t) => hit(t, b));
+			const overlap = (b: Box) => taken.reduce((sum, t) => sum + Math.max(0, Math.min(b[2], t[2]) - Math.max(b[0], t[0])) * Math.max(0, Math.min(b[3], t[3]) - Math.max(b[1], t[1])), 0);
+			const pick = tries.find((c) => fits(box(c))) ?? [...tries].sort((p, q) => overlap(box(p)) - overlap(box(q)))[0];
+			[d.lx, d.ly, d.anchor] = pick;
+			taken.push(box(pick));
 		}
 		return {
 			dots,
 			xs: Array.from({ length: xMax + 1 }, (_, i) => ({ v: i, p: x(i * 60) })),
-			ys: Array.from({ length: yMax / 250 + 1 }, (_, i) => ({ v: i * 250, p: y(i * 250) }))
+			ys: [0, 100, 250, 500, 1000, 1500, 2000].filter((v) => v <= yMax).map((v) => ({ v, p: y(v) }))
 		};
 	});
 
@@ -120,7 +139,7 @@
 					{#each plot.dots as d (d.h.slug)}
 						<a href={localize(data.lang, `/wanderungen/${d.h.slug}`)} onpointerenter={() => (focus = d.h.slug)} onpointerleave={() => (focus = null)} aria-label={d.h.name}>
 							<circle cx={d.x} cy={d.y} r={d.r + (focus === d.h.slug ? 3 : 0)} class="dot {d.h.category}" class:off={!fits(d.h)} />
-							<text x={d.x > CW * 0.7 ? d.x - d.r - 6 : d.x + d.r + 6} y={d.ly} text-anchor={d.x > CW * 0.7 ? 'end' : 'start'} class="name" class:off={!fits(d.h)}>{d.h.name}</text>
+							<text x={d.lx} y={d.ly} text-anchor={d.anchor === 'end' ? 'end' : 'start'} class="name" class:off={!fits(d.h)}>{d.h.name}</text>
 						</a>
 					{/each}
 				</svg>

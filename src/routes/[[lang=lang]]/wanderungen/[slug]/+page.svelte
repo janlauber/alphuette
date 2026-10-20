@@ -2,6 +2,7 @@
 	import Baby from '@lucide/svelte/icons/baby';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import Clock from '@lucide/svelte/icons/clock';
+	import Download from '@lucide/svelte/icons/download';
 	import CalendarRange from '@lucide/svelte/icons/calendar-range';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import Footprints from '@lucide/svelte/icons/footprints';
@@ -43,7 +44,15 @@
 		].filter(Boolean) as string[]
 	);
 	const points = $derived(h.waypoints.length ? h.waypoints : [h.start && { name: h.start, elev: h.profile?.[0]?.[1] ?? 0 }, h.end && { name: h.end, elev: h.profile?.at(-1)?.[1] ?? 0 }].filter(Boolean) as { name: string; elev: number }[]);
-	const center = $derived(h.geometry ? h.geometry[Math.floor(h.geometry.length / 2)] : null);
+	// swisstopo map centred on the route, with the route itself loaded as a KML layer
+	const swisstopo = $derived.by(() => {
+		if (!h.geometry) return '';
+		const es = h.geometry.map((p) => p[0]), ns = h.geometry.map((p) => p[1]);
+		const span = Math.max(Math.max(...es) - Math.min(...es), Math.max(...ns) - Math.min(...ns));
+		const z = span < 2500 ? 9 : span < 5000 ? 8 : span < 10000 ? 7 : 6;
+		const kml = `${data.siteUrl}/wanderungen/${h.slug}/route.kml`;
+		return `https://map.geo.admin.ch/#/map?lang=${data.lang}&center=${Math.round((Math.max(...es) + Math.min(...es)) / 2)},${Math.round((Math.max(...ns) + Math.min(...ns)) / 2)}&z=${z}&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.swisstlm3d-wanderwege;KML|${kml}`;
+	});
 	let at = $state<number | null>(null);
 
 	const jsonld = $derived({
@@ -63,7 +72,7 @@
 	<h1 class="mt-3 text-[2.6rem] sm:text-[3.6rem]">{h.name}</h1>
 	<div class="mt-4 flex flex-wrap items-center gap-2">
 		<TrailBadge category={h.category} label={t.hikes.category[h.category] + (h.sac ? ` · ${h.sac}` : '')} />
-		{#if h.season}<span class="pill text-sm"><CalendarRange size={15} strokeWidth={2.5} aria-hidden="true" />{h.season}</span>{/if}
+		{#if h.season}<span class="pill max-w-full !whitespace-normal !rounded-[16px] text-sm"><CalendarRange size={15} strokeWidth={2.5} class="shrink-0" aria-hidden="true" />{h.season}</span>{/if}
 		{#if h.fromHut}<span class="chip chip-ok text-sm"><House size={14} strokeWidth={2.5} aria-hidden="true" />{t.hikes.fromHut}</span>{/if}
 		{#if h.loop}<span class="pill text-sm"><RefreshCw size={15} strokeWidth={2.5} aria-hidden="true" />{t.hikes.loop}</span>{/if}
 		{#if h.family}<span class="pill text-sm"><Baby size={15} strokeWidth={2.5} aria-hidden="true" />{t.hikes.family}</span>{/if}
@@ -103,7 +112,7 @@
 					<RouteMap geometry={h.geometry} waypoints={h.waypoints} {at} label="{t.hikes.route}: {h.name}" />
 					<p class="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted">
 						<span>{h.source === 'gpx' ? t.hikes.fromGpx : h.source === 'wanderland' ? t.hikes.fromWanderland : h.source === 'netz' ? t.hikes.fromNetwork : t.hikes.fromWaypoints}</span>
-						{#if center}<a href="https://map.geo.admin.ch/#/map?lang={data.lang}&center={center[0]},{center[1]}&z=7&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.swisstlm3d-wanderwege" target="_blank" rel="noopener" class="font-semibold text-brand underline">{t.hikes.openMap}</a>{/if}
+						{#if swisstopo}<a href={swisstopo} target="_blank" rel="noopener" class="font-semibold text-brand underline">{t.hikes.openMap}</a>{/if}
 					</p>
 				</section>
 			{:else if h.profile}
@@ -148,9 +157,15 @@
 					</ul>
 				</section>
 			{/if}
-			{#if h.url}
-				<a href={h.url} target="_blank" rel="noopener" class="btn-line self-start"><ExternalLink size={18} strokeWidth={2.5} aria-hidden="true" />{t.hikes.details}</a>
-			{/if}
+			<div class="flex flex-wrap gap-3">
+				{#if h.geometry}
+					<a href="{localize(data.lang, `/wanderungen/${h.slug}`)}/route.gpx" download="{h.slug}.gpx" class="btn-blue" data-sveltekit-reload><Download size={18} strokeWidth={2.5} aria-hidden="true" />{t.hikes.gpx}</a>
+				{/if}
+				{#if h.url}
+					<a href={h.url} target="_blank" rel="noopener" class="btn-line"><ExternalLink size={18} strokeWidth={2.5} aria-hidden="true" />{t.hikes.details}</a>
+				{/if}
+			</div>
+			{#if h.geometry}<p class="-mt-5 text-sm text-muted">{t.hikes.gpxHint}</p>{/if}
 		</aside>
 	</div>
 </div>
