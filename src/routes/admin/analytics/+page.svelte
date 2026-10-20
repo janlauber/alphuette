@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AdminPage from '#lib/components/admin/AdminPage.svelte';
+
 	let { data } = $props();
 
 	const ranges = [
@@ -32,19 +34,26 @@
 	];
 </script>
 
-<div class="flex flex-wrap items-center justify-between gap-3">
-	<div class="flex flex-wrap items-center gap-3">
-		<h1 class="text-3xl">Besucher</h1>
-		<span class="flex items-center gap-1.5 text-sm text-muted"><span class="size-2 rounded-full {data.live ? 'bg-fir' : 'bg-line'}"></span>{data.live} gerade auf der Seite</span>
-	</div>
-	<nav class="flex gap-1 rounded-[12px] border border-line bg-paper p-1 text-sm">
-		{#each ranges as [r, label] (r)}
-			<a href="?r={r}" class="rounded-[8px] px-3 py-1.5 font-semibold no-underline {data.r === r ? 'bg-ink text-white' : 'text-muted'}">{label}</a>
-		{/each}
-	</nav>
-</div>
+<AdminPage title="Besucher" intro="Wie viele Leute die Website anschauen und wie viele davon anfragen.">
+	{#snippet help()}
+		<ul>
+			<li>Die Website zählt ohne Cookies. Wer an einem Tag mehrmals kommt, zählt einmal.</li>
+			<li>«Vom Besuch zur Buchung» zeigt, wie viele bei jedem Schritt weitermachen.</li>
+			<li>«Woher» sind andere Websites, Google oder ein QR-Code, über die Leute kommen.</li>
+			<li>Ganz unten steht, wie schnell die Website lädt. Blau ist gut, orange langsam.</li>
+		</ul>
+	{/snippet}
+	{#snippet actions()}
+		<nav class="flex flex-wrap gap-1.5" aria-label="Zeitraum">
+			{#each ranges as [r, label] (r)}
+				<a href="?r={r}" class="pill min-h-11 no-underline {data.r === r ? '!bg-brand !text-white' : ''}" aria-current={data.r === r ? 'page' : undefined}>{label}</a>
+			{/each}
+		</nav>
+	{/snippet}
 
-<div class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+<p class="flex items-center gap-2 font-semibold text-ink"><span class="size-2.5 rounded-full {data.live ? 'bg-accent' : 'bg-line'}"></span>{data.live} gerade auf der Website</p>
+
+<div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
 	{#each [
 		{ label: 'Besucher', value: data.kpi.visitors, sub: 'pro Tag gezählt' },
 		{ label: 'Seitenaufrufe', value: data.kpi.views, sub: data.kpi.visitors ? `${(data.kpi.views / data.kpi.visitors).toFixed(1)} pro Besuch` : '' },
@@ -53,7 +62,7 @@
 	] as k (k.label)}
 		<div class="card p-4">
 			<p class="text-sm text-muted">{k.label}</p>
-			<p class="mt-1 text-3xl font-bold tabular-nums">{k.value ?? 0}</p>
+			<p class="mt-1 text-3xl font-bold tabular-nums text-brand">{k.value ?? 0}</p>
 			<p class="mt-1 text-sm text-muted">{k.sub}</p>
 		</div>
 	{/each}
@@ -75,7 +84,7 @@
 			{#each funnel as f (f.label)}
 				<div>
 					<div class="flex justify-between text-sm"><span>{f.label}</span><span class="font-bold tabular-nums">{f.n}</span></div>
-					<div class="mt-1 h-2.5 rounded-full bg-sand"><div class="h-2.5 rounded-full bg-geranium" style="width: {Math.max(1, pct(f.n, funnel[0].n || 1))}%"></div></div>
+					<div class="mt-1 h-2.5 rounded-full bg-wash"><div class="h-2.5 rounded-full bg-brand" style="width: {Math.max(1, pct(f.n, funnel[0].n || 1))}%"></div></div>
 				</div>
 			{/each}
 		</div>
@@ -89,7 +98,7 @@
 			<p class="mb-2 font-semibold">{tb.title}</p>
 			{#each tb.rows as row (row.label)}
 				<div class="relative flex justify-between gap-3 px-2 py-1.5 text-sm">
-					<span class="absolute inset-y-0.5 left-0 rounded-[6px] bg-sand" style="width: {(row.n / top) * 100}%"></span>
+					<span class="absolute inset-y-0.5 left-0 rounded-[6px] bg-wash" style="width: {(row.n / top) * 100}%"></span>
 					<span class="relative truncate">{row.label}</span><span class="relative font-semibold tabular-nums">{row.n}</span>
 				</div>
 			{:else}
@@ -103,8 +112,9 @@
 	<div class="flex flex-wrap gap-6 text-sm">
 		{#each VITALS as v (v.name)}
 			{@const m = vital(v.name)}
-			<span><strong>{v.label}</strong> {#if m}<span class={v.good(m.p75) ? 'text-fir' : 'text-geranium-dark'}>{v.fmt(m.p75)}</span>{:else}<span class="text-muted">noch keine Messung</span>{/if}</span>
+			<span><strong>{v.label}</strong> {#if m}<span class="font-semibold {v.good(m.p75) ? 'text-brand' : 'text-accent-dark'}">{v.fmt(m.p75)}</span>{:else}<span class="text-muted">noch keine Messung</span>{/if}</span>
 		{/each}
 	</div>
 	<p class="text-xs text-muted">75 % der Besuche sind schneller. Ohne Cookies, IP nur gehasht mit Tagessalz. Orte: <a href="https://db-ip.com" class="underline">IP Geolocation by DB-IP</a></p>
 </section>
+</AdminPage>

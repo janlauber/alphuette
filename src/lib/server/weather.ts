@@ -2,6 +2,8 @@
 // Fetched on the server, cached two hours: browsers never talk to MeteoSwiss.
 // The point sits at 960 m; the hut is about 210 m higher, so roughly 1.4 °C colder.
 
+import { lookup } from './translate.ts';
+
 // MeteoSwiss day symbols 1 to 42 (night symbols are code + 100), texts from MeteoSwiss/opendata-localforecast-demos.
 const SYMBOLS: Record<number, [string, string, string]> = {
 	1: ['sun', "sonnig", "sunny"],
@@ -48,7 +50,10 @@ const SYMBOLS: Record<number, [string, string, string]> = {
 	42: ['storm', "stark bewölkt, Gewitter und häufige Schneeschauer", "very cloudly, thundery snow showers"]
 };
 
-export type Day = { date: string; tmin: number; tmax: number; precip: number; kind: string; de: string; en: string };
+export type Day = { date: string; tmin: number; tmax: number; precip: number; kind: string; de: string; en: string; fr: string; it: string };
+
+/** German symbol texts, so the translation job covers French and Italian. */
+export const weatherTexts = () => Object.values(SYMBOLS).map(([, de]) => de);
 
 const ITEMS = 'https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items';
 const BASE = 'https://data.geo.admin.ch/ch.meteoschweiz.ogd-local-forecasting';
@@ -87,9 +92,11 @@ export async function forecast(): Promise<Day[]> {
 	if (cache && Date.now() - cache.at < 2 * 3600_000) return cache.days;
 	const { day, run } = await latestRun();
 	const [tmax, tmin, rain, symbol] = await Promise.all(PARAMS.map((p) => series(day, run, p)));
+	const tr = await lookup(Object.values(SYMBOLS).map(([, de]) => de), ['fr', 'it']);
 	const days = [...tmax.keys()].sort().slice(0, 7).map((d) => {
 		const [kind, de, en] = SYMBOLS[(symbol.get(d) ?? 4) % 100] ?? SYMBOLS[4];
-		return { date: `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`, tmax: tmax.get(d)!, tmin: tmin.get(d) ?? NaN, precip: rain.get(d) ?? 0, kind, de, en };
+		const fr = tr.get('fr')?.get(de) ?? en, it = tr.get('it')?.get(de) ?? en;
+		return { date: `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`, tmax: tmax.get(d)!, tmin: tmin.get(d) ?? NaN, precip: rain.get(d) ?? 0, kind, de, en, fr, it };
 	});
 	cache = { at: Date.now(), days };
 	return days;

@@ -1,17 +1,10 @@
 import { SITE_URL } from '$app/env/private';
 import { sql } from '#lib/server/db.ts';
+import { LANGS, localize } from '#lib/i18n.ts';
 
 const PAGES = ['/', '/wanderungen', '/umgebung', '/anfrage', '/impressum', '/datenschutz'];
-const en = (p: string) => '/en' + (p === '/' ? '' : p);
-const entry = (p: string) =>
-	[p, en(p)]
-		.map(
-			(loc) =>
-				`<url><loc>${SITE_URL}${loc}</loc>` +
-				`<xhtml:link rel="alternate" hreflang="de" href="${SITE_URL}${p}"/>` +
-				`<xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${en(p)}"/></url>`
-		)
-		.join('');
+const alternates = (p: string) => LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${localize(l, p)}"/>`).join('');
+const entry = (p: string) => LANGS.map((l) => `<url><loc>${SITE_URL}${localize(l, p)}</loc>${alternates(p)}</url>`).join('');
 
 export const GET = async () => {
 	const hikes = await sql`select slug from hikes order by sort, id`;

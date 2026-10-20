@@ -78,10 +78,8 @@
 </script>
 
 <Seo
-	title={data.lang === 'en' ? 'Hiking in the Kiental: routes with elevation profiles' : 'Wandern im Kiental: Routen mit Höhenprofil'}
-	description={data.lang === 'en'
-		? 'Hikes from Griesalp and Kiental: Pochten falls, Tschingelsee, Gamchi, Hohtürli. With walking time, length and elevation profile.'
-		: 'Wanderungen ab Griesalp und Kiental: Pochtenfall, Tschingelsee, Gamchi, Hohtürli. Mit Gehzeit, Länge und Höhenprofil.'}
+	title={t.seo.hikes}
+	description={t.seo.hikesDescription}
 	path="/wanderungen"
 	lang={data.lang}
 	siteUrl={data.siteUrl}

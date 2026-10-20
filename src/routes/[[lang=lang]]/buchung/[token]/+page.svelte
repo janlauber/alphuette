@@ -99,6 +99,9 @@
 			<div class="richtext mt-2">{@html textToHtml(data.arrival)}</div>
 		</section>
 	{/if}
+	{#if data.booking.status === 'bestaetigt'}
+		<p class="rounded-[18px] border-2 border-line bg-wash px-5 py-4">{t.booking.guestCard}</p>
+	{/if}
 
 	{#if data.packing.length}
 		<section>
@@ -139,7 +142,17 @@
 		<section>
 			<h2 class="text-[1.9rem]">{t.booking.messages}</h2>
 			<div class="mt-4">
-				<Thread messages={data.messages} me="gast" names={{ gast: t.booking.you, host: 'Tom' }} placeholder={t.booking.write} send={t.booking.send} empty={t.booking.noMessages} locale={t.locale} />
+				<Thread
+					messages={data.messages}
+					me="gast"
+					names={{ gast: t.booking.you, host: 'Tom' }}
+					placeholder={t.booking.write}
+					send={t.booking.send}
+					empty={t.booking.noMessages}
+					hint={data.lang === 'de' ? '' : t.thread.hint}
+					labels={t.thread}
+					locale={t.locale}
+				/>
 			</div>
 		</section>
 	{/if}

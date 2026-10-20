@@ -17,7 +17,7 @@ export const POST = async ({ request, getClientAddress, url }) => {
 				ip,
 				request.headers.get('user-agent') ?? '',
 				url.hostname,
-				b.p.startsWith('/en') ? 'en' : 'de'
+				b.p.match(/^\/(en|fr|it)(?=\/|$)/)?.[1] ?? 'de'
 			);
 		}
 	} catch {

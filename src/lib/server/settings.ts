@@ -1,5 +1,7 @@
 import { sql } from './db.ts';
 import type { Rates, Season } from '#lib/booking.ts';
+import { LANGS, type Lang } from '#lib/i18n.ts';
+import { lookup } from './translate.ts';
 
 const de = {
 	tagline: 'Einfaches Alphüttli auf 1200 m im Kiental, für 1 bis 6 Personen.',
@@ -104,7 +106,8 @@ You can rent it for CHF 5 per set or bring your own.`,
 };
 
 export type Content = typeof de;
-export type Amenity = { icon: string; de: string; en: string };
+// en is only read to seed the translations table; the site takes all languages from there
+export type Amenity = { icon: string; de: string; en?: string };
 
 export const DEFAULTS = {
 	name: 'Alphütte Blüemlisalpblick',
@@ -130,6 +133,8 @@ export const DEFAULTS = {
 		lon: 7.7283
 	},
 	content: { de, en },
+	// automatic mails, each can be switched off in the admin
+	reminders: { payment: true, arrival: true, review: true, host: true },
 	amenities: [
 		{ icon: 'flame', de: 'Holzkochherd', en: 'Wood-fired stove' },
 		{ icon: 'cooking-pot', de: 'Gasrechaud und Gasgrill', en: 'Gas burner and grill' },
@@ -145,25 +150,38 @@ export const DEFAULTS = {
 	] as Amenity[]
 };
 
-export type Settings = typeof DEFAULTS;
+type Stored = { name: string; rates: typeof DEFAULTS.rates; host: typeof DEFAULTS.host; reminders: typeof DEFAULTS.reminders; content: { de: Content; en?: Partial<Content> }; amenities: Amenity[] };
+export type Settings = Omit<Stored, 'content' | 'amenities'> & { content: Record<Lang, Content>; amenities: (Amenity & Record<Lang, string>)[] };
 
-/** Settings from the database on top of the defaults above. */
+/** Settings from the database on top of the defaults above, with the texts in every language. */
 export async function getSettings(): Promise<Settings> {
+	const db = await stored();
+	const de = db.content.de;
+	const tr = await lookup([...Object.values(de), ...db.amenities.map((a) => a.de)]);
+	// missing French or Italian falls back to English, missing English to German
+	const local = (lang: Lang, text: string) => (lang === 'de' ? text : (tr.get(lang)?.get(text) ?? tr.get('en')?.get(text) ?? text));
+	const content = Object.fromEntries(
+		LANGS.map((l) => [l, Object.fromEntries(Object.entries(de).map(([k, v]) => [k, local(l, v)])) as Content])
+	) as Record<Lang, Content>;
+	const amenities = db.amenities.map((a) => ({ ...a, ...(Object.fromEntries(LANGS.map((l) => [l, local(l, a.de)])) as Record<Lang, string>) }));
+	return { ...db, content, amenities };
+}
+
+/** What is stored: German texts only (plus the old English ones, for seeding). */
+export async function stored(): Promise<Stored> {
 	const rows = await sql`select key, value from settings`;
 	const db = Object.fromEntries(rows.map((r) => [r.key, r.value]));
 	return {
 		name: db.name ?? DEFAULTS.name,
 		rates: { ...DEFAULTS.rates, ...db.rates },
 		host: { ...DEFAULTS.host, ...db.host },
-		content: {
-			de: { ...DEFAULTS.content.de, ...db.content?.de },
-			en: { ...DEFAULTS.content.en, ...db.content?.en }
-		},
+		reminders: { ...DEFAULTS.reminders, ...db.reminders },
+		content: { de: { ...DEFAULTS.content.de, ...db.content?.de }, en: db.content?.en },
 		amenities: db.amenities ?? DEFAULTS.amenities
 	};
 }
 
-export async function setSetting<K extends keyof Settings>(key: K, value: Settings[K]) {
+export async function setSetting<K extends keyof Stored>(key: K, value: Stored[K]) {
 	await sql`insert into settings (key, value) values (${key}, ${sql.json(value as never)})
 		on conflict (key) do update set value = excluded.value`;
 }
@@ -175,10 +193,4 @@ export async function getSeasons(): Promise<(Season & { id: number })[]> {
 		from seasons where end_date >= current_date order by start_date`;
 }
 
-/** FAQ text ("Question?" line, answer below, blank line between) to pairs. */
-export const parseFaq = (text: string) =>
-	text
-		.split(/\n\s*\n/)
-		.map((b) => b.trim().split('\n'))
-		.filter((lines) => lines.length > 1)
-		.map(([q, ...a]) => ({ q: q.trim(), a: a.join('\n').trim() }));
+export { parseFaq } from '#lib/text.ts';

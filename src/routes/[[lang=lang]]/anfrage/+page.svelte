@@ -76,11 +76,18 @@
 	});
 	const sent = $derived(form && 'sent' in form && form.sent);
 	const show = (i: number) => !js || step === i;
+	// country names in the page language, neighbours first
+	const COUNTRIES = ['CH', 'DE', 'AT', 'FR', 'IT', 'LI', 'NL', 'BE', 'LU', 'GB', 'ES', 'DK', 'SE', 'NO', 'PL', 'CZ', 'US', 'CA', 'AU', 'IL', 'JP', 'CN', 'IN', 'BR'];
+	const countries = $derived.by(() => {
+		const names = new Intl.DisplayNames([t.locale], { type: 'region' });
+		const [first, ...rest] = COUNTRIES.map((c) => [c, names.of(c) ?? c] as const);
+		return [first, ...rest.slice(0, 5), ...rest.slice(5).sort((a, b) => a[1].localeCompare(b[1], t.locale))];
+	});
 </script>
 
 <Seo
 	title="{t.request.title} · {data.hutName}"
-	description={data.lang === 'en' ? 'Send a booking request for the alpine hut in the Kiental.' : 'Sende eine Buchungsanfrage für das Alphüttli im Kiental.'}
+	description={t.seo.request}
 	path="/anfrage"
 	lang={data.lang}
 	siteUrl={data.siteUrl}
@@ -201,6 +208,11 @@
 					<label class="label">{t.request.phone} <span class="hint">({t.request.optional})</span>
 						<input name="phone" type="tel" autocomplete="tel" maxlength="40" value={v.phone ?? ''} class="field mt-1.5 font-normal" /></label>
 				</div>
+				<label class="label">{t.request.country}
+					<select name="country" autocomplete="country" class="field mt-1.5 font-normal" aria-describedby="country-hint">
+						{#each countries as [code, name] (code)}<option value={code} selected={(v.country ?? 'CH') === code}>{name}</option>{/each}
+					</select>
+					<span id="country-hint" class="hint mt-1 block text-sm">{t.request.countryHint}</span></label>
 				<fieldset>
 					<legend class="label">{t.request.arrival} <span class="hint">({t.request.optional})</span></legend>
 					<div class="grid grid-cols-2 gap-2">
@@ -250,6 +262,6 @@
 				<p class="text-center text-sm text-muted">{t.card.noPay}</p>
 			</fieldset>
 		</form>
-		<noscript><p class="mt-6 text-sm text-muted">{data.lang === 'en' ? 'The spam protection needs JavaScript.' : 'Der Spamschutz braucht JavaScript.'}</p></noscript>
+		<noscript><p class="mt-6 text-sm text-muted">{t.request.noscript}</p></noscript>
 	{/if}
 </div>

@@ -24,7 +24,7 @@ export const load = async ({ params, parent }) => {
 				reference,
 				message: `Alphütte ${b.ref}`
 			},
-			{ language: lang === 'en' ? 'EN' : 'DE' }
+			{ language: lang.toUpperCase() as 'DE' | 'EN' | 'FR' | 'IT' }
 		).toString();
 	} catch (e) {
 		console.error('QR bill', e);

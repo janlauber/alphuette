@@ -5,15 +5,17 @@ import { sessionEmail } from '#lib/server/auth.ts';
 import { loadSigningKey } from '#lib/server/signing.ts';
 import { record } from '#lib/server/analytics.ts';
 import { maintenance } from '#lib/server/maintenance.ts';
+import { seedEnglish } from '#lib/server/sitetexts.ts';
 
 export const init: ServerInit = async () => {
 	await migrate();
 	await loadSigningKey();
+	await seedEnglish();
 	maintenance();
 	setInterval(maintenance, 3600_000);
 };
 
-const isPrivate = (path: string) => /^\/(en\/)?(admin|buchung)(\/|$)/.test(path);
+const isPrivate = (path: string) => /^\/((en|fr|it)\/)?(admin|buchung)(\/|$)/.test(path);
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
@@ -23,7 +25,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			? new Response(null, { status: 303, headers: { location: '/admin/login' } })
 			: new Response('Forbidden', { status: 403 });
 	}
-	const lang = path === '/en' || path.startsWith('/en/') ? 'en' : 'de';
+	const lang = path.match(/^\/(en|fr|it)(?=\/|$)/)?.[1] ?? 'de';
 
 	const res = await resolve(event, { transformPageChunk: ({ html }) => html.replace('%lang%', lang) });
 	// Full page loads count as views on the server, so no ad blocker can hide them.

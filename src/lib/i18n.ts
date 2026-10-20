@@ -1,16 +1,32 @@
-export type Lang = 'de' | 'en';
+import { fr } from './i18n/fr.ts';
+import { it } from './i18n/it.ts';
+
+export const LANGS = ['de', 'en', 'fr', 'it'] as const;
+export type Lang = (typeof LANGS)[number];
 
 const de = {
 	locale: 'de-CH',
 	skip: 'Zum Inhalt',
-	nav: { hut: 'Hüttli', hikes: 'Wandern', area: 'Umgebung', request: 'Anfragen', other: 'EN', otherName: 'English', otherLang: 'en' as Lang },
+	nav: { hut: 'Hüttli', hikes: 'Wandern', area: 'Umgebung', request: 'Anfragen', language: 'Sprache' },
 	hero: {
 		whole: 'Ganzes Hüttli in Lengschwendi, Kiental',
 		all: (n: number) => `Alle ${n} Fotos`,
 		close: 'Schliessen',
 		share: 'Teilen',
-		copied: 'Link kopiert'
+		copied: 'Link kopiert',
+		mascot: 'Das Hüttli rennt ins Tal'
 	},
+	seo: {
+		home: (name: string) => `${name}: Alphütte im Kiental mieten`,
+		homeDescription: 'Solarstrom, Quellwasser, Holzherd. Wochenweise zu mieten von Mai bis Oktober.',
+		hikes: 'Wandern im Kiental: Routen mit Höhenprofil',
+		hikesDescription: 'Wanderungen ab Griesalp und Kiental: Pochtenfall, Tschingelsee, Gamchi, Hohtürli. Mit Gehzeit, Länge und Höhenprofil.',
+		hike: 'Wanderung im Kiental',
+		area: 'Rund ums Hüttli: Einkaufen, Restaurants, Wetter und Postauto im Kiental',
+		areaDescription: 'Dorfladen, Restaurants, Gästekarte mit Gratis-ÖV, Wetterprognose und die nächsten Postautos zum Hüttli.',
+		request: 'Sende eine Buchungsanfrage für das Alphüttli im Kiental.'
+	},
+	area: { title: 'Rund ums Hüttli', intro: 'Das Kiental ist ein ruhiges Seitental des Kandertals. Das findest du in der Nähe.' },
 	gallery: {
 		groups: { alle: 'Alle', draussen: 'Draussen', drinnen: 'Drinnen', winter: 'Im Winter' } as Record<string, string>,
 		prev: 'Vorheriges Foto',
@@ -112,6 +128,8 @@ const de = {
 		phone: 'Telefon',
 		optional: 'freiwillig',
 		city: 'PLZ und Wohnort',
+		country: 'Land',
+		countryHint: 'Wo du wohnst. Das braucht es für die Gästekarte und die Kurtaxe.',
 		arrival: 'Anreise mit',
 		car: 'Auto',
 		bus: 'Bus und Bahn',
@@ -125,7 +143,8 @@ const de = {
 		tooMany: 'Zu viele Anfragen von dieser Adresse. Versuch es in einer Stunde nochmals.',
 		spam: 'Das hat nicht geklappt. Lade die Seite neu und versuch es nochmals.',
 		mailbox: 'An diese E-Mail-Adresse können wir keine Mail schicken. Bitte prüfe sie.',
-		mailLimit: 'An diese Adresse haben wir heute schon mehrere Mails geschickt. Versuch es morgen wieder.'
+		mailLimit: 'An diese Adresse haben wir heute schon mehrere Mails geschickt. Versuch es morgen wieder.',
+		noscript: 'Der Spamschutz braucht JavaScript.'
 	},
 	sent: {
 		title: 'Bestätige deine E-Mail',
@@ -145,6 +164,8 @@ const de = {
 		arriveText: 'Schlüssel und Weg stehen dann hier'
 	},
 	booking: {
+		guestCard:
+			'Gästekarte: Vor der Anreise bekommst du per Mail einen Link von Tourismus Adelboden-Lenk-Kandersteg. Dort trägst du die Angaben für alle Gäste ein und bekommst die Gästekarte mit Gratis-Bus. Gäste aus dem Ausland nehmen bitte einen Ausweis mit.',
 		title: 'Deine Buchung',
 		ref: 'Buchungsnummer',
 		status: {
@@ -182,6 +203,12 @@ const de = {
 		withdraw: 'Anfrage zurückziehen',
 		withdrawConfirm: 'Willst du die Anfrage wirklich zurückziehen?',
 		saveLink: 'Speichere diesen Link. Damit kommst du jederzeit zurück zu deiner Buchung.'
+	},
+	invoice: {
+		title: 'Rechnung',
+		pay: 'Bitte zahle innert 30 Tagen, spätestens 14 Tage vor der Anreise. Scanne dazu den QR-Code mit deiner Banking-App.',
+		print: 'Drucken oder als PDF speichern',
+		notReady: 'Die QR-Rechnung ist noch nicht bereit. Tom schickt sie dir.'
 	},
 	review: {
 		title: 'Wie war deine Woche?',
@@ -265,14 +292,87 @@ const de = {
 		timetable: 'Diese Verbindung auf sbb.ch',
 		late: (m: number) => `+${m}′`
 	},
-	footer: { contact: 'Kontakt', imprint: 'Impressum', privacy: 'Datenschutz', whatsapp: 'WhatsApp' }
+	footer: { contact: 'Kontakt', imprint: 'Impressum', privacy: 'Datenschutz', whatsapp: 'WhatsApp', whatsappText: 'Hoi Tom, ich habe eine Frage zur Alphütte: ' },
+	legal: { imprint: 'Impressum', rental: 'Mietobjekt' },
+	error: {
+		missing: 'Diese Seite gibt es nicht.',
+		failed: 'Da ist etwas schiefgegangen.',
+		missingText: 'Das Hüttli macht ein Nickerchen. Der Weg zurück ist gleich hier:',
+		failedText: 'Versuch es gleich nochmals.',
+		home: 'Zum Hüttli'
+	},
+	// Lost the link to a booking: the guest gets all of them again by mail
+	find: {
+		title: 'Link zu deiner Buchung verloren?',
+		intro: 'Gib die E-Mail-Adresse ein, mit der du angefragt hast. Wir schicken dir die Links zu deinen Buchungen nochmals.',
+		email: 'E-Mail',
+		send: 'Links schicken',
+		sent: 'Wenn wir Buchungen zu dieser Adresse haben, ist die Mail unterwegs. Schau auch im Spam-Ordner nach.'
+	},
+	// Messages between guest and Tom are translated automatically
+	thread: {
+		translated: 'Automatisch übersetzt',
+		original: 'Original anzeigen',
+		hideOriginal: 'Original ausblenden',
+		hint: 'Schreib in deiner Sprache. Tom liest die Nachricht auf Deutsch, du bekommst seine Antwort in deiner Sprache.'
+	},
+	mail: {
+		hello: (name: string) => `Hoi ${name}`,
+		confirmSubject: (ref: string) => `Bitte bestätige deine Anfrage (${ref})`,
+		confirmText: (from: string, to: string, url: string) =>
+			`Bitte bestätige deine Anfrage für die Alphütte vom ${from} bis ${to} mit diesem Link. Die Woche ist 30 Minuten für dich reserviert.\n\n${url}\n\nWenn du keine Anfrage geschickt hast, kannst du diese Mail ignorieren.`,
+		requestSubject: (ref: string) => `Deine Anfrage für die Alphütte (${ref})`,
+		requestText: (from: string, to: string, people: number, url: string) =>
+			`Danke, deine Anfrage vom ${from} bis ${to} für ${people} ${people === 1 ? 'Person' : 'Personen'} ist jetzt bei Tom. Er meldet sich per Mail. Bis dahin sind die Daten für dich reserviert.\n\nDeine Anfrage, die Nachrichten und später die Rechnung:\n${url}`,
+		canReply: 'Du kannst direkt auf diese Mail antworten.',
+		confirmedSubject: (ref: string) => `Deine Buchung ist bestätigt (${ref})`,
+		confirmedText: (from: string, to: string, total: string, url: string) =>
+			`Tom hat deine Buchung vom ${from} bis ${to} bestätigt. Das Hüttli ist für dich reserviert.\n\nDie QR-Rechnung über ${total} und die Infos zur Anreise findest du hier:\n${url}\n\nWir freuen uns auf dich.`,
+		declinedSubject: (ref: string) => `Deine Anfrage für die Alphütte (${ref})`,
+		declinedText: (from: string, to: string, url: string) => `Tom kann deine Anfrage vom ${from} bis ${to} leider nicht annehmen. Vielleicht passt ein anderes Datum:\n${url}`,
+		cancelledSubject: (ref: string) => `Deine Buchung ist storniert (${ref})`,
+		cancelledText: (from: string, to: string, url: string) => `Deine Buchung vom ${from} bis ${to} ist storniert.\n\n${url}`,
+		messageSubject: (ref: string) => `Nachricht von Tom (${ref})`,
+		messageOriginal: 'Original auf Deutsch:',
+		reviewSubject: 'Wie war deine Woche im Hüttli?',
+		reviewText: (url: string) => `Danke, dass du im Hüttli warst. Tom freut sich, wenn du ihm schreibst, wie es war. Ein paar Zeilen reichen:\n\n${url}`,
+		linksSubject: 'Deine Buchungen für die Alphütte',
+		linksText: (list: string) => `Hier sind die Links zu deinen Buchungen:\n\n${list}\n\nWenn du das nicht angefordert hast, kannst du diese Mail ignorieren.`,
+		paymentSubject: (ref: string) => `Erinnerung: Rechnung für das Hüttli (${ref})`,
+		paymentText: (total: string, due: string, url: string) =>
+			`Kurze Erinnerung: Die Rechnung über ${total} ist bis ${due} fällig. Die QR-Rechnung findest du hier:\n${url}\n\nHast du schon bezahlt? Dann ist alles gut, die Zahlung ist einfach noch nicht bei Tom eingetragen.`,
+		arrivalSubject: (ref: string) => `In einer Woche geht es los (${ref})`,
+		arrivalText: (from: string, time: string, url: string) =>
+			`Am ${from} geht es ins Hüttli, Anreise ab ${time} Uhr. Hier ist das Wichtigste für die Anreise. Alles weitere, die Packliste und den Wetterbericht findest du auf deiner Buchungsseite:\n${url}`,
+		arrivalInfo: 'Infos von Tom'
+	}
 };
 
-const en: typeof de = {
+export type Dict = typeof de;
+
+const en: Dict = {
 	locale: 'en-GB',
 	skip: 'Skip to content',
-	nav: { hut: 'The hut', hikes: 'Hiking', area: 'Area', request: 'Request', other: 'DE', otherName: 'Deutsch', otherLang: 'de' },
-	hero: { whole: 'Entire hut in Lengschwendi, Kiental', all: (n) => `All ${n} photos`, close: 'Close', share: 'Share', copied: 'Link copied' },
+	nav: { hut: 'The hut', hikes: 'Hiking', area: 'Area', request: 'Request', language: 'Language' },
+	hero: {
+		whole: 'Entire hut in Lengschwendi, Kiental',
+		all: (n) => `All ${n} photos`,
+		close: 'Close',
+		share: 'Share',
+		copied: 'Link copied',
+		mascot: 'The Hüttli mascot running down to the valley'
+	},
+	seo: {
+		home: (name) => `${name}: alpine hut for rent in the Kiental`,
+		homeDescription: 'Solar power, spring water, wood stove. Rented by the week from May to October.',
+		hikes: 'Hiking in the Kiental: routes with elevation profiles',
+		hikesDescription: 'Hikes from Griesalp and Kiental: Pochten falls, Tschingelsee, Gamchi, Hohtürli. With walking time, length and elevation profile.',
+		hike: 'hike in the Kiental',
+		area: 'Around the hut: shops, restaurants, weather and buses in the Kiental',
+		areaDescription: 'Village shop, restaurants, guest card with free public transport, weather forecast and the next buses to the hut.',
+		request: 'Send a booking request for the alpine hut in the Kiental.'
+	},
+	area: { title: 'Around the hut', intro: 'The Kiental is a quiet side valley of the Kandertal. Here is what you need nearby.' },
 	gallery: {
 		groups: { alle: 'All', draussen: 'Outside', drinnen: 'Inside', winter: 'In winter' },
 		prev: 'Previous photo',
@@ -365,6 +465,8 @@ const en: typeof de = {
 		phone: 'Phone',
 		optional: 'optional',
 		city: 'Postcode and town',
+		country: 'Country',
+		countryHint: 'Where you live. Needed for the guest card and the tourist tax.',
 		arrival: 'Arriving by',
 		car: 'Car',
 		bus: 'Public transport',
@@ -378,7 +480,8 @@ const en: typeof de = {
 		tooMany: 'Too many requests from this address. Please try again in an hour.',
 		spam: 'That did not work. Reload the page and try again.',
 		mailbox: 'We cannot send mail to this address. Please check it.',
-		mailLimit: 'We have already sent several emails to this address today. Please try again tomorrow.'
+		mailLimit: 'We have already sent several emails to this address today. Please try again tomorrow.',
+		noscript: 'The spam protection needs JavaScript.'
 	},
 	sent: {
 		title: 'Confirm your email',
@@ -397,6 +500,8 @@ const en: typeof de = {
 		arriveText: 'Key and directions will show up here'
 	},
 	booking: {
+		guestCard:
+			'Guest card: before you arrive you get an email with a link from Tourismus Adelboden-Lenk-Kandersteg. Enter the details for all guests there and you receive the guest card with free buses. Guests from abroad, please bring an ID.',
 		title: 'Your booking',
 		ref: 'Booking number',
 		status: { unbestaetigt: 'Email not confirmed yet', angefragt: 'Requested', bestaetigt: 'Confirmed', abgelehnt: 'Declined', storniert: 'Cancelled', gesperrt: 'Blocked' },
@@ -427,6 +532,12 @@ const en: typeof de = {
 		withdraw: 'Withdraw request',
 		withdrawConfirm: 'Do you really want to withdraw your request?',
 		saveLink: 'Keep this link. It takes you back to your booking at any time.'
+	},
+	invoice: {
+		title: 'Invoice',
+		pay: 'Please pay within 30 days, at the latest 14 days before arrival. Scan the QR code with your banking app.',
+		print: 'Print or save as PDF',
+		notReady: 'The QR bill is not ready yet. Tom will send it to you.'
 	},
 	review: {
 		title: 'How was your week?',
@@ -510,13 +621,70 @@ const en: typeof de = {
 		timetable: 'This connection on sbb.ch',
 		late: (m) => `+${m}′`
 	},
-	footer: { contact: 'Contact', imprint: 'Legal notice', privacy: 'Privacy', whatsapp: 'WhatsApp' }
+	footer: { contact: 'Contact', imprint: 'Legal notice', privacy: 'Privacy', whatsapp: 'WhatsApp', whatsappText: 'Hello Tom, I have a question about the Alphütte: ' },
+	legal: { imprint: 'Legal notice', rental: 'Rental property' },
+	error: {
+		missing: 'This page does not exist.',
+		failed: 'Something went wrong.',
+		missingText: 'The Hüttli is having a nap. The way back is right here:',
+		failedText: 'Try again in a moment.',
+		home: 'To the hut'
+	},
+	find: {
+		title: 'Lost the link to your booking?',
+		intro: 'Enter the email address you used for your request. We will send you the links to your bookings again.',
+		email: 'Email',
+		send: 'Send links',
+		sent: 'If we have bookings for this address, the email is on its way. Please also check your spam folder.'
+	},
+	thread: {
+		translated: 'Translated automatically',
+		original: 'Show original',
+		hideOriginal: 'Hide original',
+		hint: 'Write in your language. Tom reads your message in German, and you get his answer in your language.'
+	},
+	mail: {
+		hello: (name) => `Hello ${name}`,
+		confirmSubject: (ref) => `Please confirm your request (${ref})`,
+		confirmText: (from, to, url) =>
+			`Please confirm your request for the Alphütte from ${from} to ${to} with this link. The week is held for you for 30 minutes.\n\n${url}\n\nIf you did not send a request, ignore this email.`,
+		requestSubject: (ref) => `Your request for the Alphütte (${ref})`,
+		requestText: (from, to, people, url) =>
+			`Thank you, your request from ${from} to ${to} for ${people} ${people === 1 ? 'person' : 'people'} is with Tom now. He will reply by email. The dates are held for you until then.\n\nYour request, messages and later the bill:\n${url}`,
+		canReply: 'You can reply to this email directly.',
+		confirmedSubject: (ref) => `Your booking is confirmed (${ref})`,
+		confirmedText: (from, to, total, url) =>
+			`Tom has confirmed your booking from ${from} to ${to}. The hut is reserved for you.\n\nThe QR bill for ${total} and information on how to get there are here:\n${url}\n\nWe look forward to your visit.`,
+		declinedSubject: (ref) => `Your request for the Alphütte (${ref})`,
+		declinedText: (from, to, url) => `Unfortunately Tom cannot accept your request from ${from} to ${to}. Maybe another date works:\n${url}`,
+		cancelledSubject: (ref) => `Your booking has been cancelled (${ref})`,
+		cancelledText: (from, to, url) => `Your booking from ${from} to ${to} has been cancelled.\n\n${url}`,
+		messageSubject: (ref) => `Message from Tom (${ref})`,
+		messageOriginal: 'Original in German:',
+		reviewSubject: 'How was your week at the Alphütte?',
+		reviewText: (url) => `Thank you for staying at the Alphütte. Tom would be glad to hear how it was. Writing a few lines takes two minutes:\n\n${url}`,
+		linksSubject: 'Your bookings for the Alphütte',
+		linksText: (list) => `Here are the links to your bookings:\n\n${list}\n\nIf you did not ask for this, ignore this email.`,
+		paymentSubject: (ref) => `Reminder: bill for the hut (${ref})`,
+		paymentText: (total, due, url) =>
+			`A quick reminder: the bill for ${total} is due by ${due}. You find the QR bill here:\n${url}\n\nAlready paid? Then all is well, Tom just has not marked the payment yet.`,
+		arrivalSubject: (ref) => `One week to go (${ref})`,
+		arrivalText: (from, time, url) =>
+			`On ${from} you arrive at the hut, from ${time}. Here is what you need for the journey. Everything else, the packing list and the weather forecast are on your booking page:\n${url}`,
+		arrivalInfo: 'Information from Tom'
+	}
 };
 
-export const dict = { de, en };
+export const dict: Record<Lang, Dict> = { de, en, fr, it };
 
-/** Path for a language: '/' stays German, English gets the /en prefix. */
-export const localize = (lang: Lang, path: string) => (lang === 'en' ? '/en' + (path === '/' ? '' : path) : path);
+/** Each language in its own name, for the language switcher. */
+export const LANG_NAMES: Record<Lang, string> = { de: 'Deutsch', en: 'English', fr: 'Français', it: 'Italiano' };
+
+/** Path for a language: '/' stays German, the others get a prefix like /fr. */
+export const localize = (lang: Lang, path: string) => (lang === 'de' ? path : `/${lang}` + (path === '/' ? '' : path));
+
+/** The path without its language prefix. */
+export const unlocalize = (path: string) => path.replace(/^\/(en|fr|it)(?=\/|$)/, '') || '/';
 
 export const fmtDate = (iso: string, lang: Lang, opts: Intl.DateTimeFormatOptions = {}) =>
 	new Date(iso + 'T00:00:00Z').toLocaleDateString(dict[lang].locale, {

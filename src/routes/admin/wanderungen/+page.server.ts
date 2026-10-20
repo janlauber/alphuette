@@ -1,13 +1,19 @@
 import { fail } from '@sveltejs/kit';
 import { sql } from '#lib/server/db.ts';
 import { fillProfiles, parseGpx } from '#lib/server/hikes.ts';
+import { changeRow, done, log } from '#lib/server/activity.ts';
+import { syncTranslations } from '#lib/server/sitetexts.ts';
+
+const AREA = 'Wanderungen';
+const link = '/admin/wanderungen';
+const hikeName = async (id: number) => (await sql`select name from hikes where id = ${id}`)[0]?.name ?? '';
 
 export const load = async () => {
 	await fillProfiles();
 	return {
-		hikes: await sql`select id, slug, name, time, alpine, de, en, url, source, profile, distance_m, ascent_m, sort,
-			category, sac, duration_min, season_de, season_en, start_name, end_name, transit_de, transit_en,
-			waypoints, stops, highlights_de, highlights_en, tips_de, tips_en, family, loop, from_hut
+		hikes: await sql`select id, slug, name, alpine, de, url, source, wanderland, profile, distance_m, ascent_m, sort,
+			category, sac, duration_min, season_de, start_name, end_name, transit_de,
+			waypoints, stops, highlights_de, tips_de, family, loop, from_hut
 			from hikes order by sort, id`
 	};
 };
@@ -28,7 +34,7 @@ function waypoints(text: string, old: Waypoint[]): Waypoint[] {
 }
 
 export const actions = {
-	save: async ({ request }) => {
+	save: async ({ request, locals }) => {
 		const f = await request.formData();
 		const id = Number(f.get('id')) || null;
 		const name = str(f, 'name', 80);
@@ -43,51 +49,59 @@ export const actions = {
 			sac: /^T[1-6]\+?(–T[1-6]\+?)?$/.test(str(f, 'sac').replace('-', '–')) ? str(f, 'sac').replace('-', '–') : '',
 			durationMin: Number(f.get('duration_min')) || null,
 			seasonDe: str(f, 'season_de', 120),
-			seasonEn: str(f, 'season_en', 120),
 			startName: str(f, 'start_name', 80),
 			endName: str(f, 'end_name', 80),
 			transitDe: str(f, 'transit_de', 1000),
-			transitEn: str(f, 'transit_en', 1000),
 			waypoints: sql.json(waypoints(str(f, 'waypoints', 3000), old?.waypoints ?? [])),
 			stops: sql.json(rows(str(f, 'stops', 2000))),
 			highlightsDe: str(f, 'highlights_de', 2000),
-			highlightsEn: str(f, 'highlights_en', 2000),
 			tipsDe: str(f, 'tips_de', 2000),
-			tipsEn: str(f, 'tips_en', 2000),
 			family: f.get('family') === 'on',
 			loop: f.get('loop') === 'on',
 			fromHut: f.get('from_hut') === 'on',
 			de: str(f, 'de', 2000),
-			en: str(f, 'en', 2000),
 			url: /^https?:\/\//.test(str(f, 'url')) ? str(f, 'url') : '',
 			sort: Number(f.get('sort')) || 0
 		};
+		let a: number;
 		try {
-			if (id) await sql`update hikes set ${sql(h)} where id = ${id}`;
-			else await sql`insert into hikes ${sql(h)}`;
+			if (id) a = await changeRow('hikes', id, { actor: locals.admin!, area: AREA, title: `Wanderung «${name}» geändert`, link }, () => sql`update hikes set ${sql(h)} where id = ${id}`);
+			else {
+				const [row] = await sql`insert into hikes ${sql(h)} returning id`;
+				a = await log({ actor: locals.admin!, area: AREA, title: `Wanderung «${name}» neu angelegt`, link, target: `hikes:${row.id}`, undo: { table: 'hikes', id: row.id, before: null } });
+			}
 		} catch (e) {
 			if ((e as { code?: string }).code === '23505') return fail(409, { error: 'Diese Adresse (Slug) gibt es schon.', id });
 			throw e;
 		}
-		return { saved: id ?? 'new' };
+		void syncTranslations();
+		return { saved: id ?? 'new', ...done('Wanderung gespeichert', a) };
 	},
-	gpx: async ({ request }) => {
+	gpx: async ({ request, locals }) => {
 		const f = await request.formData();
 		const file = f.get('gpx');
 		if (!(file instanceof File) || file.size === 0 || file.size > 5_000_000) return fail(400, { error: 'Bitte wähle eine GPX-Datei bis 5 MB.', id: Number(f.get('id')) });
 		const points = parseGpx(await file.text());
 		if (points.length < 2) return fail(400, { error: 'In der Datei habe ich keine Route gefunden.', id: Number(f.get('id')) });
-		await sql`update hikes set geometry = ${sql.json(points)}, source = 'gpx', profile = null where id = ${Number(f.get('id'))}`;
-		return { saved: Number(f.get('id')) };
+		const hid = Number(f.get('id'));
+		const a = await changeRow('hikes', hid, { actor: locals.admin!, area: AREA, title: `Neue Route (GPX) für «${await hikeName(hid)}»`, link }, () =>
+			sql`update hikes set geometry = ${sql.json(points)}, source = 'gpx', profile = null where id = ${hid}`
+		);
+		return { saved: hid, ...done('Route übernommen. Das Höhenprofil wird gerade berechnet.', a) };
 	},
-	wanderland: async ({ request }) => {
+	wanderland: async ({ request, locals }) => {
 		const f = await request.formData();
 		const nr = str(f, 'nr', 12);
 		if (!/^\d{1,3}(\.\d{1,3})?$/.test(nr)) return fail(400, { error: 'Die Routennummer sieht so aus: 1.13', id: Number(f.get('id')) });
-		await sql`update hikes set wanderland = ${nr}, geometry = null, profile = null, source = 'wanderland' where id = ${Number(f.get('id'))}`;
-		return { saved: Number(f.get('id')) };
+		const hid = Number(f.get('id'));
+		const a = await changeRow('hikes', hid, { actor: locals.admin!, area: AREA, title: `Route ${nr} von SchweizMobil für «${await hikeName(hid)}»`, link }, () =>
+			sql`update hikes set wanderland = ${nr}, geometry = null, profile = null, source = 'wanderland' where id = ${hid}`
+		);
+		return { saved: hid, ...done('Route übernommen', a) };
 	},
-	delete: async ({ request }) => {
-		await sql`delete from hikes where id = ${Number((await request.formData()).get('id'))}`;
+	delete: async ({ request, locals }) => {
+		const hid = Number((await request.formData()).get('id'));
+		const a = await changeRow('hikes', hid, { actor: locals.admin!, area: AREA, title: `Wanderung «${await hikeName(hid)}» gelöscht`, link }, () => sql`delete from hikes where id = ${hid}`);
+		return done('Wanderung gelöscht', a);
 	}
 };

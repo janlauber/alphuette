@@ -9,7 +9,7 @@
 	import Sun from '@lucide/svelte/icons/sun';
 	import { dict, type Lang } from '#lib/i18n.ts';
 
-	export type Day = { date: string; tmin: number; tmax: number; precip: number; kind: string; de: string; en: string };
+	export type Day = { date: string; tmin: number; tmax: number; precip: number; kind: string; de: string; en: string; fr: string; it: string };
 	let { days, lang }: { days: Day[]; lang: Lang } = $props();
 	const t = $derived(dict[lang]);
 	const ICON = { sun: Sun, partly: CloudSun, cloud: Cloud, rain: CloudRain, snow: CloudSnow, storm: CloudLightning, fog: CloudFog, drizzle: CloudDrizzle };

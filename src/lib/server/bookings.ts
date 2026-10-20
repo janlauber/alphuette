@@ -2,10 +2,11 @@ import { randomBytes } from 'node:crypto';
 import { ADMIN_EMAILS, SITE_URL } from '$app/env/private';
 import { mac, safeEqual } from './signing.ts';
 import { quote, chf, type Guests, type Range } from '#lib/booking.ts';
-import { fmtDate, type Lang } from '#lib/i18n.ts';
+import { dict, fmtDate, localize, type Lang } from '#lib/i18n.ts';
 import { sql } from './db.ts';
 import { sendMail, threadAddress } from './mail.ts';
 import { getSeasons, getSettings } from './settings.ts';
+import { translateMessage } from './translate.ts';
 
 export type Booking = {
 	id: number;
@@ -17,6 +18,7 @@ export type Booking = {
 	email: string;
 	phone: string | null;
 	city: string | null;
+	country: string | null;
 	lang: Lang;
 	adults: number;
 	children: number;
@@ -36,7 +38,7 @@ const sign = (purpose: string, ref: string) => mac(purpose, ref);
 
 export const guestToken = (ref: string) => `${ref}-${sign('guest', ref).subarray(0, 18).toString('base64url')}`;
 export const guestUrl = (b: Pick<Booking, 'ref' | 'lang'>) =>
-	`${SITE_URL}${b.lang === 'en' ? '/en' : ''}/buchung/${guestToken(b.ref)}`;
+	`${SITE_URL}${localize(b.lang, `/buchung/${guestToken(b.ref)}`)}`;
 
 export async function bookingByToken(token: string) {
 	const [ref, sig] = [token.slice(0, token.indexOf('-')), token.slice(token.indexOf('-') + 1)];
@@ -75,6 +77,7 @@ export type Request = {
 	email: string;
 	phone: string;
 	city: string;
+	country: string | null;
 	arrival: 'auto' | 'oev' | null;
 	note: string;
 	lang: Lang;
@@ -92,10 +95,10 @@ export async function createRequest(r: Request) {
 		[booking] = await sql.begin(async (tx) => {
 			await tx`delete from bookings where status = 'unbestaetigt' and created_at < now() - interval '30 minutes'`;
 			return tx<Booking[]>`
-				insert into bookings (ref, status, check_in, check_out, name, email, phone, city, lang,
+				insert into bookings (ref, status, check_in, check_out, name, email, phone, city, country, lang,
 					adults, children, infants, linen, arrival, note, quote, total_rp)
 				values (${newRef()}, 'unbestaetigt', ${r.checkIn}, ${r.checkOut}, ${r.name}, ${r.email}, ${r.phone || null},
-					${r.city}, ${r.lang}, ${r.guests.adults}, ${r.guests.children}, ${r.guests.infants}, ${r.guests.linen},
+					${r.city}, ${r.country}, ${r.lang}, ${r.guests.adults}, ${r.guests.children}, ${r.guests.infants}, ${r.guests.linen},
 					${r.arrival}, ${r.note || null}, ${sql.json({ nights: q.nights, lines: q.lines })}, ${q.total})
 				returning *`;
 		});
@@ -103,16 +106,14 @@ export async function createRequest(r: Request) {
 		if (isExclusionViolation(e)) return { error: 'taken' as const };
 		throw e;
 	}
-	if (r.note) await sql`insert into messages (booking_id, author, body) values (${booking.id}, 'gast', ${r.note})`;
+	if (r.note) await sql`insert into messages (booking_id, author, body, translation) values (${booking.id}, 'gast', ${r.note}, ${await translateMessage(r.note, 'de')})`;
 
 	// Only the guest gets mail now; Tom hears about it once the address is confirmed.
+	const m = dict[r.lang].mail;
 	await sendMail({
 		to: r.email,
-		subject: r.lang === 'en' ? `Please confirm your request (${booking.ref})` : `Bitte bestätige deine Anfrage (${booking.ref})`,
-		text:
-			r.lang === 'en'
-				? `Hello ${r.name}\n\nPlease confirm your request for the Alphütte from ${fmtDate(r.checkIn, 'en')} to ${fmtDate(r.checkOut, 'en')} with this link. The week is held for you for 30 minutes.\n\n${guestUrl(booking)}\n\nIf you did not send a request, ignore this email.`
-				: `Hoi ${r.name}\n\nBitte bestätige deine Anfrage für die Alphütte vom ${fmtDate(r.checkIn, 'de')} bis ${fmtDate(r.checkOut, 'de')} mit diesem Link. Die Woche ist 30 Minuten für dich reserviert.\n\n${guestUrl(booking)}\n\nWenn du keine Anfrage geschickt hast, kannst du diese Mail ignorieren.`
+		subject: m.confirmSubject(booking.ref),
+		text: `${m.hello(r.name)}\n\n${m.confirmText(fmtDate(r.checkIn, r.lang), fmtDate(r.checkOut, r.lang), guestUrl(booking))}`
 	});
 	return { booking };
 }
@@ -125,14 +126,12 @@ export async function confirmEmail(id: number) {
 	if (!b) return false;
 	const people = b.adults + b.children + b.infants;
 	const when = `${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')}`;
+	const m = dict[b.lang].mail;
 	await sendMail({
 		to: b.email,
 		replyTo: replyTo(b.ref),
-		subject: b.lang === 'en' ? `Your request for the Alphütte (${b.ref})` : `Deine Anfrage für die Alphütte (${b.ref})`,
-		text:
-			b.lang === 'en'
-				? `Hello ${b.name}\n\nThank you, your request from ${fmtDate(b.checkIn, 'en')} to ${fmtDate(b.checkOut, 'en')} for ${people} ${people === 1 ? 'person' : 'people'} is with Tom now. He will reply by email. The dates are held for you until then.\n\nYour request, messages and later the bill:\n${guestUrl(b)}${replyTo(b.ref) ? '\n\nYou can reply to this email directly.' : ''}`
-				: `Hoi ${b.name}\n\nDanke, deine Anfrage vom ${when} für ${people} ${people === 1 ? 'Person' : 'Personen'} ist jetzt bei Tom. Er meldet sich per Mail. Bis dahin sind die Daten für dich reserviert.\n\nDeine Anfrage, die Nachrichten und später die Rechnung:\n${guestUrl(b)}${replyTo(b.ref) ? '\n\nDu kannst direkt auf diese Mail antworten.' : ''}`
+		subject: m.requestSubject(b.ref),
+		text: `${m.hello(b.name)}\n\n${m.requestText(fmtDate(b.checkIn, b.lang), fmtDate(b.checkOut, b.lang), people, guestUrl(b))}${replyTo(b.ref) ? `\n\n${m.canReply}` : ''}`
 	});
 	await sendMail({
 		to: ADMIN_EMAILS,
@@ -144,37 +143,11 @@ export async function confirmEmail(id: number) {
 }
 
 const STATUS_MAIL = {
-	bestaetigt: {
-		de: (b: Booking) => ({
-			subject: `Deine Buchung ist bestätigt (${b.ref})`,
-			text: `Hoi ${b.name}\n\nTom hat deine Buchung vom ${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')} bestätigt. Das Hüttli ist für dich reserviert.\n\nDie QR-Rechnung über ${chf(b.totalRp ?? 0)} und die Infos zur Anreise findest du hier:\n${guestUrl(b)}\n\nWir freuen uns auf dich.`
-		}),
-		en: (b: Booking) => ({
-			subject: `Your booking is confirmed (${b.ref})`,
-			text: `Hello ${b.name}\n\nTom has confirmed your booking from ${fmtDate(b.checkIn, 'en')} to ${fmtDate(b.checkOut, 'en')}. The hut is reserved for you.\n\nThe QR bill for ${chf(b.totalRp ?? 0)} and information on how to get there are here:\n${guestUrl(b)}\n\nWe look forward to your visit.`
-		})
-	},
-	abgelehnt: {
-		de: (b: Booking) => ({
-			subject: `Deine Anfrage für die Alphütte (${b.ref})`,
-			text: `Hoi ${b.name}\n\nTom kann deine Anfrage vom ${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')} leider nicht annehmen. Vielleicht passt ein anderes Datum:\n${SITE_URL}/`
-		}),
-		en: (b: Booking) => ({
-			subject: `Your request for the Alphütte (${b.ref})`,
-			text: `Hello ${b.name}\n\nUnfortunately Tom cannot accept your request from ${fmtDate(b.checkIn, 'en')} to ${fmtDate(b.checkOut, 'en')}. Maybe another date works:\n${SITE_URL}/en`
-		})
-	},
-	storniert: {
-		de: (b: Booking) => ({
-			subject: `Deine Buchung ist storniert (${b.ref})`,
-			text: `Hoi ${b.name}\n\nDeine Buchung vom ${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')} ist storniert.\n\n${guestUrl(b)}`
-		}),
-		en: (b: Booking) => ({
-			subject: `Your booking has been cancelled (${b.ref})`,
-			text: `Hello ${b.name}\n\nYour booking from ${fmtDate(b.checkIn, 'en')} to ${fmtDate(b.checkOut, 'en')} has been cancelled.\n\n${guestUrl(b)}`
-		})
-	}
+	bestaetigt: (b: Booking, m: Mail, from: string, to: string) => ({ subject: m.confirmedSubject(b.ref), text: m.confirmedText(from, to, chf(b.totalRp ?? 0), guestUrl(b)) }),
+	abgelehnt: (b: Booking, m: Mail, from: string, to: string) => ({ subject: m.declinedSubject(b.ref), text: m.declinedText(from, to, SITE_URL + localize(b.lang, '/')) }),
+	storniert: (b: Booking, m: Mail, from: string, to: string) => ({ subject: m.cancelledSubject(b.ref), text: m.cancelledText(from, to, guestUrl(b)) })
 };
+type Mail = (typeof dict)['de']['mail'];
 
 const FROM = { bestaetigt: ['angefragt'], abgelehnt: ['angefragt'], storniert: ['unbestaetigt', 'angefragt', 'bestaetigt'] };
 
@@ -184,7 +157,11 @@ export async function setStatus(id: number, status: keyof typeof STATUS_MAIL, no
 		update bookings set status = ${status}, updated_at = now()
 		where id = ${id} and status in ${sql(FROM[status])} returning *`;
 	if (!b) return false;
-	if (notify) await sendMail({ to: b.email, replyTo: replyTo(b.ref), ...STATUS_MAIL[status][b.lang](b) });
+	if (notify) {
+		const m = dict[b.lang].mail;
+		const { subject, text } = STATUS_MAIL[status](b, m, fmtDate(b.checkIn, b.lang), fmtDate(b.checkOut, b.lang));
+		await sendMail({ to: b.email, replyTo: replyTo(b.ref), subject, text: `${m.hello(b.name)}\n\n${text}` });
+	}
 	return true;
 }
 
@@ -203,25 +180,31 @@ export async function withdraw(id: number) {
 	return !!b;
 }
 
+/**
+ * Stores a message and mails it to the other side. Guest messages get a German translation for Tom,
+ * Tom's messages one in the guest's language.
+ */
 export async function addMessage(b: Booking, author: 'gast' | 'host', body: string, via: 'web' | 'mail' = 'web') {
-	await sql`insert into messages (booking_id, author, body, via) values (${b.id}, ${author}, ${body}, ${via})`;
+	const translation = await translateMessage(body, author === 'gast' ? 'de' : b.lang);
+	await sql`insert into messages (booking_id, author, body, via, translation) values (${b.id}, ${author}, ${body}, ${via}, ${translation})`;
 	if (author === 'gast') {
 		await sendMail({
 			to: ADMIN_EMAILS,
 			replyTo: replyTo(b.ref),
 			subject: `Nachricht von ${b.name} (${b.ref})`,
-			text: `${body}\n\n---\n${SITE_URL}/admin/buchungen/${b.id}${replyTo(b.ref) ? '\nAntworte direkt auf diese Mail oder im Admin.' : ''}`
+			text: `${translation ? `${translation}\n\n(automatisch übersetzt, Original:)\n${body}` : body}\n\n---\n${SITE_URL}/admin/buchungen/${b.id}${replyTo(b.ref) ? '\nAntworte direkt auf diese Mail oder im Admin. Schreib ruhig auf Deutsch, der Gast bekommt es übersetzt.' : ''}`
 		});
 	} else {
+		const m = dict[b.lang].mail;
 		await sendMail({
 			to: b.email,
 			replyTo: replyTo(b.ref),
-			subject: b.lang === 'en' ? `Message from Tom (${b.ref})` : `Nachricht von Tom (${b.ref})`,
-			text: `${body}\n\n---\n${guestUrl(b)}`
+			subject: m.messageSubject(b.ref),
+			text: `${translation ? `${translation}\n\n${m.messageOriginal}\n${body}` : body}\n\n---\n${guestUrl(b)}`
 		});
 	}
 }
 
 export const messagesOf = (bookingId: number) =>
-	sql<{ id: number; author: 'gast' | 'host'; body: string; via: string; createdAt: Date }[]>`
-		select id, author, body, via, created_at from messages where booking_id = ${bookingId} order by created_at`;
+	sql<{ id: number; author: 'gast' | 'host'; body: string; translation: string | null; via: string; createdAt: Date }[]>`
+		select id, author, body, translation, via, created_at from messages where booking_id = ${bookingId} order by created_at`;

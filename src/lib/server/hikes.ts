@@ -1,5 +1,7 @@
 import { sql } from './db.ts';
 import { toLv95, toWgs84 } from '#lib/geo.ts';
+import type { Lang } from '#lib/i18n.ts';
+import { lookup } from './translate.ts';
 
 type Waypoint = { name: string; elev: number; min?: number | null; distM?: number | null; e?: number; n?: number };
 type Row = {
@@ -39,9 +41,16 @@ type Row = {
 };
 
 const lines = (s: string) => s.split('\n').map((l) => l.trim()).filter(Boolean);
-const pick = (lang: 'de' | 'en', de: string, en: string) => (lang === 'en' && en) || de;
+/** German texts of a hike that get translated; names of places stay as they are. */
+export const hikeTexts = (h: Pick<Row, 'de' | 'seasonDe' | 'transitDe' | 'highlightsDe' | 'tipsDe'>) => [h.de, h.seasonDe, h.transitDe, h.highlightsDe, h.tipsDe];
 
-const forLang = (h: Row, lang: 'de' | 'en') => ({
+async function translator(rows: Row[], lang: Lang) {
+	if (lang === 'de') return (s: string) => s;
+	const tr = await lookup(rows.flatMap(hikeTexts), lang === 'en' ? ['en'] : [lang, 'en']);
+	return (s: string) => tr.get(lang)?.get(s) ?? tr.get('en')?.get(s) ?? s;
+}
+
+const forLang = (h: Row, t: (s: string) => string) => ({
 	slug: h.slug,
 	name: h.name,
 	time: h.time,
@@ -49,7 +58,7 @@ const forLang = (h: Row, lang: 'de' | 'en') => ({
 	alpine: h.alpine,
 	category: h.category || (h.alpine ? 'bergwanderweg' : 'wanderweg'),
 	sac: h.sac,
-	text: pick(lang, h.de, h.en),
+	text: t(h.de),
 	url: h.url,
 	source: h.source,
 	profile: h.profile,
@@ -59,14 +68,14 @@ const forLang = (h: Row, lang: 'de' | 'en') => ({
 	descentM: h.source === 'wegpunkte' ? null : h.descentM,
 	// the 200-point profile can miss a pass by a few metres, a named waypoint can't
 	highest: h.profile?.length ? Math.round(Math.max(...h.profile.map((p) => p[1]), ...(h.waypoints ?? []).map((w) => w.elev ?? 0))) : null,
-	season: pick(lang, h.seasonDe, h.seasonEn),
+	season: t(h.seasonDe),
 	start: h.startName,
 	end: h.endName,
-	transit: pick(lang, h.transitDe, h.transitEn),
+	transit: t(h.transitDe),
 	waypoints: h.waypoints ?? [],
 	stops: h.stops ?? [],
-	highlights: lines(pick(lang, h.highlightsDe, h.highlightsEn)),
-	tips: pick(lang, h.tipsDe, h.tipsEn),
+	highlights: lines(t(h.highlightsDe)),
+	tips: t(h.tipsDe),
 	family: h.family,
 	loop: h.loop,
 	fromHut: h.fromHut
@@ -75,14 +84,15 @@ const forLang = (h: Row, lang: 'de' | 'en') => ({
 // ponytail: every n-th vertex is plenty for a 600 px map
 const thinMap = (g: [number, number][] | null, max = 400) => (!g || g.length <= max ? g : g.filter((_, i) => i % Math.ceil(g.length / max) === 0 || i === g.length - 1));
 
-export async function listHikes(lang: 'de' | 'en' = 'de') {
+export async function listHikes(lang: Lang = 'de') {
 	const rows = await sql<Row[]>`select * from hikes order by sort, id`;
-	return rows.map((h) => forLang(h, lang));
+	const t = await translator(rows, lang);
+	return rows.map((h) => forLang(h, t));
 }
 
-export async function hikeBySlug(slug: string, lang: 'de' | 'en') {
+export async function hikeBySlug(slug: string, lang: Lang) {
 	const [h] = await sql<Row[]>`select * from hikes where slug = ${slug}`;
-	return h ? { ...forLang(h, lang), geometry: h.source === 'wegpunkte' ? null : thinMap(h.geometry) } : null;
+	return h ? { ...forLang(h, await translator([h], lang)), geometry: h.source === 'wegpunkte' ? null : thinMap(h.geometry) } : null;
 }
 
 /** GPX track or route points as LV95 coordinates. */

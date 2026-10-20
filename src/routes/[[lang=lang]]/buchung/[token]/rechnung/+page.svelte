@@ -6,11 +6,10 @@
 	let { data } = $props();
 	const t = $derived(dict[data.lang]);
 	const b = $derived(data.booking);
-	const en = $derived(data.lang === 'en');
 </script>
 
 <svelte:head>
-	<title>{en ? 'Invoice' : 'Rechnung'} {b.ref}</title>
+	<title>{t.invoice.title} {b.ref}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -26,7 +25,7 @@
 		</div>
 	</div>
 
-	<h1 class="mt-12 text-3xl">{en ? 'Invoice' : 'Rechnung'} {b.ref}</h1>
+	<h1 class="mt-12 text-3xl">{t.invoice.title} {b.ref}</h1>
 	<p class="mt-2">{fmtDate(b.checkIn, data.lang)} – {fmtDate(b.checkOut, data.lang)}</p>
 
 	<table class="mt-6 w-full">
@@ -42,19 +41,15 @@
 			<tr class="font-semibold"><td class="pt-3">{t.card.total}</td><td class="pt-3 text-right tabular-nums">{chf(b.total)}</td></tr>
 		</tfoot>
 	</table>
-	<p class="mt-6">
-		{en
-			? 'Please pay within 30 days, at the latest 14 days before arrival. Scan the QR code with your banking app.'
-			: 'Bitte zahle innert 30 Tagen, spätestens 14 Tage vor der Anreise. Scanne dazu den QR-Code mit deiner Banking-App.'}
-	</p>
+	<p class="mt-6">{t.invoice.pay}</p>
 
-	<button class="btn-line mt-6 print:hidden" onclick={() => print()}>{en ? 'Print or save as PDF' : 'Drucken oder als PDF speichern'}</button>
+	<button class="btn-line mt-6 print:hidden" onclick={() => print()}>{t.invoice.print}</button>
 </div>
 
 {#if data.svg}
 	<div class="qr mx-auto max-w-[210mm] bg-white">{@html data.svg}</div>
 {:else}
-	<p class="mx-auto max-w-[210mm] bg-white px-12 py-6 text-rot">{en ? 'The QR bill is not ready yet. Tom will send it to you.' : 'Die QR-Rechnung ist noch nicht bereit. Tom schickt sie dir.'}</p>
+	<p class="mx-auto max-w-[210mm] bg-white px-12 py-6 text-rot">{t.invoice.notReady}</p>
 {/if}
 
 <style>

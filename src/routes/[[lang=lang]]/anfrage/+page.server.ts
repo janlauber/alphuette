@@ -50,6 +50,7 @@ export const actions = {
 			email: (values.email ?? '').trim().toLowerCase().slice(0, 200),
 			phone: (values.phone ?? '').trim().slice(0, 40),
 			city: (values.city ?? '').trim().slice(0, 100),
+			country: /^[A-Z]{2}$/.test(values.country ?? '') ? values.country! : null,
 			arrival: values.arrival === 'auto' || values.arrival === 'oev' ? values.arrival : null,
 			note: (values.note ?? '').trim().slice(0, 3000),
 			lang

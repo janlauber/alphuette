@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Huettli from '#lib/components/Huettli.svelte';
 	import Panorama from '#lib/components/Panorama.svelte';
-	import { dict, localize } from '#lib/i18n.ts';
+	import { dict, LANG_NAMES, LANGS, localize, unlocalize } from '#lib/i18n.ts';
 
 	let { data, children } = $props();
 	const t = $derived(dict[data.lang]);
-	const path = $derived(page.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/');
+	const path = $derived(unlocalize(page.url.pathname));
+	let langMenu = $state<HTMLDetailsElement>();
 	const whatsapp = $derived(
 		data.host.whatsapp
-			? `https://wa.me/${data.host.whatsapp.replace(/\D/g, '').replace(/^0/, '41')}?text=${encodeURIComponent(data.lang === 'en' ? 'Hello Tom, I have a question about the Alphütte: ' : 'Hoi Tom, ich habe eine Frage zur Alphütte: ')}`
+			? `https://wa.me/${data.host.whatsapp.replace(/\D/g, '').replace(/^0/, '41')}?text=${encodeURIComponent(t.footer.whatsappText)}`
 			: ''
 	);
 	const links = $derived([
@@ -17,6 +19,12 @@
 		{ href: '/umgebung', label: t.nav.area }
 	]);
 </script>
+
+<!-- the language menu closes on a click elsewhere or Escape -->
+<svelte:window
+	onclick={(e) => langMenu?.open && !langMenu.contains(e.target as Node) && (langMenu.open = false)}
+	onkeydown={(e) => e.key === 'Escape' && langMenu?.open && (langMenu.open = false)}
+/>
 
 <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-white">{t.skip}</a>
 
@@ -30,9 +38,32 @@
 		<nav class="flex items-center gap-0.5 text-[14px] font-semibold sm:gap-1 sm:text-[15px]">
 			{#each links as l (l.href)}
 				{@const active = path.startsWith(l.href)}
-				<a href={localize(data.lang, l.href)} class="rounded-full border-2 px-2.5 py-1.5 no-underline transition-colors sm:px-3 {active ? 'border-brand text-brand' : 'border-transparent hover:bg-wash'}" aria-current={active ? 'page' : undefined}>{l.label}</a>
+				<a href={localize(data.lang, l.href)} class="rounded-full border-2 px-1.5 py-1.5 no-underline transition-colors min-[400px]:px-2.5 sm:px-3 {active ? 'border-brand text-brand' : 'border-transparent hover:bg-wash'}" aria-current={active ? 'page' : undefined}>{l.label}</a>
 			{/each}
-			<a href={localize(t.nav.otherLang, path)} hreflang={t.nav.otherLang} lang={t.nav.otherLang} aria-label={t.nav.otherName} class="rounded-full border-2 border-transparent px-2.5 py-1.5 no-underline hover:bg-wash sm:px-3">{t.nav.other}</a>
+			<details bind:this={langMenu} class="group relative">
+				<summary
+					class="flex cursor-pointer list-none items-center gap-0.5 rounded-full border-2 border-transparent px-1.5 py-1.5 uppercase hover:bg-wash group-open:border-brand group-open:text-brand sm:px-2.5 [&::-webkit-details-marker]:hidden"
+					aria-label="{t.nav.language}: {LANG_NAMES[data.lang]}"
+				>
+					{data.lang}<ChevronDown size={15} strokeWidth={2.5} class="transition-transform group-open:rotate-180" aria-hidden="true" />
+				</summary>
+				<ul class="absolute right-0 top-full z-40 mt-2 grid min-w-40 gap-0.5 rounded-[18px] border-2 border-brand bg-paper p-1.5 shadow-[0_4px_0_var(--color-brand)]">
+					{#each LANGS as l (l)}
+						<li>
+							<a
+								href={localize(l, path)}
+								hreflang={l}
+								lang={l}
+								data-sveltekit-reload
+								class="flex items-center justify-between gap-3 rounded-full px-3 py-1.5 no-underline {l === data.lang ? 'bg-brand text-white' : 'text-ink hover:bg-wash'}"
+								aria-current={l === data.lang ? 'true' : undefined}
+							>
+								{LANG_NAMES[l]}<span class="text-xs uppercase opacity-70">{l}</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</details>
 			<a href="{localize(data.lang, '/')}#buchen" class="btn-primary ml-2 hidden !min-h-10 !px-4 !py-1.5 text-sm lg:inline-flex">{t.nav.request}</a>
 		</nav>
 	</div>
@@ -62,6 +93,7 @@
 				<a href={localize(data.lang, '/umgebung')} class="no-underline hover:underline">{t.nav.area}</a>
 				<a href={localize(data.lang, '/impressum')} class="no-underline hover:underline">{t.footer.imprint}</a>
 				<a href={localize(data.lang, '/datenschutz')} class="no-underline hover:underline">{t.footer.privacy}</a>
+				<a href={localize(data.lang, '/buchung')} class="no-underline hover:underline">{t.find.title}</a>
 			</nav>
 		</div>
 	</div>

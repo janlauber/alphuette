@@ -65,7 +65,7 @@
 	});
 </script>
 
-<Seo title="{h.name}: {data.lang === 'en' ? 'hike in the Kiental' : 'Wanderung im Kiental'}" description={h.text} path="/wanderungen/{h.slug}" lang={data.lang} siteUrl={data.siteUrl} {jsonld} />
+<Seo title="{h.name}: {t.seo.hike}" description={h.text} path="/wanderungen/{h.slug}" lang={data.lang} siteUrl={data.siteUrl} {jsonld} />
 
 <div class="mx-auto max-w-6xl px-5 pt-6 sm:px-6">
 	<a href={localize(data.lang, '/wanderungen')} class="inline-flex items-center gap-1 text-sm font-semibold text-brand no-underline hover:underline"><ChevronLeft size={16} strokeWidth={2.5} aria-hidden="true" />{t.hikes.back}</a>

@@ -5,12 +5,13 @@
 	type Departure = { time: string; arrival: string; line: string; delay: number };
 	let { list, winter, lang, route }: { list: Departure[]; winter: boolean; lang: Lang; route: 'toHut' | 'fromHut' } = $props();
 	const t = $derived(dict[lang]);
+	const SBB: Record<Lang, string> = { de: 'de/kaufen', en: 'en/buying', fr: 'fr/acheter', it: 'it/acquistare' };
 	const title = $derived(winter ? t.transit[route === 'toHut' ? 'toWinter' : 'fromWinter'] : t.transit[route]);
 	// SBB timetable with both stops filled in
 	const sbb = $derived.by(() => {
 		const valley = 'Reichenbach im Kandertal', hut = winter ? 'Kiental, Ramslauenen' : 'Kiental, Abzw. Spiggengrund';
 		const [von, nach] = route === 'toHut' ? [valley, hut] : [hut, valley];
-		return `https://www.sbb.ch/${lang === 'en' ? 'en/buying' : 'de/kaufen'}/pages/fahrplan/fahrplan.xhtml?von=${encodeURIComponent(von)}&nach=${encodeURIComponent(nach)}`;
+		return `https://www.sbb.ch/${SBB[lang]}/pages/fahrplan/fahrplan.xhtml?von=${encodeURIComponent(von)}&nach=${encodeURIComponent(nach)}`;
 	});
 </script>
 

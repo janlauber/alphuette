@@ -12,22 +12,27 @@
 
 	let { data } = $props();
 	const t = $derived(dict[data.lang]);
-	const en = $derived(data.lang === 'en');
 
 	// "Einkaufen: …" paragraphs become cards with a matching icon.
 	const cards = $derived(
 		data.area.split(/\n\s*\n/).map((p) => {
 			const m = p.match(/^([^:]{2,40}):\s*([\s\S]*)$/);
 			const label = m?.[1] ?? '';
-			const icon = /einkauf|shop/i.test(label) ? ShoppingBasket : /essen|eat/i.test(label) ? Utensils : /karte|card/i.test(label) ? Ticket : Info;
+			const icon = /einkauf|shop|course|achat|spesa|acquist/i.test(label)
+				? ShoppingBasket
+				: /essen|eat|manger|restaur|mangia|ristor/i.test(label)
+					? Utensils
+					: /karte|card|carte|carta/i.test(label)
+						? Ticket
+						: Info;
 			return { label, html: textToHtml(m?.[2] ?? p), icon };
 		})
 	);
 </script>
 
 <Seo
-	title={en ? 'Around the hut: shops, restaurants, weather and buses in the Kiental' : 'Rund ums Hüttli: Einkaufen, Restaurants, Wetter und Postauto im Kiental'}
-	description={en ? 'Village shop, restaurants, guest card with free public transport, weather forecast and the next buses to the hut.' : 'Dorfladen, Restaurants, Gästekarte mit Gratis-ÖV, Wetterprognose und die nächsten Postautos zum Hüttli.'}
+	title={t.seo.area}
+	description={t.seo.areaDescription}
 	path="/umgebung"
 	lang={data.lang}
 	siteUrl={data.siteUrl}
@@ -36,9 +41,9 @@
 <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-6">
 	<div class="flex items-end justify-between gap-6">
 		<div>
-			<h1 class="text-[2.6rem] sm:text-[3.6rem]">{en ? 'Around the hut' : 'Rund ums Hüttli'}</h1>
+			<h1 class="text-[2.6rem] sm:text-[3.6rem]">{t.area.title}</h1>
 			<p class="mt-3 max-w-[58ch] text-lg">
-				{en ? 'The Kiental is a quiet side valley of the Kandertal. Here is what you need nearby.' : 'Das Kiental ist ein ruhiges Seitental des Kandertals. Das findest du in der Nähe.'}
+				{t.area.intro}
 			</p>
 		</div>
 		<Huettli face="wink" pose="stand" animate class="hidden w-32 shrink-0 text-brand sm:block" />

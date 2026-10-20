@@ -18,3 +18,11 @@ export function textToHtml(text: string) {
 		})
 		.join('');
 }
+
+/** FAQ text ("Question?" line, answer below, blank line between) to pairs. */
+export const parseFaq = (text: string) =>
+	text
+		.split(/\n\s*\n/)
+		.map((b) => b.trim().split('\n'))
+		.filter((lines) => lines.length > 1)
+		.map(([q, ...a]) => ({ q: q.trim(), a: a.join('\n').trim() }));

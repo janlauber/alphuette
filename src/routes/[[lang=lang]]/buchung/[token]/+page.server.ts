@@ -39,7 +39,8 @@ export const load = async ({ params, parent }) => {
 			paidAt: b.paidAt
 		},
 		photo: photos[0] ?? null,
-		messages: messages.map(({ id, author, body, createdAt }) => ({ id, author, body, createdAt })),
+		// the guest only needs Tom's messages in their language; their own stay as written
+		messages: messages.map(({ id, author, body, translation, createdAt }) => ({ id, author, body, translation: author === 'host' ? translation : null, createdAt })),
 		guestInfo: confirmed ? content.guest_info || settings.content.de.guest_info : '',
 		arrival: content.arrival,
 		packing: confirmed || b.status === 'angefragt' ? listItems(content.packing) : [],

@@ -1,91 +1,81 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import Baby from '@lucide/svelte/icons/baby';
+	import Clock from '@lucide/svelte/icons/clock';
+	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import House from '@lucide/svelte/icons/house';
+	import Pencil from '@lucide/svelte/icons/pencil';
+	import Plus from '@lucide/svelte/icons/plus';
+	import RefreshCw from '@lucide/svelte/icons/refresh-cw';
+	import TrendingUp from '@lucide/svelte/icons/trending-up';
+	import AdminPage from '#lib/components/admin/AdminPage.svelte';
 	import Profile from '#lib/components/Profile.svelte';
+	import HikeForm, { type Hike } from './HikeForm.svelte';
 
 	let { data, form } = $props();
-	const keep = () => async ({ update }: { update: (o?: { reset?: boolean }) => Promise<void> }) => update({ reset: false });
-	type Waypoint = { name: string; elev: number; min?: number | null };
-	const blank = {
-		id: null, slug: '', name: '', time: '', alpine: false, de: '', en: '', url: '', source: '', profile: null, distanceM: null, ascentM: null, sort: 0,
-		category: 'wanderweg', sac: '', durationMin: null as number | null, seasonDe: '', seasonEn: '', startName: '', endName: '', transitDe: '', transitEn: '',
-		waypoints: null as Waypoint[] | null, stops: null as string[] | null, highlightsDe: '', highlightsEn: '', tipsDe: '', tipsEn: '', family: false, loop: false, fromHut: false
+	const hikes = $derived(data.hikes as unknown as Hike[]);
+	let open = $state<number | 'new' | null>(null);
+
+	const blank: Hike = {
+		id: null, slug: '', name: '', de: '', url: '', source: '', wanderland: null, profile: null, distanceM: null, ascentM: null, sort: 0,
+		category: 'wanderweg', sac: '', durationMin: null, seasonDe: '', startName: '', endName: '', transitDe: '',
+		waypoints: null, stops: null, highlightsDe: '', tipsDe: '', family: false, loop: false, fromHut: false
 	};
-	const wpText = (w: Waypoint[] | null) => (w ?? []).map((p) => [p.name, p.elev, p.min ?? ''].join(' | ')).join('\n');
+	const WAY: Record<string, string> = { wanderweg: 'Wanderweg', bergwanderweg: 'Bergwanderweg', alpinwanderweg: 'Alpinwanderweg' };
+	const time = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ` ${min % 60} min` : ''}` : `${min} min`);
+	const error = (id: number | null) => (form?.error && (form.id ?? null) === id ? form.error : undefined);
 </script>
 
-<h1 class="text-3xl">Wanderungen</h1>
-<p class="mt-1 max-w-[62ch] text-stein">Jede Wanderung bekommt eine eigene Seite. Lade eine GPX-Datei hoch (z. B. von deiner Uhr) oder gib die Nummer einer offiziellen Route von Wanderland Schweiz ein. Dann berechnet die Seite Länge, Höhenmeter und das Höhenprofil.</p>
+<AdminPage title="Wanderungen" intro="Jede Wanderung hat eine eigene Seite mit Karte, Höhenprofil und Wegweisern.">
+	{#snippet help()}
+		<ul>
+			<li>Tipp auf «Bearbeiten», um eine Wanderung zu ändern. Die Felder sind in Gruppen aufgeteilt, die du aufklappen kannst.</li>
+			<li>Unter «Route und Höhenprofil» lädst du eine GPX-Datei oder gibst die Nummer einer SchweizMobil-Route ein. Länge, Höhenmeter und Karte rechnet die Website selbst.</li>
+			<li>Ortsnamen bleiben in allen Sprachen gleich. Englisch, Französisch und Italienisch übersetzt die Website automatisch, meist innert einer Minute.</li>
+			<li>Mit «Ansehen» öffnest du die Seite, wie Gäste sie sehen.</li>
+		</ul>
+	{/snippet}
+	{#snippet actions()}
+		<button type="button" class="btn-blue" onclick={() => (open = 'new')} disabled={open === 'new'}><Plus size={18} aria-hidden="true" />Neue Wanderung</button>
+	{/snippet}
 
-{#snippet hikeForm(h: typeof blank)}
-	<div class="card flex flex-col gap-3 p-4">
-		{#if h.profile}<Profile profile={h.profile} height={70} />{/if}
-		{#if h.id}
-			<p class="text-sm text-stein">
-				{h.distanceM ? `${(h.distanceM / 1000).toFixed(1)} km, ${h.ascentM} m Aufstieg` : 'Noch kein Profil'}
-				{h.source === 'gpx' ? ', aus GPX' : h.source === 'wanderland' ? ', Wanderland-Route' : h.source === 'netz' ? ', auf dem Wanderwegnetz berechnet' : h.source ? ', aus Wegpunkten angenähert' : ''}
-			</p>
+	<ul class="grid gap-4">
+		{#if open === 'new'}
+			<li class="card-strong p-5">
+				<h2 class="mb-4 text-2xl">Neue Wanderung</h2>
+				<HikeForm hike={blank} error={error(null)} onclose={() => (open = null)} />
+			</li>
 		{/if}
-		<form method="POST" action="?/save" use:enhance={keep} class="grid gap-3 sm:grid-cols-6">
-			<input type="hidden" name="id" value={h.id ?? ''} />
-			<label class="label text-sm sm:col-span-3">Name <input name="name" value={h.name} required class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-2">Gehzeit in Minuten <input name="duration_min" type="number" min="0" value={h.durationMin ?? ''} placeholder="135" class="field mt-1 font-normal" /></label>
-			<label class="label text-sm">SAC-Skala <input name="sac" value={h.sac} placeholder="T2" class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-2">Wegart
-				<select name="category" class="field mt-1 font-normal">
-					{#each [['wanderweg', 'Wanderweg (gelb)'], ['bergwanderweg', 'Bergwanderweg (weiss-rot-weiss)'], ['alpinwanderweg', 'Alpinwanderweg (weiss-blau-weiss)']] as [v, l] (v)}<option value={v} selected={h.category === v}>{l}</option>{/each}
-				</select>
-			</label>
-			<div class="flex flex-wrap items-end gap-4 pb-3 text-sm sm:col-span-4">
-				<label class="flex items-center gap-2"><input type="checkbox" name="family" checked={h.family} class="check" /> Mit Kindern</label>
-				<label class="flex items-center gap-2"><input type="checkbox" name="loop" checked={h.loop} class="check" /> Rundweg</label>
-				<label class="flex items-center gap-2"><input type="checkbox" name="from_hut" checked={h.fromHut} class="check" /> Ab Hüttli zu Fuss</label>
-			</div>
-			<label class="label text-sm sm:col-span-3">Beschreibung Deutsch <textarea name="de" rows="3" class="field mt-1 font-normal">{h.de}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Beschreibung Englisch <textarea name="en" rows="3" class="field mt-1 font-normal">{h.en}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Start <input name="start_name" value={h.startName} class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-3">Ziel <input name="end_name" value={h.endName} class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-3">Saison Deutsch <input name="season_de" value={h.seasonDe} placeholder="Juni bis Oktober" class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-3">Saison Englisch <input name="season_en" value={h.seasonEn} class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-6">Wegpunkte, eine Zeile pro Punkt: Name | Höhe | Minuten ab Start
-				<textarea name="waypoints" rows="5" placeholder={'Griesalp | 1408 |\nBundalp | 1840 | 90'} class="field mt-1 font-mono text-sm font-normal">{wpText(h.waypoints)}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Hin und zurück, Deutsch <textarea name="transit_de" rows="3" class="field mt-1 font-normal">{h.transitDe}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Hin und zurück, Englisch <textarea name="transit_en" rows="3" class="field mt-1 font-normal">{h.transitEn}</textarea></label>
-			<label class="label text-sm sm:col-span-6">Einkehren, eine Zeile pro Ort <textarea name="stops" rows="3" class="field mt-1 font-normal">{(h.stops ?? []).join('\n')}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Unterwegs, Deutsch (eine Zeile pro Punkt) <textarea name="highlights_de" rows="3" class="field mt-1 font-normal">{h.highlightsDe}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Unterwegs, Englisch <textarea name="highlights_en" rows="3" class="field mt-1 font-normal">{h.highlightsEn}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Gut zu wissen, Deutsch <textarea name="tips_de" rows="3" class="field mt-1 font-normal">{h.tipsDe}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Gut zu wissen, Englisch <textarea name="tips_en" rows="3" class="field mt-1 font-normal">{h.tipsEn}</textarea></label>
-			<label class="label text-sm sm:col-span-3">Link mit mehr Infos <input name="url" type="url" value={h.url} class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-2">Adresse <input name="slug" value={h.slug} placeholder="aus dem Namen" class="field mt-1 font-normal" /></label>
-			<label class="label text-sm">Reihenfolge <input name="sort" type="number" value={h.sort} class="field mt-1 font-normal" /></label>
-			<div class="flex items-center gap-3 sm:col-span-6">
-				<button class="btn-line !min-h-9 !py-1 text-sm">{h.id ? 'Speichern' : 'Wanderung hinzufügen'}</button>
-				{#if form?.saved === (h.id ?? 'new')}<span class="text-sm text-moos">Gespeichert</span>{/if}
-				{#if form?.error && form.id === h.id}<span class="text-sm text-geranium" role="alert">{form.error}</span>{/if}
-			</div>
-		</form>
-		{#if h.id}
-			<div class="flex flex-wrap items-center gap-3 border-t border-line pt-3">
-				<form method="POST" action="?/gpx" enctype="multipart/form-data" use:enhance class="flex flex-wrap items-center gap-2">
-					<input type="hidden" name="id" value={h.id} />
-					<label class="text-sm font-semibold">GPX-Datei <input type="file" name="gpx" accept=".gpx,application/gpx+xml" required class="ml-1 text-sm font-normal" /></label>
-					<button class="btn-line !min-h-9 !py-1 text-sm">Route laden</button>
-				</form>
-				<form method="POST" action="?/wanderland" use:enhance class="flex flex-wrap items-center gap-2">
-					<input type="hidden" name="id" value={h.id} />
-					<label class="text-sm font-semibold">oder Wanderland-Route Nr. <input name="nr" placeholder="1.13" class="field ml-1 inline-block !min-h-9 !w-20 !py-1 font-normal" /></label>
-					<button class="btn-line !min-h-9 !py-1 text-sm">Laden</button>
-				</form>
-				<form method="POST" action="?/delete" class="ml-auto" use:enhance={({ cancel }) => { if (!confirm('Wanderung löschen?')) cancel(); }}>
-					<input type="hidden" name="id" value={h.id} /><button class="text-sm text-geranium underline">Löschen</button>
-				</form>
-			</div>
-		{/if}
-	</div>
-{/snippet}
-
-<div class="mt-8 grid gap-4">
-	{#each data.hikes as h (h.id)}{@render hikeForm(h as typeof blank)}{/each}
-	<h2 class="mt-4 text-xl">Neue Wanderung</h2>
-	{@render hikeForm(blank)}
-</div>
+		{#each hikes as h (h.id)}
+			<li class={open === h.id ? 'card-strong p-5' : 'card p-4 sm:p-5'}>
+				{#if open === h.id}
+					<h2 class="mb-4 text-2xl">{h.name}</h2>
+					<HikeForm hike={h} error={error(h.id)} onclose={() => (open = null)} />
+				{:else}
+					<div class="grid gap-4 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center">
+						<div class="rounded-[14px] bg-wash px-2 pt-2">
+							{#if h.profile}<Profile profile={h.profile} height={56} labels={false} title={h.name} />{:else}<p class="py-4 text-center text-sm text-muted">Noch keine Route</p>{/if}
+						</div>
+						<div class="min-w-0">
+							<p class="text-xl font-bold text-brand">{h.name}</p>
+							<p class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold text-ink">
+								<span>{WAY[h.category] ?? 'Wanderweg'}{h.sac ? ` · ${h.sac}` : ''}</span>
+								{#if h.durationMin}<span class="flex items-center gap-1"><Clock size={15} class="text-brand" aria-hidden="true" />{time(h.durationMin)}</span>{/if}
+								{#if h.distanceM}<span>{(h.distanceM / 1000).toLocaleString('de-CH', { maximumFractionDigits: 1 })} km</span>{/if}
+								{#if h.ascentM}<span class="flex items-center gap-1"><TrendingUp size={15} class="text-brand" aria-hidden="true" />{h.ascentM} m</span>{/if}
+								{#if h.fromHut}<span class="flex items-center gap-1"><House size={15} class="text-brand" aria-hidden="true" />ab Hüttli</span>{/if}
+								{#if h.loop}<span class="flex items-center gap-1"><RefreshCw size={15} class="text-brand" aria-hidden="true" />Rundweg</span>{/if}
+								{#if h.family}<span class="flex items-center gap-1"><Baby size={15} class="text-brand" aria-hidden="true" />mit Kindern</span>{/if}
+							</p>
+							<div class="mt-3 flex flex-wrap gap-2">
+								<button type="button" class="btn-line !min-h-11 !px-4 !py-2 text-sm" onclick={() => (open = h.id)}><Pencil size={16} aria-hidden="true" />Bearbeiten</button>
+								<a href="/wanderungen/{h.slug}" target="_blank" class="btn-line !min-h-11 !px-4 !py-2 text-sm">Ansehen<ExternalLink size={15} aria-hidden="true" /></a>
+							</div>
+						</div>
+					</div>
+				{/if}
+			</li>
+		{:else}
+			<li class="text-muted">Noch keine Wanderungen.</li>
+		{/each}
+	</ul>
+</AdminPage>

@@ -84,8 +84,8 @@
 </script>
 
 <Seo
-	title={data.lang === 'en' ? `${data.hutName}: alpine hut for rent in the Kiental` : `${data.hutName}: Alphütte im Kiental mieten`}
-	description={c.tagline + ' ' + (data.lang === 'en' ? 'Solar power, spring water, wood stove. Rented by the week from May to October.' : 'Solarstrom, Quellwasser, Holzherd. Wochenweise zu mieten von Mai bis Oktober.')}
+	title={t.seo.home(data.hutName)}
+	description={c.tagline + ' ' + t.seo.homeDescription}
 	path="/"
 	lang={data.lang}
 	siteUrl={data.siteUrl}
@@ -112,7 +112,7 @@
 		</div>
 	</div>
 	<div class="mt-6 text-brand lg:mt-2">
-		<Panorama hut={data.lang === 'en' ? 'The Hüttli mascot running down to the valley' : 'Das Hüttli rennt ins Tal'} class="h-[210px] w-full sm:h-[290px] lg:h-[420px]" />
+		<Panorama hut={t.hero.mascot} class="h-[210px] w-full sm:h-[290px] lg:h-[420px]" />
 	</div>
 </section>
 
@@ -243,7 +243,7 @@
 					<h2 class="text-[2rem]">{t.sections.hikes}</h2>
 					<a href={localize(data.lang, '/wanderungen')} class="shrink-0 font-bold text-brand underline">{t.hikes.more}</a>
 				</div>
-				<div class="snap-row -mx-5 mt-5 flex snap-x gap-3 overflow-x-auto px-5 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0">
+				<div class="snap-row -mx-5 mt-3 flex snap-x gap-3 overflow-x-auto px-5 pb-3 pt-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0">
 					{#each data.hikes.slice(0, 4) as hike (hike.slug)}
 						<div class="w-[80%] shrink-0 snap-start sm:w-auto"><HikeCard {hike} lang={data.lang} /></div>
 					{/each}
