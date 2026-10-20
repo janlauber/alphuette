@@ -7,6 +7,7 @@
 
 	let { data, form } = $props();
 	const today = toIso(Date.now());
+	let copied = $state(false);
 
 	const months = $derived.by(() => {
 		const start = today.slice(0, 7);
@@ -113,5 +114,14 @@
 				{/each}
 			</ul>
 		</div>
+	</section>
+	<section class="card mt-10 p-5">
+		<h2 class="text-2xl">Im Handy-Kalender</h2>
+		<p class="mt-2 max-w-[60ch] text-muted">Alle Buchungen, Anfragen und Sperren erscheinen in deinem Kalender auf dem Handy und bleiben von selbst aktuell. Einmal einrichten genügt.</p>
+		<div class="mt-4 flex flex-wrap gap-3">
+			<a href={data.feed.replace(/^https?:/, 'webcal:')} class="btn-primary no-underline">Auf dem iPhone abonnieren</a>
+			<button type="button" class="btn-line" onclick={() => navigator.clipboard.writeText(data.feed).then(() => (copied = true))}>{copied ? 'Adresse kopiert' : 'Adresse kopieren'}</button>
+		</div>
+		<p class="mt-3 text-sm text-muted">Android und Google Kalender: Adresse kopieren, dann im Google Kalender am Computer bei «Weitere Kalender» auf «Per URL» gehen und sie einfügen. Die Adresse ist geheim, gib sie nicht weiter.</p>
 	</section>
 </AdminPage>

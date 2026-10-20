@@ -99,6 +99,7 @@
 				<div class="mt-3 flex flex-wrap gap-2">
 					<button type="button" class="btn-line !min-h-0 !px-3 !py-1.5 text-sm" onclick={() => edit(t)} aria-expanded={editing === String(t.id)}>Bearbeiten</button>
 					<form method="POST" action="?/toggle" use:enhance={confirmFirst(() => (t.active ? { title: `«${t.label}» ausschalten?`, text: 'Die Website schickt diese Mail dann nicht mehr, bis du sie wieder einschaltest.', ok: 'Ausschalten' } : null))}><input type="hidden" name="id" value={t.id} /><button class="btn-line !min-h-0 !px-3 !py-1.5 text-sm">{t.active ? 'Ausschalten' : 'Einschalten'}</button></form>
+					<a href="/admin/mails/vorschau/t{t.id}" target="_blank" rel="noopener" class="btn-line !min-h-0 !px-3 !py-1.5 text-sm no-underline">Als Mail ansehen</a>
 					<form method="POST" action="?/test" use:enhance><input type="hidden" name="id" value={t.id} /><button class="btn-line !min-h-0 !px-3 !py-1.5 text-sm">Testmail an mich</button></form>
 					{#if !t.key}
 						<form method="POST" action="?/delete" use:enhance={confirmFirst({ title: `Mail «${t.label}» löschen?`, text: 'Sie geht dann nicht mehr raus. Du kannst es im Verlauf rückgängig machen.', ok: 'Löschen', danger: true })}>
@@ -110,6 +111,16 @@
 			</li>
 		{/each}
 	</ul>
+
+	<section class="mt-12">
+		<h2 class="text-2xl">Mails beim Buchen</h2>
+		<p class="mt-1 max-w-[60ch] text-muted">Diese Mails schickt die Website bei jedem Schritt einer Buchung von selbst. Die Bestätigung hat die Rechnung als PDF und einen Kalendereintrag im Anhang.</p>
+		<ul class="mt-3 flex flex-wrap gap-2">
+			{#each Object.entries(data.flow) as [art, label] (art)}
+				<li><a href="/admin/mails/vorschau/{art}" target="_blank" rel="noopener" class="pill no-underline">{label}</a></li>
+			{/each}
+		</ul>
+	</section>
 
 	<section class="mt-12">
 		<h2 class="text-2xl">Zuletzt verschickt</h2>

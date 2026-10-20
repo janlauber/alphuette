@@ -2,11 +2,11 @@ import { fail } from '@sveltejs/kit';
 import { ADMIN_EMAILS, MAIL_FROM, REPLY_DOMAIN, SITE_URL } from '$app/env/private';
 import { sql } from '#lib/server/db.ts';
 import { getSettings, setSetting, stored } from '#lib/server/settings.ts';
-import { compose, PLACEHOLDERS, templates, TRIGGERS, values, type Template, type Trigger } from '#lib/server/reminders.ts';
+import { compose, exampleBooking, PLACEHOLDERS, templates, TRIGGERS, values, type Template, type Trigger } from '#lib/server/reminders.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { syncTranslations } from '#lib/server/sitetexts.ts';
 import { changeRow, changeSettings, done, log } from '#lib/server/activity.ts';
-import type { Booking } from '#lib/server/bookings.ts';
+import { FLOW_MAILS } from '#lib/server/bookings.ts';
 
 // the domain the site sends from, e.g. alphuette-kiental.ch
 const mailDomain = MAIL_FROM.replace(/^.*@/, '').replace(/>.*$/, '').toLowerCase();
@@ -14,14 +14,6 @@ const AREA = 'Mails';
 const link = '/admin/mails';
 
 // a made-up stay three weeks from now, only for the preview and the test mail
-const example = (): Booking => {
-	const inDays = (n: number) => new Date(Date.now() + n * 86400_000).toISOString().slice(0, 10);
-	return {
-		id: 0, ref: 'BEISPL', status: 'bestaetigt', checkIn: inDays(21), checkOut: inDays(28), name: 'Anna Muster', email: 'anna@example.ch',
-		phone: '079 123 45 67', city: 'Bern', country: 'CH', lang: 'de', adults: 2, children: 2, infants: 0, linen: 4, arrival: 'oev', note: null, hostNote: null,
-		quote: null, totalRp: 74000, paidAt: null, confirmedAt: new Date(), createdAt: new Date(), updatedAt: new Date()
-	};
-};
 
 export const load = async () => {
 	const [s, list, sent] = await Promise.all([
@@ -35,9 +27,10 @@ export const load = async () => {
 		fallback: ADMIN_EMAILS,
 		domain: mailDomain,
 		templates: list,
+		flow: FLOW_MAILS,
 		triggers: TRIGGERS,
 		placeholders: PLACEHOLDERS,
-		example: values(example(), 'de', s),
+		example: values(exampleBooking(), 'de', s),
 		sent: sent.map((r) => ({ ...r, label: labels.get(r.kind) ?? r.kind }))
 	};
 };
@@ -103,8 +96,8 @@ export const actions = {
 		const id = Number((await request.formData()).get('id'));
 		const [t] = await sql<Template[]>`select * from mail_templates where id = ${id}`;
 		if (!t) return;
-		const m = await compose(t, example(), await getSettings());
-		await sendMail({ to: locals.admin!, subject: `[Test] ${m.subject}`, text: `So sieht die Mail «${t.label}» mit einem erfundenen Gast aus:\n\n${m.text}` });
+		const m = await compose(t, exampleBooking(), await getSettings(), false);
+		await sendMail({ ...m, to: locals.admin!, subject: `[Test] ${m.subject}`, preheader: `So sieht die Mail «${t.label}» mit einem erfundenen Gast aus` });
 		return done(`Testmail an ${locals.admin} geschickt`);
 	}
 };

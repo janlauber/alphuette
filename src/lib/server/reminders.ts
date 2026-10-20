@@ -1,9 +1,9 @@
 import { SITE_URL } from '$app/env/private';
 import { chf } from '#lib/booking.ts';
-import { fmtDate, type Lang } from '#lib/i18n.ts';
+import { dict, fmtDate, type Lang } from '#lib/i18n.ts';
 import { sql } from './db.ts';
-import { guestUrl, type Booking } from './bookings.ts';
-import { sendMail } from './mail.ts';
+import { bookingFiles, guestUrl, type Booking } from './bookings.ts';
+import { sendMail, type Mail } from './mail.ts';
 import { getSettings, inbox, type Settings } from './settings.ts';
 import { lookup } from './translate.ts';
 import { log } from './activity.ts';
@@ -72,11 +72,13 @@ export function values(b: Booking, lang: Lang, s: Settings): Record<string, stri
 	};
 }
 
-/** The finished mail: in German for Tom, in the guest's language for guests. */
-export async function compose(t: Template, b: Booking, s: Settings) {
+/** The finished mail: in German for Tom, in the guest's language for guests, with a button for the link the template uses. */
+export async function compose(t: Template, b: Booking, s: Settings, files = true): Promise<Mail> {
+	const uses = (k: string) => t.body.includes(`{${k}}`);
 	if (t.audience === 'host') {
 		const v = values(b, 'de', s);
-		return { to: inbox(s), subject: render(t.subject, v), text: render(t.body, v) };
+		const subject = render(t.subject, v);
+		return { to: inbox(s), subject, heading: subject, text: render(t.body, v), button: uses('verwaltung') ? { label: 'Zur Buchung im Admin', url: v.verwaltung } : undefined };
 	}
 	let { subject, body } = t;
 	if (b.lang !== 'de') {
@@ -85,7 +87,12 @@ export async function compose(t: Template, b: Booking, s: Settings) {
 		[subject, body] = [pick(subject), pick(body)];
 	}
 	const v = values(b, b.lang, s);
-	return { to: b.email, subject: render(subject, v), text: render(body, v) };
+	const m = dict[b.lang].mail;
+	const button = uses('rechnung') ? { label: m.invoiceButton, url: v.rechnung } : uses('bewertung') ? { label: m.reviewButton, url: v.bewertung } : uses('link') ? { label: m.bookingButton, url: v.link } : undefined;
+	// the payment reminder carries the bill
+	const bill = files && (t.trigger === 'unpaid_before_arrival' || uses('rechnung')) ? (await bookingFiles(b)).filter((f) => f.type === 'application/pdf') : [];
+	const title = render(subject, v);
+	return { to: b.email, subject: title, heading: title, text: render(body, v), button, attachments: bill };
 }
 
 const due = (t: Template) => {
@@ -117,3 +124,13 @@ export async function sendReminders() {
 
 /** When which automatic mail went out for one booking, for the booking page. */
 export const mailsOf = (id: number) => sql<{ kind: string; at: Date }[]>`select kind, at from booking_mails where booking_id = ${id} order by at`;
+
+/** A made-up guest for previews and test mails. */
+export const exampleBooking = (): Booking => {
+	const inDays = (n: number) => new Date(Date.now() + n * 86400_000).toISOString().slice(0, 10);
+	return {
+		id: 0, ref: 'BEISPL', status: 'bestaetigt', checkIn: inDays(21), checkOut: inDays(28), name: 'Anna Muster', email: 'anna@example.ch',
+		phone: '079 123 45 67', city: 'Bern', country: 'CH', lang: 'de', adults: 2, children: 2, infants: 0, linen: 4, arrival: 'oev', note: null, hostNote: null,
+		quote: null, totalRp: 74000, paidAt: null, confirmedAt: new Date(), createdAt: new Date(), updatedAt: new Date()
+	};
+};

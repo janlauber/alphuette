@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { sql } from '#lib/server/db.ts';
-import { newRef } from '#lib/server/bookings.ts';
+import { hostCalendarUrl, newRef } from '#lib/server/bookings.ts';
 import { getSeasons } from '#lib/server/settings.ts';
 import { changeRow, done, log } from '#lib/server/activity.ts';
 import { fmtDate } from '#lib/i18n.ts';
@@ -14,7 +14,7 @@ export const load = async () => {
 			where status in ('angefragt', 'bestaetigt', 'gesperrt') and check_out >= current_date order by check_in`,
 		getSeasons()
 	]);
-	return { bookings, seasons };
+	return { bookings, seasons, feed: hostCalendarUrl() };
 };
 
 const iso = (v: FormDataEntryValue | null) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null);

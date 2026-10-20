@@ -19,7 +19,7 @@ export const actions = {
 		if (bookings.length) {
 			const m = dict[lang].mail;
 			const list = bookings.map((b) => `${fmtDate(b.checkIn, lang)} – ${fmtDate(b.checkOut, lang)}\n${guestUrl({ ...b, lang })}`).join('\n\n');
-			await sendMail({ to: email, subject: m.linksSubject, text: `${m.linksText(list)}\n\n${SITE_URL}` });
+			await sendMail({ to: email, subject: m.linksSubject, heading: m.linksHeading, text: `${m.linksText(list)}\n\n${SITE_URL}` });
 		}
 		return { sent: true };
 	}

@@ -39,15 +39,15 @@ export function missing(h: InvoiceHost) {
 	return [!h.iban && 'IBAN', !h.name.trim() && 'Name', !h.street.trim() && 'Strasse', !h.zip.trim() && 'PLZ', !h.city.trim() && 'Ort'].filter((x): x is string => !!x);
 }
 
+/** What the QR code holds; the same for the bill page and the PDF. */
+export const billData = (h: InvoiceHost, b: InvoiceBooking) => ({
+	currency: 'CHF' as const,
+	amount: (b.totalRp ?? 0) / 100,
+	creditor: { name: h.name, ...splitStreet(h.street), zip: h.zip, city: h.city, country: 'CH', account: h.iban },
+	reference: reference(h.iban, b),
+	message: `Alphütte ${b.ref}`
+});
+
 export function qrBill(h: InvoiceHost, b: InvoiceBooking, lang: QrLang) {
-	return new SwissQRBill(
-		{
-			currency: 'CHF',
-			amount: (b.totalRp ?? 0) / 100,
-			creditor: { name: h.name, ...splitStreet(h.street), zip: h.zip, city: h.city, country: 'CH', account: h.iban },
-			reference: reference(h.iban, b),
-			message: `Alphütte ${b.ref}`
-		},
-		{ language: lang }
-	).toString();
+	return new SwissQRBill(billData(h, b), { language: lang }).toString();
 }
