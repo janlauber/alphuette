@@ -7,7 +7,7 @@
 	let { data, form } = $props();
 	const b = $derived(data.b);
 	const t = dict.de;
-	const STATUS: Record<string, string> = { angefragt: 'Angefragt', bestaetigt: 'Bestätigt', abgelehnt: 'Abgelehnt', storniert: 'Storniert' };
+	const STATUS: Record<string, string> = { unbestaetigt: 'E-Mail unbestätigt', angefragt: 'Angefragt', bestaetigt: 'Bestätigt', abgelehnt: 'Abgelehnt', storniert: 'Storniert' };
 	const ask = (msg: string) => ({ cancel }: { cancel: () => void }) => {
 		if (!confirm(msg)) cancel();
 	};

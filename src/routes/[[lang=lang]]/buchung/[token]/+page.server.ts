@@ -1,6 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
-import { addMessage, bookingByToken, messagesOf, withdraw } from '#lib/server/bookings.ts';
+import { addMessage, bookingByToken, confirmEmail, messagesOf, withdraw } from '#lib/server/bookings.ts';
+import { addReview, reviewOf } from '#lib/server/reviews.ts';
 import { getSettings } from '#lib/server/settings.ts';
+import { listPhotos } from '#lib/server/images.ts';
 import { limited } from '#lib/server/limit.ts';
 
 async function booking(token: string) {
@@ -9,11 +11,19 @@ async function booking(token: string) {
 	return b;
 }
 
+const listItems = (text: string) =>
+	text
+		.split('\n')
+		.map((l) => l.replace(/^\s*[-•]\s*/, '').trim())
+		.filter(Boolean);
+
 export const load = async ({ params, parent }) => {
 	const { lang } = await parent();
 	const b = await booking(params.token);
-	const [settings, messages] = await Promise.all([getSettings(), messagesOf(b.id)]);
+	const [settings, messages, review, photos] = await Promise.all([getSettings(), messagesOf(b.id), reviewOf(b.id), listPhotos(lang)]);
+	const content = settings.content[lang];
 	const confirmed = b.status === 'bestaetigt';
+	const today = new Date().toISOString().slice(0, 10);
 	return {
 		booking: {
 			ref: b.ref,
@@ -28,17 +38,27 @@ export const load = async ({ params, parent }) => {
 			total: b.totalRp ?? 0,
 			paidAt: b.paidAt
 		},
+		photo: photos[0] ?? null,
 		messages: messages.map(({ id, author, body, createdAt }) => ({ id, author, body, createdAt })),
-		guestInfo: confirmed ? settings.content[lang].guest_info || settings.content.de.guest_info : '',
-		arrival: settings.content[lang].arrival,
+		guestInfo: confirmed ? content.guest_info || settings.content.de.guest_info : '',
+		arrival: content.arrival,
+		packing: confirmed || b.status === 'angefragt' ? listItems(content.packing) : [],
 		rates: { checkIn: settings.rates.checkIn, checkOut: settings.rates.checkOut },
-		invoiceReady: confirmed && !!settings.host.iban
+		invoiceReady: confirmed && !!settings.host.iban,
+		canReview: confirmed && b.checkOut <= today && !review,
+		reviewed: !!review
 	};
 };
 
 export const actions = {
+	confirm: async ({ params }) => {
+		const b = await booking(params.token);
+		await confirmEmail(b.id);
+		return { confirmed: true };
+	},
 	message: async ({ params, request }) => {
 		const b = await booking(params.token);
+		if (b.status === 'unbestaetigt') return fail(400, { empty: true });
 		if (limited('msg:' + b.id, 20, 60 * 60_000)) return fail(429, { tooMany: true });
 		const body = String((await request.formData()).get('body') ?? '').trim().slice(0, 5000);
 		if (!body) return fail(400, { empty: true });
@@ -48,5 +68,15 @@ export const actions = {
 	withdraw: async ({ params }) => {
 		const b = await booking(params.token);
 		await withdraw(b.id);
+	},
+	review: async ({ params, request }) => {
+		const b = await booking(params.token);
+		const f = await request.formData();
+		const rating = Math.trunc(Number(f.get('rating')));
+		const body = String(f.get('body') ?? '').trim().slice(0, 3000);
+		const name = String(f.get('name') ?? '').trim().slice(0, 80) || b.name.split(' ')[0];
+		if (!(rating >= 1 && rating <= 5) || body.length < 10) return fail(400, { reviewInvalid: true });
+		await addReview(b, rating, body, name);
+		return { reviewed: true };
 	}
 };

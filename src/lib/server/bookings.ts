@@ -1,5 +1,6 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
-import { ADMIN_EMAILS, APP_SECRET, SITE_URL } from '$app/env/private';
+import { randomBytes } from 'node:crypto';
+import { ADMIN_EMAILS, SITE_URL } from '$app/env/private';
+import { mac, safeEqual } from './signing.ts';
 import { quote, chf, type Guests, type Range } from '#lib/booking.ts';
 import { fmtDate, type Lang } from '#lib/i18n.ts';
 import { sql } from './db.ts';
@@ -31,23 +32,7 @@ export type Booking = {
 	updatedAt: Date;
 };
 
-// Guest links and reply addresses are signed, so no tokens are stored.
-let signingKey = APP_SECRET ?? '';
-
-/** Key from APP_SECRET, else one generated once and kept in the database. Called at startup. */
-export async function loadSigningKey() {
-	if (signingKey) return;
-	await sql`insert into settings (key, value) values ('signing_key', ${sql.json(randomBytes(32).toString('base64url'))})
-		on conflict (key) do nothing`;
-	const [row] = await sql`select value from settings where key = 'signing_key'`;
-	signingKey = row.value;
-}
-
-const sign = (purpose: string, ref: string) => {
-	if (!signingKey) throw new Error('signing key not loaded');
-	return createHmac('sha256', signingKey).update(`${purpose}:${ref}`).digest();
-};
-const safeEqual = (a: Buffer, b: Buffer) => a.length === b.length && timingSafeEqual(a, b);
+const sign = (purpose: string, ref: string) => mac(purpose, ref);
 
 export const guestToken = (ref: string) => `${ref}-${sign('guest', ref).subarray(0, 18).toString('base64url')}`;
 export const guestUrl = (b: Pick<Booking, 'ref' | 'lang'>) =>
@@ -75,7 +60,7 @@ export async function bookingByReplyAddress(address: string) {
 export async function takenRanges(): Promise<Range[]> {
 	return sql<Range[]>`
 		select check_in as start, check_out as end from bookings
-		where status in ('angefragt', 'bestaetigt', 'gesperrt') and check_out > current_date
+		where status in ('unbestaetigt', 'angefragt', 'bestaetigt', 'gesperrt') and check_out > current_date
 		order by check_in`;
 }
 
@@ -104,38 +89,58 @@ export async function createRequest(r: Request) {
 
 	let booking: Booking;
 	try {
-		[booking] = await sql<Booking[]>`
-			insert into bookings (ref, status, check_in, check_out, name, email, phone, city, lang,
-				adults, children, infants, linen, arrival, note, quote, total_rp)
-			values (${newRef()}, 'angefragt', ${r.checkIn}, ${r.checkOut}, ${r.name}, ${r.email}, ${r.phone || null},
-				${r.city}, ${r.lang}, ${r.guests.adults}, ${r.guests.children}, ${r.guests.infants}, ${r.guests.linen},
-				${r.arrival}, ${r.note || null}, ${sql.json({ nights: q.nights, lines: q.lines })}, ${q.total})
-			returning *`;
+		[booking] = await sql.begin(async (tx) => {
+			await tx`delete from bookings where status = 'unbestaetigt' and created_at < now() - interval '30 minutes'`;
+			return tx<Booking[]>`
+				insert into bookings (ref, status, check_in, check_out, name, email, phone, city, lang,
+					adults, children, infants, linen, arrival, note, quote, total_rp)
+				values (${newRef()}, 'unbestaetigt', ${r.checkIn}, ${r.checkOut}, ${r.name}, ${r.email}, ${r.phone || null},
+					${r.city}, ${r.lang}, ${r.guests.adults}, ${r.guests.children}, ${r.guests.infants}, ${r.guests.linen},
+					${r.arrival}, ${r.note || null}, ${sql.json({ nights: q.nights, lines: q.lines })}, ${q.total})
+				returning *`;
+		});
 	} catch (e) {
 		if (isExclusionViolation(e)) return { error: 'taken' as const };
 		throw e;
 	}
 	if (r.note) await sql`insert into messages (booking_id, author, body) values (${booking.id}, 'gast', ${r.note})`;
 
-	const when = `${fmtDate(r.checkIn, r.lang)} bis ${fmtDate(r.checkOut, r.lang)}`;
-	const people = r.guests.adults + r.guests.children + r.guests.infants;
+	// Only the guest gets mail now; Tom hears about it once the address is confirmed.
 	await sendMail({
 		to: r.email,
-		replyTo: replyTo(booking.ref),
-		subject:
-			r.lang === 'en' ? `Your request for the Alphütte (${booking.ref})` : `Deine Anfrage für die Alphütte (${booking.ref})`,
+		subject: r.lang === 'en' ? `Please confirm your request (${booking.ref})` : `Bitte bestätige deine Anfrage (${booking.ref})`,
 		text:
 			r.lang === 'en'
-				? `Hello ${r.name}\n\nThank you for your request from ${fmtDate(r.checkIn, 'en')} to ${fmtDate(r.checkOut, 'en')} for ${people} ${people === 1 ? 'person' : 'people'}. Tom will reply as soon as possible. The dates are held for you until then.\n\nYour request, messages and later the bill are here:\n${guestUrl(booking)}${replyTo(booking.ref) ? '\n\nYou can reply to this email directly.' : ''}`
-				: `Hoi ${r.name}\n\nDanke für deine Anfrage vom ${when} für ${people} ${people === 1 ? 'Person' : 'Personen'}. Tom meldet sich so bald wie möglich. Bis dahin sind die Daten für dich reserviert.\n\nDeine Anfrage, die Nachrichten und später die Rechnung findest du hier:\n${guestUrl(booking)}${replyTo(booking.ref) ? '\n\nDu kannst direkt auf diese Mail antworten.' : ''}`
+				? `Hello ${r.name}\n\nPlease confirm your request for the Alphütte from ${fmtDate(r.checkIn, 'en')} to ${fmtDate(r.checkOut, 'en')} with this link. The week is held for you for 30 minutes.\n\n${guestUrl(booking)}\n\nIf you did not send a request, ignore this email.`
+				: `Hoi ${r.name}\n\nBitte bestätige deine Anfrage für die Alphütte vom ${fmtDate(r.checkIn, 'de')} bis ${fmtDate(r.checkOut, 'de')} mit diesem Link. Die Woche ist 30 Minuten für dich reserviert.\n\n${guestUrl(booking)}\n\nWenn du keine Anfrage geschickt hast, kannst du diese Mail ignorieren.`
+	});
+	return { booking };
+}
+
+/** The guest opened the link from the mail and confirmed: now Tom gets the request. */
+export async function confirmEmail(id: number) {
+	const [b] = await sql<Booking[]>`
+		update bookings set status = 'angefragt', updated_at = now()
+		where id = ${id} and status = 'unbestaetigt' returning *`;
+	if (!b) return false;
+	const people = b.adults + b.children + b.infants;
+	const when = `${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')}`;
+	await sendMail({
+		to: b.email,
+		replyTo: replyTo(b.ref),
+		subject: b.lang === 'en' ? `Your request for the Alphütte (${b.ref})` : `Deine Anfrage für die Alphütte (${b.ref})`,
+		text:
+			b.lang === 'en'
+				? `Hello ${b.name}\n\nThank you, your request from ${fmtDate(b.checkIn, 'en')} to ${fmtDate(b.checkOut, 'en')} for ${people} ${people === 1 ? 'person' : 'people'} is with Tom now. He will reply by email. The dates are held for you until then.\n\nYour request, messages and later the bill:\n${guestUrl(b)}${replyTo(b.ref) ? '\n\nYou can reply to this email directly.' : ''}`
+				: `Hoi ${b.name}\n\nDanke, deine Anfrage vom ${when} für ${people} ${people === 1 ? 'Person' : 'Personen'} ist jetzt bei Tom. Er meldet sich per Mail. Bis dahin sind die Daten für dich reserviert.\n\nDeine Anfrage, die Nachrichten und später die Rechnung:\n${guestUrl(b)}${replyTo(b.ref) ? '\n\nDu kannst direkt auf diese Mail antworten.' : ''}`
 	});
 	await sendMail({
 		to: ADMIN_EMAILS,
-		replyTo: replyTo(booking.ref),
-		subject: `Neue Anfrage: ${r.name}, ${fmtDate(r.checkIn, 'de', { year: undefined })} bis ${fmtDate(r.checkOut, 'de', { year: undefined })}`,
-		text: `${r.name} aus ${r.city} fragt an:\n\n${when}\n${r.guests.adults} Erwachsene, ${r.guests.children} Kinder, ${r.guests.infants} Kleinkinder\nTotal ${chf(q.total)}\n${r.note ? `\nNachricht:\n${r.note}\n` : ''}\nBestätigen oder ablehnen:\n${SITE_URL}/admin/buchungen/${booking.id}${replyTo(booking.ref) ? '\n\nWenn du auf diese Mail antwortest, geht die Antwort an den Gast.' : ''}`
+		replyTo: replyTo(b.ref),
+		subject: `Neue Anfrage: ${b.name}, ${fmtDate(b.checkIn, 'de', { year: undefined })} bis ${fmtDate(b.checkOut, 'de', { year: undefined })}`,
+		text: `${b.name} aus ${b.city} fragt an:\n\n${when}\nErwachsene: ${b.adults}, Kinder: ${b.children}, Kleinkinder: ${b.infants}\nTotal ${chf(b.totalRp ?? 0)}\n${b.note ? `\nNachricht:\n${b.note}\n` : ''}\nBestätigen oder ablehnen:\n${SITE_URL}/admin/buchungen/${b.id}${replyTo(b.ref) ? '\n\nWenn du auf diese Mail antwortest, geht die Antwort an den Gast.' : ''}`
 	});
-	return { booking };
+	return true;
 }
 
 const STATUS_MAIL = {
@@ -171,7 +176,7 @@ const STATUS_MAIL = {
 	}
 };
 
-const FROM = { bestaetigt: ['angefragt'], abgelehnt: ['angefragt'], storniert: ['angefragt', 'bestaetigt'] };
+const FROM = { bestaetigt: ['angefragt'], abgelehnt: ['angefragt'], storniert: ['unbestaetigt', 'angefragt', 'bestaetigt'] };
 
 /** Host changes the status. Returns false if the transition is not allowed. */
 export async function setStatus(id: number, status: keyof typeof STATUS_MAIL, notify = true) {
@@ -185,10 +190,11 @@ export async function setStatus(id: number, status: keyof typeof STATUS_MAIL, no
 
 /** Guest withdraws their own pending request. */
 export async function withdraw(id: number) {
+	const [prev] = await sql`select status from bookings where id = ${id}`;
 	const [b] = await sql<Booking[]>`
 		update bookings set status = 'storniert', updated_at = now()
-		where id = ${id} and status = 'angefragt' returning *`;
-	if (b)
+		where id = ${id} and status in ('unbestaetigt', 'angefragt') returning *`;
+	if (b && prev?.status === 'angefragt')
 		await sendMail({
 			to: ADMIN_EMAILS,
 			subject: `Anfrage zurückgezogen: ${b.name} (${b.ref})`,

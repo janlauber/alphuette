@@ -9,15 +9,16 @@
 		tagline: ['Kurzbeschreibung', 'Ein Satz unter dem Titel, erscheint auch bei Google.'],
 		intro: ['Einleitung', 'Leerzeile = neuer Absatz.'],
 		sleeping: ['Schlafen', 'Zeilen mit "- " am Anfang werden eine Liste.'],
-		amenities: ['Ausstattung', ''],
 		good_to_know: ['Gut zu wissen', 'Was Gäste wissen sollten, bevor sie buchen.'],
 		arrival: ['Anreise', ''],
 		rules: ['Hausregeln', ''],
 		payment: ['Zahlung und Absage', ''],
-		area: ['Umgebung: Einkaufen, Essen, Gästekarte', 'Erscheint auf der Seite Umgebung.'],
+		area: ['Umgebung: Einkaufen, Essen, Gästekarte', 'Erscheint auf der Seite Umgebung. "Titel: Text" wird zu einer Karte.'],
+		faq: ['Häufige Fragen', 'Erste Zeile die Frage, darunter die Antwort, Leerzeile dazwischen. Erscheint auch bei Google.'],
+		packing: ['Packliste für Gäste', 'Eine Zeile pro Punkt mit "- " am Anfang. Gäste können sie abhaken.'],
 		guest_info: ['Infos nur für bestätigte Gäste', 'Schlüssel, genaue Lage, Parkplatz, Weg zum Hüttli. Sehen nur Gäste mit bestätigter Buchung.']
 	};
-	const tips = $derived([...data.tips, { name: '', time: '', alpine: false, de: '', en: '', url: '' }]);
+	const amenities = $derived([...data.amenities, { icon: 'info', de: '', en: '' }]);
 </script>
 
 <h1 class="text-3xl">Inhalte</h1>
@@ -49,22 +50,22 @@
 </section>
 
 <section class="mt-12">
-	<h2 class="text-xl">Wanderungen</h2>
-	<p class="text-sm text-stein">Erscheinen als Wegweiser. Die ersten vier stehen auf der Startseite. Leere Zeilen werden entfernt.</p>
-	<form method="POST" action="?/tips" use:enhance={keep} class="mt-4 grid gap-4">
-		{#each tips as tip, i (i)}
-			<fieldset class="grid gap-2 rounded-[3px] bg-paper p-4 sm:grid-cols-6">
-				<label class="label text-sm sm:col-span-3">Ziel <input name="name" value={tip.name} class="field mt-1 font-normal" /></label>
-				<label class="label text-sm sm:col-span-2">Gehzeit <input name="time" value={tip.time} placeholder="2 h 15 min" class="field mt-1 font-normal" /></label>
-				<label class="flex items-end gap-2 pb-2 text-sm"><input type="checkbox" name="alpine" value={i} checked={tip.alpine} class="accent-tanne" /> Bergweg</label>
-				<label class="label text-sm sm:col-span-3">Beschreibung Deutsch <textarea name="de" rows="2" class="field mt-1 font-normal">{tip.de}</textarea></label>
-				<label class="label text-sm sm:col-span-3">Beschreibung Englisch <textarea name="en" rows="2" class="field mt-1 font-normal">{tip.en}</textarea></label>
-				<label class="label text-sm sm:col-span-6">Link <input name="url" type="url" value={tip.url} class="field mt-1 font-normal" /></label>
-			</fieldset>
+	<h2 class="text-xl">Ausstattung</h2>
+	<p class="text-sm text-stein">Erscheint als Liste mit Icons. Leere Zeilen werden entfernt.</p>
+	<form method="POST" action="?/amenities" use:enhance={keep} class="mt-4 grid gap-2">
+		{#each amenities as a, i (i)}
+			<div class="grid grid-cols-[150px_1fr] gap-2 rounded-[12px] bg-paper p-2 sm:grid-cols-[170px_1fr_1fr]">
+				<label class="sr-only" for="icon-{i}">Icon</label>
+				<select id="icon-{i}" name="icon" class="field !min-h-10 !py-1.5 text-sm">
+					{#each data.icons as icon (icon)}<option value={icon} selected={a.icon === icon}>{icon}</option>{/each}
+				</select>
+				<input name="de" value={a.de} placeholder="Deutsch" aria-label="Deutsch" class="field !min-h-10 !py-1.5" />
+				<input name="en" value={a.en} placeholder="Englisch" aria-label="Englisch" class="field col-span-2 !min-h-10 !py-1.5 sm:col-span-1" />
+			</div>
 		{/each}
 		<div class="flex items-center gap-3">
-			<button class="btn-gelb !py-2">Wanderungen speichern</button>
-			{#if form?.saved === 'tips'}<span class="text-sm text-moos">Gespeichert</span>{/if}
+			<button class="btn-gelb !py-2">Ausstattung speichern</button>
+			{#if form?.saved === 'amenities'}<span class="text-sm text-moos">Gespeichert</span>{/if}
 		</div>
 	</form>
 </section>

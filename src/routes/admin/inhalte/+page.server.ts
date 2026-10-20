@@ -1,10 +1,11 @@
 import { fail } from '@sveltejs/kit';
 import { formatIBAN, isIBANValid } from 'swissqrbill/utils';
-import { DEFAULTS, getSettings, setSetting, type Content, type Tip } from '#lib/server/settings.ts';
+import { DEFAULTS, getSettings, setSetting, type Amenity, type Content } from '#lib/server/settings.ts';
+import { ICONS } from '#lib/icons.ts';
 
 export const load = async () => {
 	const s = await getSettings();
-	return { name: s.name, host: s.host, content: s.content, tips: s.tips, fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[] };
+	return { name: s.name, host: s.host, content: s.content, amenities: s.amenities, icons: Object.keys(ICONS), fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[] };
 };
 
 /** Swiss or Liechtenstein IBAN (the only ones a QR bill accepts), formatted, or null. */
@@ -48,22 +49,14 @@ export const actions = {
 		});
 		return { saved: 'host' };
 	},
-	tips: async ({ request }) => {
+	amenities: async ({ request }) => {
 		const f = await request.formData();
-		const col = (k: string) => f.getAll(k).map((v) => String(v).trim().slice(0, 500));
-		const [names, times, de, en, urls] = [col('name'), col('time'), col('de'), col('en'), col('url')];
-		const alpine = new Set(col('alpine'));
-		const tips: Tip[] = names
-			.map((name, i) => ({
-				name,
-				time: times[i],
-				alpine: alpine.has(String(i)),
-				de: de[i],
-				en: en[i],
-				url: /^https?:\/\//.test(urls[i]) ? urls[i] : ''
-			}))
-			.filter((t) => t.name);
-		await setSetting('tips', tips);
-		return { saved: 'tips' };
+		const col = (k: string) => f.getAll(k).map((v) => String(v).trim().slice(0, 80));
+		const [icons, de, en] = [col('icon'), col('de'), col('en')];
+		const list: Amenity[] = de
+			.map((label, i) => ({ icon: icons[i] in ICONS ? icons[i] : 'info', de: label, en: en[i] }))
+			.filter((a) => a.de);
+		await setSetting('amenities', list);
+		return { saved: 'amenities' };
 	}
 };

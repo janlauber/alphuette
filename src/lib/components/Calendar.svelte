@@ -73,7 +73,7 @@
 	<div class="flex items-center justify-between gap-2">
 		<button
 			type="button"
-			class="grid size-9 place-items-center rounded-full hover:bg-linie disabled:opacity-25"
+			class="grid size-9 place-items-center rounded-full hover:bg-sand disabled:opacity-25"
 			aria-label={t.calendar.prev}
 			disabled={month <= today.slice(0, 7)}
 			onclick={() => (month = shift(month, -1))}
@@ -87,7 +87,7 @@
 		</div>
 		<button
 			type="button"
-			class="grid size-9 place-items-center rounded-full hover:bg-linie disabled:opacity-25"
+			class="grid size-9 place-items-center rounded-full hover:bg-sand disabled:opacity-25"
 			aria-label={t.calendar.next}
 			disabled={shift(month, months - 1) >= lastMonth}
 			onclick={() => (month = shift(month, 1))}
@@ -99,7 +99,7 @@
 	<div class="mt-3 grid gap-6" style="grid-template-columns: repeat({months}, minmax(0, 1fr))">
 		{#each shown as ym (ym)}
 			<div>
-				<div class="grid grid-cols-7 text-center text-xs text-stein" aria-hidden="true">
+				<div class="grid grid-cols-7 text-center text-xs text-muted" aria-hidden="true">
 					{#each weekdays as w (w)}<span class="pb-1">{w.slice(0, 2)}</span>{/each}
 				</div>
 				<div class="grid grid-cols-7" role="group" aria-label={monthName(ym)}>
@@ -110,11 +110,11 @@
 							<button
 								type="button"
 								class="relative aspect-square text-[0.95rem] tabular-nums transition-colors
-									{edge ? 'z-10 rounded-full bg-tanne font-semibold text-kalk' : ''}
-									{inRange ? 'bg-gelb/35' : ''}
+									{edge ? 'z-10 rounded-full bg-geranium font-semibold text-white' : ''}
+									{inRange ? 'bg-blush' : ''}
 									{!edge && enabled(d) ? 'rounded-full hover:outline hover:outline-1 hover:outline-tanne' : ''}
-									{!edge && !enabled(d) ? 'text-stein/45' : ''}
-									{isTaken(d, taken) && !edge ? 'line-through decoration-stein/60' : ''}"
+									{!edge && !enabled(d) ? 'text-muted/40' : ''}
+									{isTaken(d, taken) && !edge ? 'line-through decoration-muted/60' : ''}"
 								disabled={!enabled(d) && !edge}
 								aria-pressed={edge}
 								aria-label={label(d)}
@@ -130,7 +130,7 @@
 			</div>
 		{/each}
 	</div>
-	<p class="mt-2 min-h-6 text-sm text-stein" aria-live="polite">
+	<p class="mt-2 min-h-6 text-sm text-muted" aria-live="polite">
 		{picking === 'out' ? t.calendar.pickOut : !checkIn ? t.calendar.pickIn : ''}
 	</p>
 </div>

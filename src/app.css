@@ -1,37 +1,50 @@
 @import 'tailwindcss';
 
+/* Design C "Geranie": white, dark wood, geranium red like the flowers on chalet windows. */
 @theme {
-	--color-kalk: #f1f2ec;
-	--color-paper: #fbfbf8;
-	--color-tanne: #1e2b26;
-	--color-moos: #3d5246;
-	--color-stein: #5e665f;
-	--color-linie: #d6d9d0;
-	--color-gelb: #f5c400;
-	--color-rot: #c3261c;
-	--font-serif: 'Newsreader Variable', Georgia, serif;
-	--font-sans: 'Source Sans 3 Variable', ui-sans-serif, system-ui, sans-serif;
+	--color-paper: #ffffff;
+	--color-ink: #2a201b;
+	--color-muted: #6e625a;
+	--color-sand: #f3efeb;
+	--color-line: #eae4df;
+	--color-fir: #2f5d46;
+	--color-geranium: #d2373f;
+	--color-geranium-dark: #b42b33;
+	--color-blush: #fde4e5;
+
+	/* older names, still used in the admin */
+	--color-kalk: #f7f5f3;
+	--color-tanne: #2a201b;
+	--color-moos: #2f5d46;
+	--color-stein: #6e625a;
+	--color-linie: #eae4df;
+	--color-gelb: #fde4e5;
+	--color-rot: #d2373f;
+
+	--font-serif: 'Gloock', Georgia, serif;
+	--font-sans: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
 	html {
-		background: var(--color-kalk);
-		color: var(--color-tanne);
+		background: var(--color-paper);
+		color: var(--color-ink);
 		font-family: var(--font-sans);
 		-webkit-font-smoothing: antialiased;
 		scroll-padding-top: 5rem;
+		-webkit-tap-highlight-color: transparent;
 	}
 	body {
-		font-size: 1.0625rem;
+		font-size: 1rem;
 		line-height: 1.55;
 	}
 	h1,
 	h2,
 	h3 {
 		font-family: var(--font-serif);
-		font-weight: 420;
-		line-height: 1.12;
-		letter-spacing: -0.012em;
+		font-weight: 400;
+		line-height: 1.08;
+		letter-spacing: -0.005em;
 		text-wrap: balance;
 	}
 	a {
@@ -39,11 +52,11 @@
 		text-decoration-thickness: 1px;
 	}
 	:focus-visible {
-		outline: 2px solid var(--color-tanne);
+		outline: 2px solid var(--color-ink);
 		outline-offset: 2px;
 	}
 	::selection {
-		background: var(--color-gelb);
+		background: var(--color-blush);
 	}
 	@media (prefers-reduced-motion: reduce) {
 		*,
@@ -64,40 +77,47 @@
 }
 .richtext ul {
 	display: grid;
-	gap: 0.35em;
+	gap: 0.4em;
 }
 .richtext li {
 	position: relative;
-	padding-left: 1.1em;
+	padding-left: 1.25em;
 }
 .richtext li::before {
 	content: '';
 	position: absolute;
-	left: 0.1em;
-	top: 0.68em;
-	width: 0.42em;
-	height: 0.42em;
-	background: var(--color-moos);
+	left: 0.15em;
+	top: 0.62em;
+	width: 0.4em;
+	height: 0.4em;
+	border-radius: 50%;
+	background: var(--color-geranium);
+}
+.richtext a {
+	text-decoration: underline;
 }
 
-/* Yellow button in the colour of Swiss hiking signs */
+.btn-primary,
 .btn-gelb {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	background: var(--color-gelb);
-	color: var(--color-tanne);
-	font-weight: 650;
-	padding: 0.8rem 1.25rem;
-	border-radius: 3px;
+	min-height: 3rem;
+	padding: 0.75rem 1.35rem;
+	border-radius: 12px;
+	background: var(--color-geranium);
+	color: #fff;
+	font-weight: 700;
 	transition: background-color 120ms;
 }
+.btn-primary:hover,
 .btn-gelb:hover {
-	background: #e8b800;
+	background: var(--color-geranium-dark);
 }
+.btn-primary:disabled,
 .btn-gelb:disabled {
-	opacity: 0.45;
+	opacity: 0.4;
 	cursor: not-allowed;
 }
 .btn-line {
@@ -105,38 +125,55 @@
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	border: 1px solid var(--color-tanne);
-	padding: 0.55rem 1rem;
-	border-radius: 3px;
+	min-height: 2.75rem;
+	padding: 0.6rem 1.1rem;
+	border: 1px solid #d9d0c9;
+	border-radius: 12px;
 	font-weight: 600;
+	background: var(--color-paper);
 }
 .btn-line:hover {
-	background: var(--color-tanne);
-	color: var(--color-kalk);
+	border-color: var(--color-ink);
+}
+
+@utility card {
+	border: 1px solid var(--color-line);
+	border-radius: 18px;
+	background: var(--color-paper);
 }
 
 .field {
 	display: block;
 	width: 100%;
-	border: 1px solid #b9beb4;
-	background: white;
-	border-radius: 3px;
-	padding: 0.6rem 0.75rem;
+	min-height: 3rem;
+	border: 1px solid #d9d0c9;
+	background: #fff;
+	border-radius: 12px;
+	padding: 0.7rem 0.85rem;
 }
 .field:focus {
-	outline: 2px solid var(--color-tanne);
+	outline: 2px solid var(--color-ink);
 	outline-offset: 0;
-	border-color: var(--color-tanne);
+	border-color: var(--color-ink);
 }
 .field[aria-invalid='true'] {
-	border-color: var(--color-rot);
+	border-color: var(--color-geranium);
+	box-shadow: 0 0 0 1px var(--color-geranium);
 }
 .label {
 	display: block;
 	font-weight: 600;
-	margin-bottom: 0.3rem;
+	margin-bottom: 0.35rem;
 }
 .hint {
-	color: var(--color-stein);
+	color: var(--color-muted);
 	font-weight: 400;
+}
+
+/* Horizontal scrollers without visible scrollbar on touch devices */
+.snap-row {
+	scrollbar-width: none;
+}
+.snap-row::-webkit-scrollbar {
+	display: none;
 }

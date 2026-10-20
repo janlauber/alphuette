@@ -5,9 +5,12 @@
 	const nav = [
 		['/admin', 'Übersicht'],
 		['/admin/buchungen', 'Buchungen'],
+		['/admin/analytics', 'Besucher'],
 		['/admin/kalender', 'Kalender'],
 		['/admin/gaeste', 'Gäste'],
 		['/admin/fotos', 'Fotos'],
+		['/admin/bewertungen', 'Gästebuch'],
+		['/admin/wanderungen', 'Wanderungen'],
 		['/admin/preise', 'Preise'],
 		['/admin/inhalte', 'Inhalte']
 	];

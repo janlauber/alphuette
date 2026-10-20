@@ -2,11 +2,15 @@ import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { dev } from '$app/env';
 import { migrate } from '#lib/server/db.ts';
 import { sessionEmail } from '#lib/server/auth.ts';
-import { loadSigningKey } from '#lib/server/bookings.ts';
+import { loadSigningKey } from '#lib/server/signing.ts';
+import { record } from '#lib/server/analytics.ts';
+import { maintenance } from '#lib/server/maintenance.ts';
 
 export const init: ServerInit = async () => {
 	await migrate();
 	await loadSigningKey();
+	maintenance();
+	setInterval(maintenance, 3600_000);
 };
 
 const isPrivate = (path: string) => /^\/(en\/)?(admin|buchung)(\/|$)/.test(path);
@@ -22,6 +26,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const lang = path === '/en' || path.startsWith('/en/') ? 'en' : 'de';
 
 	const res = await resolve(event, { transformPageChunk: ({ html }) => html.replace('%lang%', lang) });
+	// Full page loads count as views on the server, so no ad blocker can hide them.
+	const html = res.headers.get('content-type')?.startsWith('text/html');
+	if (html && res.status === 200 && event.request.method === 'GET' && !isPrivate(path) && !path.startsWith('/admin')) {
+		record(
+			{ kind: 'view', path, referrer: event.request.headers.get('referer'), url: event.url },
+			event.getClientAddress(),
+			event.request.headers.get('user-agent') ?? '',
+			event.url.hostname,
+			lang
+		);
+	}
 	try {
 		res.headers.set('x-content-type-options', 'nosniff');
 		res.headers.set('referrer-policy', 'strict-origin-when-cross-origin');

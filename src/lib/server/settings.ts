@@ -9,14 +9,6 @@ Drinnen gibt es eine Küche mit Holzherd, ein Zimmer, eine Galerie und ein Stüb
 	sleeping: `- Galerie: Matratzen 1 × 90 cm, 1 × 140 cm und 2 × 120 cm
 - Stübli: ein Bett 140 × 200 cm
 - Bettwäsche kannst du mieten oder selber mitbringen. Ein Schlafsack geht auch.`,
-	amenities: `- Holzkochherd, Gasrechaud und Gasgrill
-- Gartencheminée vor dem Haus
-- Frisches Quellwasser im Haus und im Brunnen vor dem Haus, trinkbar
-- Warmwasser aus einem 80-Liter-Boiler, den die Sonne aufheizt
-- Solarstrom für Licht und zum Laden, USB-Kabel sind da
-- Kühlbox mit 12 V
-- Geschirr, Besteck und Kochutensilien
-- Frottiertücher und Putzlappen`,
 	good_to_know: `- Das WC ist ein Plumpsklo unter dem Balkon, WC-Papier ist da.
 - Einen Kühlschrank gibt es nicht, dafür die 12-V-Kühlbox.
 - Der Solarstrom reicht für Licht und zum Laden von Handy und Kamera.
@@ -37,6 +29,26 @@ Sagst du bis 60 Tage vor der Anreise ab, kostet es nichts. Bis 30 Tage vorher za
 Essen gehen: Hotel-Restaurant Alpenruh (gut 1 km, Ruhetage Dienstag und Mittwoch), Hotel Bären in Kiental, Berghaus Ramslauenen, Berggasthaus Golderli, Naturfreundehaus Gorneren und die Hotels auf der Griesalp.
 
 Gästekarte: Damit fährst du gratis mit dem Bus von Reichenbach nach Kiental, mit der Sesselbahn auf die Ramslauenen, mit dem Zug von Mülenen nach Kandersteg und mit den Bussen nach Adelboden. Niesenbahn, Blausee und Oeschinensee kosten weniger. https://adelboden-lenk-kandersteg.ch/buchen/angebote/gaestekarte`,
+	faq: `Gibt es Strom im Hüttli?
+Ja, Solarstrom für Licht und zum Laden von Handy und Kamera. USB-Kabel sind da.
+
+Kann ich auch nur ein paar Nächte bleiben?
+Das Hüttli vermieten wir wochenweise, von Samstag bis Samstag.
+
+Wie komme ich ohne Auto hin?
+Mit dem Postauto 220 ab Reichenbach im Kandertal bis «Kiental, Abzw. Spiggengrund», etwa 22 Minuten.
+
+Ist die Kurtaxe im Preis inbegriffen?
+Nein, wir weisen sie separat aus: CHF 3 pro Nacht ab 16 Jahren, Kinder von 6 bis 15 die Hälfte, dazu CHF 1 kantonale Beherbergungsabgabe. Dafür bekommst du die Gästekarte mit Gratis-ÖV in der Region.
+
+Gibt es Bettwäsche?
+Du kannst sie für CHF 5 pro Set mieten oder selber mitbringen.`,
+	packing: `- Schlafsack oder eigene Bettwäsche
+- Stirnlampe oder Taschenlampe
+- Feste Schuhe für den Weg zum Hüttli
+- Lebensmittel für die ersten Tage
+- Powerbank
+- Regenjacke`,
 	guest_info: ''
 };
 
@@ -48,14 +60,6 @@ Inside there is a kitchen with a wood stove, a bedroom, a sleeping loft and a sm
 	sleeping: `- Loft: mattresses 1 × 90 cm, 1 × 140 cm and 2 × 120 cm
 - Parlour: one bed 140 × 200 cm
 - You can rent bed linen or bring your own. A sleeping bag works too.`,
-	amenities: `- Wood-fired cooking stove, gas burner and gas grill
-- Outdoor fireplace
-- Fresh spring water inside and at the fountain outside, safe to drink
-- Hot water from an 80-litre solar-heated tank
-- Solar power for lights and charging, USB cables provided
-- 12 V cool box
-- Crockery, cutlery and cooking utensils
-- Towels and cleaning cloths`,
 	good_to_know: `- The toilet is a compost toilet under the balcony, toilet paper is provided.
 - There is no fridge, only the 12 V cool box.
 - The solar power covers lights and charging phones and cameras.
@@ -76,11 +80,31 @@ If you cancel up to 60 days before arrival, it costs nothing. Up to 30 days befo
 Eating out: Hotel-Restaurant Alpenruh (just over 1 km, closed Tuesday and Wednesday), Hotel Bären in Kiental, Berghaus Ramslauenen, Berggasthaus Golderli, Naturfreundehaus Gorneren and the hotels at Griesalp.
 
 Guest card: it gives you free rides on the bus from Reichenbach to Kiental, the chairlift to Ramslauenen, the train from Mülenen to Kandersteg and the buses to Adelboden. Niesen railway, Blausee and Oeschinensee are cheaper. https://adelboden-lenk-kandersteg.ch/en/booking/guest-card`,
+	faq: `Is there electricity in the hut?
+Yes, solar power for lights and charging phones and cameras. USB cables are provided.
+
+Can I stay just a few nights?
+The hut is rented by the week, Saturday to Saturday.
+
+How do I get there without a car?
+PostBus 220 from Reichenbach im Kandertal to "Kiental, Abzw. Spiggengrund", about 22 minutes.
+
+Is the tourist tax included?
+No, it is shown separately: CHF 3 per night from age 16, children 6 to 15 pay half, plus the cantonal lodging levy of CHF 1. In return you get the guest card with free public transport in the region.
+
+Is bed linen available?
+You can rent it for CHF 5 per set or bring your own.`,
+	packing: `- Sleeping bag or your own bed linen
+- Head torch or flashlight
+- Sturdy shoes for the path to the hut
+- Food for the first days
+- Power bank
+- Rain jacket`,
 	guest_info: ''
 };
 
 export type Content = typeof de;
-export type Tip = { name: string; time: string; alpine: boolean; de: string; en: string; url: string };
+export type Amenity = { icon: string; de: string; en: string };
 
 export const DEFAULTS = {
 	name: 'Alphütte Blüemlisalpblick',
@@ -106,56 +130,19 @@ export const DEFAULTS = {
 		lon: 7.7283
 	},
 	content: { de, en },
-	tips: [
-		{
-			name: 'Guggerwäg',
-			time: '1 h 30 min',
-			alpine: false,
-			de: 'Von der Ramslauenen durch Lengschwendi bis zur Alperue.',
-			en: 'From Ramslauenen through Lengschwendi to Alperue.',
-			url: 'https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege'
-		},
-		{
-			name: 'Wildwasserweg',
-			time: '1 h',
-			alpine: false,
-			de: 'Von Tschingel zur Griesalp, vorbei am Pochtenfall und am Hexenkessel. 2 km, 250 m aufwärts.',
-			en: 'From Tschingel up to Griesalp past the Pochten falls and the Hexenkessel gorge. 2 km, 250 m of ascent.',
-			url: 'https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege'
-		},
-		{
-			name: 'Bärenpfad',
-			time: '2 h 15 min',
-			alpine: false,
-			de: 'Rundweg ab Alpenruhe via Tschingelsee und Pochtenalp. 6,6 km, leicht.',
-			en: 'Loop from Alpenruhe via Tschingelsee and Pochtenalp. 6.6 km, easy.',
-			url: 'https://adelboden-lenk-kandersteg.ch/aktivitaeten/tour/detail/alpenruhe-baerenpfad-wildwasserweg-tschingel'
-		},
-		{
-			name: 'Griesalp bis Kiental',
-			time: '2 h',
-			alpine: false,
-			de: 'Talwärts via Hexenkessel, Tschingelsee und Faulbrunni, am Hüttli vorbei. 7,3 km.',
-			en: 'Downhill via Hexenkessel, Tschingelsee and Faulbrunni, passing the hut. 7.3 km.',
-			url: 'https://wandern.post.ch/-/media/post-maxisites/wandern/wanderungen/kiental-be/Kiental-BE-DE.pdf'
-		},
-		{
-			name: 'Gamchi',
-			time: '4 h',
-			alpine: false,
-			de: 'Rundtour ab Griesalp über die Alp Gamchi und die Bundalp. 10,3 km, 760 m auf und ab.',
-			en: 'Loop from Griesalp via Gamchi and Bundalp. 10.3 km, 760 m up and down.',
-			url: 'https://www.interlaken.swiss/erlebnisse/tour/aussichtsreiche-rundtour-zum-gamchi'
-		},
-		{
-			name: 'Hohtürli',
-			time: '7 h',
-			alpine: true,
-			de: 'Passwanderung von der Griesalp über das Hohtürli (2778 m) zum Oeschinensee und nach Kandersteg. Bergwanderweg.',
-			en: 'Pass hike from Griesalp over Hohtürli (2,778 m) to Lake Oeschinen and Kandersteg. Mountain trail.',
-			url: 'https://www.bls.ch/de/freizeit-und-ferien/ausfluege/hohtuerli-passwanderung'
-		}
-	] as Tip[]
+	amenities: [
+		{ icon: 'flame', de: 'Holzkochherd', en: 'Wood-fired stove' },
+		{ icon: 'cooking-pot', de: 'Gasrechaud und Gasgrill', en: 'Gas burner and grill' },
+		{ icon: 'flame-kindling', de: 'Gartencheminée', en: 'Outdoor fireplace' },
+		{ icon: 'droplets', de: 'Quellwasser, trinkbar', en: 'Spring water, drinkable' },
+		{ icon: 'thermometer', de: 'Warmwasser vom Solarboiler', en: 'Solar hot water' },
+		{ icon: 'sun', de: 'Solarstrom für Licht', en: 'Solar power for lights' },
+		{ icon: 'cable', de: 'Laden per USB', en: 'USB charging' },
+		{ icon: 'snowflake', de: '12-V-Kühlbox', en: '12 V cool box' },
+		{ icon: 'utensils', de: 'Geschirr und Kochutensilien', en: 'Crockery and cookware' },
+		{ icon: 'shirt', de: 'Frottiertücher', en: 'Towels' },
+		{ icon: 'toilet', de: 'Plumpsklo draussen', en: 'Outdoor compost toilet' }
+	] as Amenity[]
 };
 
 export type Settings = typeof DEFAULTS;
@@ -172,7 +159,7 @@ export async function getSettings(): Promise<Settings> {
 			de: { ...DEFAULTS.content.de, ...db.content?.de },
 			en: { ...DEFAULTS.content.en, ...db.content?.en }
 		},
-		tips: db.tips ?? DEFAULTS.tips
+		amenities: db.amenities ?? DEFAULTS.amenities
 	};
 }
 
@@ -187,3 +174,11 @@ export async function getSeasons(): Promise<(Season & { id: number })[]> {
 			min_nights, changeover
 		from seasons where end_date >= current_date order by start_date`;
 }
+
+/** FAQ text ("Question?" line, answer below, blank line between) to pairs. */
+export const parseFaq = (text: string) =>
+	text
+		.split(/\n\s*\n/)
+		.map((b) => b.trim().split('\n'))
+		.filter((lines) => lines.length > 1)
+		.map(([q, ...a]) => ({ q: q.trim(), a: a.join('\n').trim() }));

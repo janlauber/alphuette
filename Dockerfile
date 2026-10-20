@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npm run build && npm prune --omit=dev
+RUN npm run build && npm prune --omit=dev && node scripts/geoip.mjs geo/dbip-city-lite.mmdb
 
 FROM node:24-slim
 WORKDIR /app
@@ -13,10 +13,12 @@ ENV NODE_ENV=production \
 	PROTOCOL_HEADER=x-forwarded-proto \
 	HOST_HEADER=x-forwarded-host \
 	ADDRESS_HEADER=x-forwarded-for \
-	XFF_DEPTH=1
+	XFF_DEPTH=1 \
+	GEOIP_DB=/app/geo/dbip-city-lite.mmdb
 COPY --from=build /app/build build
 COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/package.json ./
+COPY --from=build /app/geo geo
 COPY migrations migrations
 USER node
 EXPOSE 3000

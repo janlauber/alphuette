@@ -33,6 +33,24 @@ Gäste haben kein Konto. Ihr Link `/buchung/<ref>-<signatur>` ist signiert, mit 
 falls nicht gesetzt, mit einem Schlüssel, den die App beim ersten Start erzeugt und in der Datenbank ablegt.
 Wer den Schlüssel ändert, macht alle Gäste-Links ungültig.
 
+## Funktionen, die man kennen muss
+
+- **Anfrage mit E-Mail-Bestätigung:** Eine neue Anfrage ist `unbestaetigt` und hält die Woche 30 Minuten.
+  Erst der Klick im Mail schickt sie an den Gastgeber. Abgelaufene löscht die stündliche Wartung.
+- **Spamschutz** (`src/lib/server/spam.ts`): Proof-of-Work im Browser (`src/lib/pow.ts`), Mindest-Ausfüllzeit,
+  Honeypot, MX-Prüfung mit Sperrliste für Wegwerf-Domains, höchstens 3 Mails pro Empfänger und Tag.
+- **Analytics** (`src/lib/server/analytics.ts`, Admin unter Besucher): Seitenaufrufe zählt der Server, den Rest
+  meldet ein Beacon an `/api/p`. Keine Cookies, Besucher = Hash aus IP, Browser und Tagessalz. Orte aus DB-IP Lite,
+  das der Docker-Build herunterlädt.
+- **Wanderungen:** Route aus GPX, aus Wanderland Schweiz (Nummer wie `1.13`) oder grob aus Wegpunkten.
+  Das Höhenprofil kommt von swisstopo und wird im Hintergrund berechnet.
+- **Wetter und Postauto:** MeteoSchweiz-Lokalprognose für PLZ 3723 und transport.opendata.ch, beide vom Server
+  geholt und gecacht. Ausserhalb der Saison zeigt die Seite die Busse bis Ramslauenen.
+- **Gästebuch:** Am Tag nach der Abreise bekommt der Gast einen Link. Einträge erscheinen erst nach Freigabe.
+
+Quellenangaben, die sichtbar bleiben müssen: «Quelle: MeteoSchweiz», «Fahrplandaten: opentransportdata.swiss»,
+«© swisstopo», «Wanderland Schweiz (ASTRA und Kantone)» und im Admin «IP Geolocation by DB-IP».
+
 ## Betrieb
 
 Das `Dockerfile` baut ein Node-Image auf Port 3000. Nötig sind `DATABASE_URL`, `SITE_URL` und `ADMIN_EMAILS`.

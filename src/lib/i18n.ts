@@ -2,38 +2,45 @@ export type Lang = 'de' | 'en';
 
 const de = {
 	locale: 'de-CH',
-	nav: { hut: 'Das Hüttli', area: 'Umgebung', request: 'Anfragen', other: 'English', otherLang: 'en' as Lang },
+	skip: 'Zum Inhalt',
+	nav: { hut: 'Hüttli', hikes: 'Wandern', area: 'Umgebung', request: 'Anfragen', other: 'EN', otherName: 'English', otherLang: 'en' as Lang },
+	hero: {
+		whole: 'Ganzes Hüttli in Lengschwendi, Kiental',
+		all: (n: number) => `Alle ${n} Fotos`,
+		close: 'Schliessen',
+		share: 'Teilen',
+		copied: 'Link kopiert'
+	},
+	stats: { guests: (n: number) => `1 bis ${n} Gäste`, rooms: 'Stube und Galerie', altitude: '1200 m ü. M.' },
+	host: { title: (n: string) => `${n} ist dein Gastgeber`, lives: (c: string) => `Wohnt in ${c}` },
 	facts: {
-		guests: (n: number) => `1 bis ${n} Personen`,
-		altitude: '1200 m ü. M.',
 		checkIn: (t: string) => `Anreise ab ${t} Uhr`,
 		checkOut: (t: string) => `Abreise bis ${t} Uhr`
 	},
 	sections: {
+		amenities: 'Was es im Hüttli gibt',
 		sleeping: 'Schlafen',
-		amenities: 'Ausstattung',
 		goodToKnow: 'Gut zu wissen',
-		location: 'Lage',
+		location: 'Wo das Hüttli steht',
 		arrival: 'Anreise',
 		rules: 'Hausregeln',
 		payment: 'Zahlung und Absage',
-		hikes: 'Wanderungen in der Nähe',
-		host: 'Dein Gastgeber'
+		reviews: 'Gästebuch',
+		faq: 'Häufige Fragen',
+		hikes: 'Wanderungen im Tal',
+		weather: 'Wetter im Kiental',
+		transit: 'Nächste Postautos',
+		area: 'Einkaufen, Essen, Gästekarte'
 	},
-	photos: { all: (n: number) => `Alle ${n} Fotos`, close: 'Schliessen', prev: 'Vorheriges Foto', next: 'Nächstes Foto' },
-	map: { open: 'Auf der Karte von swisstopo öffnen', note: 'Die genaue Lage erfährst du nach der Bestätigung.' },
-	hikes: {
-		intro: 'Ausgangspunkte im Tal, mit Gehzeit für die ganze Strecke.',
-		more: 'Mehr Ausflüge',
-		mountain: 'Bergwanderweg'
-	},
+	map: { open: 'Karte von swisstopo öffnen', note: 'Die genaue Lage bekommst du nach der Bestätigung.' },
 	card: {
 		from: 'ab',
 		perWeek: 'pro Woche',
 		perNight: 'pro Nacht',
 		checkIn: 'Anreise',
 		checkOut: 'Abreise',
-		pick: 'Datum wählen',
+		pick: 'Woche wählen',
+		pickDates: 'Daten wählen',
 		adults: 'Erwachsene',
 		adultsHint: 'ab 16 Jahren',
 		children: 'Kinder',
@@ -45,9 +52,18 @@ const de = {
 		less: 'weniger',
 		more: 'mehr',
 		submit: 'Weiter zur Anfrage',
-		noPay: 'Du zahlst erst, wenn Tom die Anfrage bestätigt hat.',
+		noPay: 'Du zahlst erst, wenn Tom bestätigt hat.',
 		total: 'Total',
-		clear: 'Daten löschen'
+		clear: 'Auswahl löschen',
+		close: 'Schliessen'
+	},
+	weeks: {
+		title: 'Freie Wochen',
+		free: 'frei',
+		taken: 'belegt',
+		hint: 'Tippe auf eine freie Woche. Für mehrere Wochen tippst du danach auf die letzte.',
+		count: (n: number) => (n === 1 ? '1 Woche' : `${n} Wochen`),
+		none: 'Für diese Saison sind keine Wochen mehr frei.'
 	},
 	lines: {
 		stay: (n: number) => `${n} ${n === 1 ? 'Nacht' : 'Nächte'}`,
@@ -73,11 +89,14 @@ const de = {
 	},
 	request: {
 		title: 'Anfrage senden',
-		stay: 'Dein Aufenthalt',
-		change: 'Ändern',
-		you: 'Deine Angaben',
+		steps: ['Aufenthalt', 'Deine Angaben', 'Prüfen und senden'],
+		stepOf: (i: number, n: number) => `Schritt ${i} von ${n}`,
+		next: 'Weiter',
+		back: 'Zurück',
+		change: 'Woche ändern',
 		name: 'Vor- und Nachname',
 		email: 'E-Mail',
+		emailHint: 'Hierhin schicken wir den Link zum Bestätigen.',
 		phone: 'Telefon',
 		optional: 'freiwillig',
 		city: 'PLZ und Wohnort',
@@ -86,15 +105,38 @@ const de = {
 		bus: 'Bus und Bahn',
 		note: 'Nachricht an Tom',
 		notePlaceholder: 'Wer kommt mit, was habt ihr vor, gibt es Fragen?',
-		consent: 'Mit dem Senden akzeptierst du die Hausregeln. So gehen wir mit deinen Daten um:',
+		consent: 'Mit dem Senden akzeptierst du die Hausregeln und die Zahlungsbedingungen.',
+		privacy: 'Datenschutz',
 		submit: 'Anfrage senden',
+		sending: 'Wird gesendet …',
 		invalid: 'Bitte prüfe die markierten Felder.',
-		tooMany: 'Zu viele Anfragen von dieser Adresse. Versuch es in einer Stunde nochmals.'
+		tooMany: 'Zu viele Anfragen von dieser Adresse. Versuch es in einer Stunde nochmals.',
+		spam: 'Das hat nicht geklappt. Lade die Seite neu und versuch es nochmals.',
+		mailbox: 'An diese E-Mail-Adresse können wir keine Mail schicken. Bitte prüfe sie.',
+		mailLimit: 'An diese Adresse haben wir heute schon mehrere Mails geschickt. Versuch es morgen wieder.'
+	},
+	sent: {
+		title: 'Bestätige deine E-Mail',
+		text: (mail: string) =>
+			`Wir haben einen Link an ${mail} geschickt. Erst wenn du ihn öffnest, geht die Anfrage an Tom. Die Woche bleibt 30 Minuten für dich reserviert.`,
+		noMail: 'Keine Mail bekommen? Schau im Spam-Ordner nach oder sende die Anfrage nochmals.'
+	},
+	steps: {
+		sent: 'Anfrage gesendet',
+		confirm: 'E-Mail bestätigen',
+		confirmText: 'Link in deinem Postfach, 30 Minuten gültig',
+		host: 'Tom prüft die Anfrage',
+		hostText: 'Du bekommst seine Antwort per Mail',
+		bill: 'QR-Rechnung',
+		billText: 'Zahlbar innert 30 Tagen',
+		arrive: (d: string) => `Anreise am ${d}`,
+		arriveText: 'Schlüssel und Weg stehen dann hier'
 	},
 	booking: {
 		title: 'Deine Buchung',
 		ref: 'Buchungsnummer',
 		status: {
+			unbestaetigt: 'E-Mail noch nicht bestätigt',
 			angefragt: 'Angefragt',
 			bestaetigt: 'Bestätigt',
 			abgelehnt: 'Abgelehnt',
@@ -102,11 +144,16 @@ const de = {
 			gesperrt: 'Gesperrt'
 		} as Record<string, string>,
 		statusText: {
+			unbestaetigt: 'Bestätige die Anfrage, damit sie an Tom geht.',
 			angefragt: 'Tom prüft deine Anfrage und meldet sich per Mail. Die Daten sind so lange für dich reserviert.',
 			bestaetigt: 'Das Hüttli ist für dich reserviert.',
 			abgelehnt: 'Tom kann deine Anfrage leider nicht annehmen.',
 			storniert: 'Diese Buchung ist storniert.'
 		} as Record<string, string>,
+		confirmTitle: 'Bestätige deine Anfrage',
+		confirmText: 'Mit dem Klick bestätigst du, dass die E-Mail-Adresse dir gehört. Danach geht die Anfrage an Tom.',
+		confirm: 'Anfrage bestätigen',
+		confirmed: 'Danke, deine Anfrage ist bei Tom.',
 		guests: 'Gäste',
 		messages: 'Nachrichten',
 		noMessages: 'Noch keine Nachrichten. Schreib Tom, wenn du eine Frage hast.',
@@ -114,51 +161,92 @@ const de = {
 		send: 'Nachricht senden',
 		you: 'Du',
 		invoice: 'QR-Rechnung öffnen',
+		calendar: 'In den Kalender',
 		paid: (d: string) => `Bezahlt am ${d}`,
-		open: 'Offen',
+		open: 'Noch nicht bezahlt',
 		info: 'Infos für deinen Aufenthalt',
+		packing: 'Packliste',
+		packingHint: 'Abhaken geht nur auf diesem Gerät.',
 		withdraw: 'Anfrage zurückziehen',
 		withdrawConfirm: 'Willst du die Anfrage wirklich zurückziehen?',
 		saveLink: 'Speichere diesen Link. Damit kommst du jederzeit zurück zu deiner Buchung.'
 	},
-	footer: {
-		contact: 'Kontakt',
-		imprint: 'Impressum',
-		privacy: 'Datenschutz',
-		whatsapp: 'WhatsApp'
-	}
+	review: {
+		title: 'Wie war deine Woche?',
+		text: 'Tom freut sich über ein paar Zeilen. Nach seiner Freigabe erscheinen sie im Gästebuch.',
+		rating: 'Bewertung',
+		stars: (n: number) => `${n} von 5 Sternen`,
+		body: 'Dein Eintrag',
+		name: 'Name im Gästebuch',
+		namePlaceholder: 'z. B. Familie Muster aus Bern',
+		send: 'Eintrag senden',
+		thanks: 'Danke für deinen Eintrag. Er erscheint, sobald Tom ihn freigegeben hat.',
+		reply: 'Antwort von Tom',
+		count: (n: number) => (n === 1 ? '1 Eintrag' : `${n} Einträge`)
+	},
+	hikes: {
+		title: 'Wanderungen im Kiental',
+		intro: 'Ausgangspunkte im Tal, mit Gehzeit, Länge und Höhenmetern.',
+		more: 'Alle Wanderungen',
+		distance: 'Länge',
+		ascent: 'Aufstieg',
+		descent: 'Abstieg',
+		time: 'Gehzeit',
+		mountain: 'Bergwanderweg',
+		profile: 'Höhenprofil',
+		fromGpx: 'Profil aus der GPS-Spur, Höhen: © swisstopo',
+		fromWanderland: 'Route: Wanderland Schweiz (ASTRA und Kantone), Höhen: © swisstopo',
+		fromWaypoints: 'Profil aus Wegpunkten angenähert, Höhen: © swisstopo',
+		details: 'Mehr zur Route',
+		back: 'Alle Wanderungen'
+	},
+	weather: { source: 'Quelle: MeteoSchweiz. Prognose für Kiental Dorf, beim Hüttli etwa 1 bis 2 Grad kälter.', today: 'Heute', rain: (mm: number) => `${mm} mm` },
+	transit: {
+		toHut: 'Reichenbach bis Abzw. Spiggengrund',
+		fromHut: 'Abzw. Spiggengrund bis Reichenbach',
+		toWinter: 'Reichenbach bis Kiental, Ramslauenen',
+		fromWinter: 'Kiental, Ramslauenen bis Reichenbach',
+		winter: 'Ausserhalb der Saison fährt das Postauto nur bis zur Ramslauenen, von dort sind es gut 2 km zu Fuss.',
+		source: 'Fahrplandaten: opentransportdata.swiss',
+		none: 'Heute fährt kein Postauto mehr.',
+		timetable: 'Ganzer Fahrplan auf sbb.ch',
+		late: (m: number) => `+${m}′`
+	},
+	footer: { contact: 'Kontakt', imprint: 'Impressum', privacy: 'Datenschutz', whatsapp: 'WhatsApp' }
 };
 
 const en: typeof de = {
 	locale: 'en-GB',
-	nav: { hut: 'The hut', area: 'Surroundings', request: 'Request', other: 'Deutsch', otherLang: 'de' },
-	facts: {
-		guests: (n) => `1 to ${n} guests`,
-		altitude: '1,200 m above sea level',
-		checkIn: (t) => `Check-in from ${t}`,
-		checkOut: (t) => `Check-out by ${t}`
-	},
+	skip: 'Skip to content',
+	nav: { hut: 'The hut', hikes: 'Hiking', area: 'Area', request: 'Request', other: 'DE', otherName: 'Deutsch', otherLang: 'de' },
+	hero: { whole: 'Entire hut in Lengschwendi, Kiental', all: (n) => `All ${n} photos`, close: 'Close', share: 'Share', copied: 'Link copied' },
+	stats: { guests: (n) => `1 to ${n} guests`, rooms: 'Parlour and loft', altitude: '1,200 m above sea level' },
+	host: { title: (n) => `Your host is ${n}`, lives: (c) => `Lives in ${c}` },
+	facts: { checkIn: (t) => `Check-in from ${t}`, checkOut: (t) => `Check-out by ${t}` },
 	sections: {
+		amenities: 'What the hut has',
 		sleeping: 'Sleeping',
-		amenities: 'Amenities',
 		goodToKnow: 'Good to know',
-		location: 'Location',
+		location: 'Where the hut is',
 		arrival: 'Getting there',
 		rules: 'House rules',
 		payment: 'Payment and cancellation',
-		hikes: 'Hikes nearby',
-		host: 'Your host'
+		reviews: 'Guest book',
+		faq: 'Questions',
+		hikes: 'Hikes in the valley',
+		weather: 'Weather in the Kiental',
+		transit: 'Next buses',
+		area: 'Shops, food, guest card'
 	},
-	photos: { all: (n) => `All ${n} photos`, close: 'Close', prev: 'Previous photo', next: 'Next photo' },
-	map: { open: 'Open on the swisstopo map', note: 'You get the exact location after confirmation.' },
-	hikes: { intro: 'Starting points in the valley, with walking time for the whole route.', more: 'More ideas', mountain: 'Mountain trail' },
+	map: { open: 'Open the swisstopo map', note: 'You get the exact location after confirmation.' },
 	card: {
 		from: 'from',
 		perWeek: 'per week',
 		perNight: 'per night',
 		checkIn: 'Check-in',
 		checkOut: 'Check-out',
-		pick: 'Add date',
+		pick: 'Choose a week',
+		pickDates: 'Choose dates',
 		adults: 'Adults',
 		adultsHint: '16 and over',
 		children: 'Children',
@@ -170,9 +258,18 @@ const en: typeof de = {
 		less: 'fewer',
 		more: 'more',
 		submit: 'Continue to request',
-		noPay: 'You only pay once Tom has confirmed your request.',
+		noPay: 'You only pay once Tom has confirmed.',
 		total: 'Total',
-		clear: 'Clear dates'
+		clear: 'Clear selection',
+		close: 'Close'
+	},
+	weeks: {
+		title: 'Free weeks',
+		free: 'free',
+		taken: 'booked',
+		hint: 'Tap a free week. For several weeks, tap the last one next.',
+		count: (n) => (n === 1 ? '1 week' : `${n} weeks`),
+		none: 'No weeks are free this season.'
 	},
 	lines: {
 		stay: (n) => `${n} ${n === 1 ? 'night' : 'nights'}`,
@@ -189,20 +286,17 @@ const en: typeof de = {
 		changeover: (day) => `Check-in and check-out are on ${day}.`,
 		guests: (n) => `The hut sleeps at most ${n} people, including at least one adult.`
 	},
-	calendar: {
-		taken: 'Booked',
-		pickIn: 'Choose your check-in day.',
-		pickOut: 'Choose your check-out day.',
-		prev: 'Previous month',
-		next: 'Next month'
-	},
+	calendar: { taken: 'Booked', pickIn: 'Choose your check-in day.', pickOut: 'Choose your check-out day.', prev: 'Previous month', next: 'Next month' },
 	request: {
 		title: 'Send request',
-		stay: 'Your stay',
-		change: 'Change',
-		you: 'Your details',
+		steps: ['Your stay', 'Your details', 'Review and send'],
+		stepOf: (i, n) => `Step ${i} of ${n}`,
+		next: 'Next',
+		back: 'Back',
+		change: 'Change week',
 		name: 'First and last name',
 		email: 'Email',
+		emailHint: 'We send the confirmation link here.',
 		phone: 'Phone',
 		optional: 'optional',
 		city: 'Postcode and town',
@@ -211,21 +305,47 @@ const en: typeof de = {
 		bus: 'Public transport',
 		note: 'Message to Tom',
 		notePlaceholder: 'Who is coming, what are your plans, any questions?',
-		consent: 'By sending you accept the house rules. How we handle your data:',
+		consent: 'By sending you accept the house rules and the payment terms.',
+		privacy: 'Privacy',
 		submit: 'Send request',
+		sending: 'Sending …',
 		invalid: 'Please check the marked fields.',
-		tooMany: 'Too many requests from this address. Please try again in an hour.'
+		tooMany: 'Too many requests from this address. Please try again in an hour.',
+		spam: 'That did not work. Reload the page and try again.',
+		mailbox: 'We cannot send mail to this address. Please check it.',
+		mailLimit: 'We have already sent several emails to this address today. Please try again tomorrow.'
+	},
+	sent: {
+		title: 'Confirm your email',
+		text: (mail) => `We sent a link to ${mail}. Your request only goes to Tom once you open it. The week stays held for you for 30 minutes.`,
+		noMail: 'No email? Check your spam folder or send the request again.'
+	},
+	steps: {
+		sent: 'Request sent',
+		confirm: 'Confirm your email',
+		confirmText: 'Link in your inbox, valid for 30 minutes',
+		host: 'Tom reviews the request',
+		hostText: 'You get his answer by email',
+		bill: 'QR bill',
+		billText: 'Payable within 30 days',
+		arrive: (d) => `Arrival on ${d}`,
+		arriveText: 'Key and directions will show up here'
 	},
 	booking: {
 		title: 'Your booking',
 		ref: 'Booking number',
-		status: { angefragt: 'Requested', bestaetigt: 'Confirmed', abgelehnt: 'Declined', storniert: 'Cancelled', gesperrt: 'Blocked' },
+		status: { unbestaetigt: 'Email not confirmed yet', angefragt: 'Requested', bestaetigt: 'Confirmed', abgelehnt: 'Declined', storniert: 'Cancelled', gesperrt: 'Blocked' },
 		statusText: {
+			unbestaetigt: 'Confirm the request so it reaches Tom.',
 			angefragt: 'Tom is reviewing your request and will reply by email. The dates are held for you until then.',
 			bestaetigt: 'The hut is reserved for you.',
 			abgelehnt: 'Unfortunately Tom cannot accept your request.',
 			storniert: 'This booking has been cancelled.'
 		},
+		confirmTitle: 'Confirm your request',
+		confirmText: 'By clicking you confirm that this email address is yours. Then the request goes to Tom.',
+		confirm: 'Confirm request',
+		confirmed: 'Thank you, your request is with Tom.',
 		guests: 'Guests',
 		messages: 'Messages',
 		noMessages: 'No messages yet. Write to Tom if you have a question.',
@@ -233,12 +353,56 @@ const en: typeof de = {
 		send: 'Send message',
 		you: 'You',
 		invoice: 'Open QR bill',
+		calendar: 'Add to calendar',
 		paid: (d) => `Paid on ${d}`,
-		open: 'Unpaid',
+		open: 'Not paid yet',
 		info: 'Information for your stay',
+		packing: 'Packing list',
+		packingHint: 'Ticks are saved on this device only.',
 		withdraw: 'Withdraw request',
 		withdrawConfirm: 'Do you really want to withdraw your request?',
 		saveLink: 'Keep this link. It takes you back to your booking at any time.'
+	},
+	review: {
+		title: 'How was your week?',
+		text: 'Tom would be glad to hear from you. Once he approves it, your entry shows in the guest book.',
+		rating: 'Rating',
+		stars: (n) => `${n} out of 5 stars`,
+		body: 'Your entry',
+		name: 'Name in the guest book',
+		namePlaceholder: 'e.g. the Smith family from Zurich',
+		send: 'Send entry',
+		thanks: 'Thank you for your entry. It shows once Tom has approved it.',
+		reply: 'Reply from Tom',
+		count: (n) => (n === 1 ? '1 entry' : `${n} entries`)
+	},
+	hikes: {
+		title: 'Hikes in the Kiental',
+		intro: 'Starting points in the valley, with walking time, length and elevation.',
+		more: 'All hikes',
+		distance: 'Length',
+		ascent: 'Ascent',
+		descent: 'Descent',
+		time: 'Time',
+		mountain: 'Mountain trail',
+		profile: 'Elevation profile',
+		fromGpx: 'Profile from the GPS track, elevations: © swisstopo',
+		fromWanderland: 'Route: Wanderland Schweiz (FEDRO and cantons), elevations: © swisstopo',
+		fromWaypoints: 'Profile approximated from waypoints, elevations: © swisstopo',
+		details: 'More about the route',
+		back: 'All hikes'
+	},
+	weather: { source: 'Source: MeteoSwiss. Forecast for Kiental village, about 1 to 2 degrees colder at the hut.', today: 'Today', rain: (mm) => `${mm} mm` },
+	transit: {
+		toHut: 'Reichenbach to Abzw. Spiggengrund',
+		fromHut: 'Abzw. Spiggengrund to Reichenbach',
+		toWinter: 'Reichenbach to Kiental, Ramslauenen',
+		fromWinter: 'Kiental, Ramslauenen to Reichenbach',
+		winter: 'Outside the season the bus only goes to Ramslauenen, about 2 km on foot from the hut.',
+		source: 'Timetable data: opentransportdata.swiss',
+		none: 'No more buses today.',
+		timetable: 'Full timetable on sbb.ch',
+		late: (m) => `+${m}′`
 	},
 	footer: { contact: 'Contact', imprint: 'Legal notice', privacy: 'Privacy', whatsapp: 'WhatsApp' }
 };
