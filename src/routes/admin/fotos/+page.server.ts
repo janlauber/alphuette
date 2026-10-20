@@ -20,7 +20,8 @@ export const actions = {
 			}
 			try {
 				await addPhoto(new Uint8Array(await file.arrayBuffer()));
-			} catch {
+			} catch (e) {
+				console.error('photo upload failed', file.name, e);
 				failed.push(file.name);
 			}
 		}
