@@ -8,11 +8,12 @@ import {
 	BUCKET_NAME,
 	BUCKET_PORT,
 	BUCKET_REGION,
-	S3_ENDPOINT
+	S3_ENDPOINT,
+	UPLOAD_DIR
 } from '$app/env/private';
 
 // S3 in production (variable names as a Rook/klickops bucket provides them);
-// a local folder when no bucket is configured (development).
+// a local folder (UPLOAD_DIR) when no bucket is configured.
 const endpoint =
 	S3_ENDPOINT?.replace(/\/$/, '') ??
 	(BUCKET_HOST ? `${BUCKET_PORT === '443' ? 'https' : 'http'}://${BUCKET_HOST}:${BUCKET_PORT ?? '80'}` : null);
@@ -29,12 +30,9 @@ if (s3) {
 	s3.fetch(`${endpoint}/${BUCKET_NAME}?list-type=2&max-keys=1`)
 		.then(async (r) => console.log(`storage: bucket ${BUCKET_NAME} at ${endpoint}: list ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
 		.catch((e) => console.error('storage: bucket unreachable', e));
-	s3.fetch(`${endpoint}/${BUCKET_NAME}/probe.txt`, { method: 'PUT', body: 'ok' })
-		.then(async (r) => console.log(`storage: probe put ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
-		.catch((e) => console.error('storage: probe failed', e));
 }
 const url = (key: string) => `${endpoint}/${BUCKET_NAME}/${key}`;
-const local = (key: string) => `.data/uploads/${key}`;
+const local = (key: string) => `${UPLOAD_DIR}/${key}`;
 
 export async function put(key: string, body: Uint8Array, type: string) {
 	if (!s3) {
