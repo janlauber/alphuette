@@ -1,5 +1,5 @@
 import { AwsClient } from 'aws4fetch';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import {
 	AWS_ACCESS_KEY_ID,
@@ -63,6 +63,20 @@ export async function get(key: string): Promise<Uint8Array | null> {
 	if (file || !s3) return file;
 	const res = await s3.fetch(url(key)).catch(() => null);
 	return res?.ok ? new Uint8Array(await res.arrayBuffer()) : null;
+}
+
+/** Copies photos that so far only exist on the volume into the bucket; files already there are skipped. */
+export async function copyToBucket() {
+	if (!s3) return 0;
+	let n = 0;
+	for (const f of await readdir(local('photos')).catch(() => [] as string[])) {
+		const key = `photos/${f}`;
+		if ((await s3.fetch(url(key), { method: 'HEAD' })).ok) continue;
+		const res = await s3.fetch(url(key), { method: 'PUT', body: (await readFile(local(key))) as BodyInit, headers: { 'content-type': 'image/webp' } });
+		if (!res.ok) throw new Error(`Bucket nimmt ${key} nicht an (${res.status} ${await s3Code(res)})`);
+		n++;
+	}
+	return n;
 }
 
 export async function del(key: string) {
