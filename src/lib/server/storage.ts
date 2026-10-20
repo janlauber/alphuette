@@ -24,7 +24,12 @@ const s3 = endpoint
 			region: BUCKET_REGION
 		})
 	: null;
-if (s3) console.log(`storage: bucket ${BUCKET_NAME} at ${endpoint}, region ${BUCKET_REGION}`);
+if (s3) {
+	// Startup check, so a broken bucket shows up in the log right away.
+	s3.fetch(`${endpoint}/${BUCKET_NAME}?list-type=2&max-keys=1`)
+		.then(async (r) => console.log(`storage: bucket ${BUCKET_NAME} at ${endpoint}: list ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
+		.catch((e) => console.error('storage: bucket unreachable', e));
+}
 const url = (key: string) => `${endpoint}/${BUCKET_NAME}/${key}`;
 const local = (key: string) => `.data/uploads/${key}`;
 
