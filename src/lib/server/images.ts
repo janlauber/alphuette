@@ -1,7 +1,5 @@
 import sharp from 'sharp';
 import { randomUUID } from 'node:crypto';
-import { readdir, readFile } from 'node:fs/promises';
-import { fromFileName } from '#lib/photoName.ts';
 import { sql } from './db.ts';
 import { put, del } from './storage.ts';
 import { lookup } from './translate.ts';
@@ -29,30 +27,6 @@ export async function addPhoto(file: Uint8Array, alt = { de: '', en: '' }) {
 			${alt.de}, ${alt.en}, ${max})
 		returning id`;
 	return photo.id as number;
-}
-
-/**
- * One-off import of the drone photos shipped in seed/photos: they go to the front of the gallery
- * and the first becomes the title image. A settings row claims the run, so it happens once even
- * if Tom later edits or deletes the photos.
- * ponytail: delete this and seed/ once production has run it.
- */
-export async function importSeedPhotos(dir = 'seed/photos') {
-	const files = (await readdir(dir).catch(() => [] as string[])).filter((f) => f.endsWith('.jpg')).sort();
-	if (!files.length) return;
-	const claimed = await sql`insert into settings (key, value) values ('seed_photos', ${sql.json({ at: new Date().toISOString() })}) on conflict do nothing returning 1`;
-	if (!claimed.length) return;
-	const ids: number[] = [];
-	for (const f of files) {
-		const { alt, category } = fromFileName(f);
-		const pid = await addPhoto(new Uint8Array(await readFile(`${dir}/${f}`)), { de: alt, en: '' });
-		if (category) await sql`update photos set category = ${category} where id = ${pid}`;
-		ids.push(pid);
-	}
-	await sql`update photos set sort = sort + ${ids.length} where not (id = any(${ids}))`;
-	await sql`update photos set sort = x.sort from (select unnest(${ids}::int[]) as id, generate_series(1, ${ids.length}) as sort) x where photos.id = x.id`;
-	await sql`update photos set hero = (id = ${ids[0]})`;
-	return ids.length;
 }
 
 /** Removes the row and its files for good. The admin only moves photos to the trash (deleted_at). */

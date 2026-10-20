@@ -20,7 +20,6 @@ COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/package.json ./
 COPY --from=build /app/geo geo
 COPY migrations migrations
-COPY seed seed
 USER node
 EXPOSE 3000
 CMD ["node", "build"]
