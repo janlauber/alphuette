@@ -5,6 +5,9 @@ import { purgePhotos } from './images.ts';
 import { nightlyBackup } from './backup.ts';
 import { syncTranslations } from './sitetexts.ts';
 import { sendReminders } from './reminders.ts';
+import { report } from './monitor.ts';
+
+export let lastMaintenance: Date | null = null;
 
 // Hourly housekeeping. ponytail: in-process timer, fine for one replica; a klickops cron job if it ever scales out.
 export async function maintenance() {
@@ -16,7 +19,8 @@ export async function maintenance() {
 		await nightlyBackup();
 		await sendReminders();
 		await syncTranslations();
+		lastMaintenance = new Date();
 	} catch (e) {
-		console.error('maintenance', e);
+		await report(e, 'Wartung (stündlich)');
 	}
 }

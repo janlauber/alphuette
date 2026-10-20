@@ -1,13 +1,19 @@
 import { sql } from './db.ts';
 import type { Booking } from './bookings.ts';
+import { lookup } from './translate.ts';
+import type { Lang } from '#lib/i18n.ts';
 
 export type Review = { id: number; name: string; rating: number; body: string; reply: string | null; stay: string | null; lang: string };
 
-/** Approved reviews, newest first, with the average for structured data. */
-export async function publicReviews() {
-	const reviews = await sql<Review[]>`
+/** Approved reviews, newest first, with the average for structured data. Guests' words stay as written; Tom's German replies are translated. */
+export async function publicReviews(lang: Lang = 'de') {
+	let reviews: Review[] = await sql<Review[]>`
 		select id, name, rating, body, reply, stay::text as stay, lang from reviews
 		where approved order by created_at desc limit 50`;
+	if (lang !== 'de') {
+		const tr = await lookup(reviews.flatMap((r) => (r.reply ? [r.reply] : [])), [lang, 'en']);
+		reviews = reviews.map((r) => (r.reply ? { ...r, reply: tr.get(lang)?.get(r.reply) ?? tr.get('en')?.get(r.reply) ?? r.reply } : r));
+	}
 	const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
 	return { reviews, avg: Math.round(avg * 10) / 10, count: reviews.length };
 }

@@ -129,10 +129,28 @@
 			<p class="mt-3 text-center text-[10pt] font-semibold text-muted">{t.thanks}</p>
 		{:else}
 			<div class="flyer flex h-full flex-col {landscape ? 'flyer-l' : ''}">
-				<div class="relative overflow-hidden rounded-[8mm] border-[3px] border-brand bg-paper {landscape ? 'h-[92mm]' : 'h-[110mm]'}">
-					<Panorama hut={data.name} animate={false} class="absolute inset-0 h-full w-full" />
-				</div>
-				<div class="mt-[8mm] grid flex-1 gap-[8mm] {landscape ? 'grid-cols-[1fr_62mm]' : 'grid-cols-1'}">
+				{#if data.photos.hero && landscape}
+					<div class="flex h-[84mm] shrink-0 gap-[4mm] overflow-hidden">
+						<img src="/bilder/photos/{data.photos.hero.key}-1600.webp" alt={data.photos.hero.alt} class="h-[84mm] min-w-0 flex-[2] rounded-[7mm] border-[3px] border-brand object-cover object-bottom" />
+						<div class="flex min-w-0 flex-1 flex-col gap-[4mm]">
+							{#each data.photos.more.slice(0, 2) as p (p.key)}<img src="/bilder/photos/{p.key}-960.webp" alt={p.alt} class="h-[40mm] w-full rounded-[6mm] border-[3px] border-brand object-cover" />{/each}
+						</div>
+					</div>
+				{:else if data.photos.hero}
+					<div class="relative h-[112mm]">
+						<img src="/bilder/photos/{data.photos.hero.key}-1600.webp" alt={data.photos.hero.alt} class="absolute inset-0 size-full rounded-[8mm] border-[3px] border-brand object-cover object-bottom" />
+						<div class="absolute -bottom-[12mm] right-[6mm] flex gap-[3mm]">
+							{#each data.photos.more as p, i (p.key)}
+								<img src="/bilder/photos/{p.key}-960.webp" alt={p.alt} class="size-[36mm] rounded-[5mm] border-[3px] border-white object-cover shadow-[0_2mm_0_var(--color-brand)] {['-rotate-3', 'rotate-2', '-rotate-1'][i]}" />
+							{/each}
+						</div>
+					</div>
+				{:else}
+					<div class="relative overflow-hidden rounded-[8mm] border-[3px] border-brand bg-paper {landscape ? 'h-[92mm]' : 'h-[110mm]'}">
+						<Panorama hut={data.name} animate={false} class="absolute inset-0 h-full w-full" />
+					</div>
+				{/if}
+				<div class="{data.photos.hero && !landscape ? 'mt-[16mm]' : 'mt-[8mm]'} grid flex-1 gap-[8mm] {landscape ? 'grid-cols-[1fr_62mm]' : 'grid-cols-1'}">
 					<div>
 						<p class="text-[14pt] font-semibold text-muted">{data.name}</p>
 						<h1 class="text-[{landscape ? 40 : 46}pt] leading-[1.02]" style="font-size: {landscape ? 40 : 46}pt">{t.flyerTitle}</h1>

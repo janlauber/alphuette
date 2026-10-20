@@ -1,4 +1,4 @@
-import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
+import type { Handle, HandleServerError, ServerInit } from '@sveltejs/kit/hooks';
 import { dev } from '$app/env';
 import { migrate } from '#lib/server/db.ts';
 import { sessionEmail } from '#lib/server/auth.ts';
@@ -6,8 +6,10 @@ import { loadSigningKey } from '#lib/server/signing.ts';
 import { record } from '#lib/server/analytics.ts';
 import { maintenance } from '#lib/server/maintenance.ts';
 import { seedEnglish } from '#lib/server/sitetexts.ts';
+import { report } from '#lib/server/monitor.ts';
 
 export const init: ServerInit = async () => {
+	process.on('unhandledRejection', (e) => report(e, 'unhandled promise'));
 	await migrate();
 	await loadSigningKey();
 	await seedEnglish();
@@ -52,4 +54,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		// some responses (e.g. proxied) have immutable headers
 	}
 	return res;
+};
+
+// Unexpected errors in pages, actions and endpoints: logged, grouped, and mailed to Jan.
+// Only real bugs ('unknown'); 404s and error(...) thrown on purpose are not.
+export const handleError: HandleServerError = async ({ kind, error, event }) => {
+	if (kind === 'unknown') await report(error, `${event.request.method} ${event.url.pathname}`);
 };

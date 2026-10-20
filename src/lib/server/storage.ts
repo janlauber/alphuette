@@ -45,7 +45,8 @@ export async function put(key: string, body: Uint8Array, type: string) {
 	if (!s3) return putLocal(key, body);
 	const res = await s3.fetch(url(key), { method: 'PUT', body: body as BodyInit, headers: { 'content-type': type } }).catch((e) => e as Error);
 	if (res instanceof Response && res.ok) return;
-	console.error(`storage: bucket put ${key} failed, writing to ${UPLOAD_DIR}:`, res instanceof Response ? `${res.status} ${(await res.text()).slice(0, 200)}` : res);
+	const why = res instanceof Response ? `${res.status} ${(await res.text()).slice(0, 200)}` : String(res);
+	await import('./monitor.ts').then((m) => m.report(new Error(`Bucket nimmt kein Foto an (${why}), liegt jetzt auf dem Volume`), 'Fotos speichern', { alert: false }));
 	await putLocal(key, body);
 }
 

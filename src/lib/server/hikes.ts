@@ -156,7 +156,7 @@ export async function fillProfiles() {
 			const p = await computeProfile(h.geometry!);
 			await sql`update hikes set profile = ${sql.json(p.profile)}, distance_m = ${p.distance}, ascent_m = ${p.ascent}, descent_m = ${p.descent} where id = ${h.id}`;
 		} catch (e) {
-			console.error('hike profile', h.id, e);
+			await import('./monitor.ts').then((m) => m.report(e, `Höhenprofil Wanderung ${h.id}`, { alert: false }));
 		}
 	}
 }

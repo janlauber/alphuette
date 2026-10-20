@@ -106,9 +106,18 @@
 	{:else if b.status === 'bestaetigt' && !b.paidAt}
 		<h2 id="todo" class="text-2xl">{past ? 'Aufenthalt vorbei, aber noch nicht bezahlt' : 'Bestätigt. Noch nicht bezahlt.'}</h2>
 		<p class="mt-2">Sobald das Geld ({chf(b.totalRp ?? 0)}) auf deinem Konto ist, markierst du die Buchung als bezahlt.</p>
-		<form method="POST" action="?/paid" use:enhance class="mt-5">
-			<button name="paid" value="1" class="btn-primary">Als bezahlt markieren</button>
-		</form>
+		{#if data.due}
+			<p class="mt-2 {data.due < new Date().toISOString().slice(0, 10) ? 'font-semibold text-danger' : 'text-muted'}">
+				Zahlbar bis {long(data.due)}{data.due < new Date().toISOString().slice(0, 10) ? ', das ist vorbei' : ''}.{data.reminded ? ` Erinnerung geschickt am ${long(data.reminded)}.` : ''}
+			</p>
+		{/if}
+		<div class="mt-5 flex flex-wrap items-center gap-3">
+			<form method="POST" action="?/paid" use:enhance>
+				<button name="paid" value="1" class="btn-primary">Als bezahlt markieren</button>
+			</form>
+			<a href="{data.guestLink}/rechnung" target="_blank" rel="noopener" class="btn-line no-underline">Rechnung ansehen</a>
+			<a href="/admin/finanzen" class="font-semibold">Alle Zahlungen</a>
+		</div>
 	{:else if b.status === 'bestaetigt'}
 		<h2 id="todo" class="text-2xl">{past ? 'Alles erledigt' : 'Alles bereit'}</h2>
 		<p class="mt-2">

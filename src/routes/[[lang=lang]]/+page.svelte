@@ -28,6 +28,14 @@
 	const t = $derived(dict[data.lang]);
 	const c = $derived(data.content);
 	const hero = $derived(data.photos[0]);
+	let gallery = $state<Gallery>();
+	// three small photos in the title image: inside, outside, winter if there are any
+	const thumbs = $derived.by(() => {
+		const all = data.photos.map((photo, index) => ({ photo, index })).slice(1);
+		const first = (c: string) => all.find((x) => x.photo.category === c);
+		const picked = [first('drinnen'), first('draussen'), first('winter')].filter((x) => x !== undefined);
+		return [...picked, ...all.filter((x) => !picked.includes(x))].slice(0, 3);
+	});
 	const lv = $derived(toLv95(data.location.lat, data.location.lon));
 	const hostFirst = $derived(data.host.name.split(' ')[0]);
 
@@ -101,7 +109,27 @@
 		<p class="mt-3 max-w-[48ch] text-lg text-white/90 sm:text-xl">{c.tagline}</p>
 		<div class="mt-5 flex flex-wrap items-center gap-3">
 			<a href="#buchen" class="btn-primary !border-ink !shadow-[0_4px_0_var(--color-ink)]">{t.card.pick}</a>
-			{#if data.photos.length}<a href="#fotos" class="btn-line !border-white !bg-transparent !text-white !shadow-none hover:!bg-white/10"><Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}</a>{/if}
+			{#if data.photos.length > 1}
+	<div class="flex items-center gap-4 lg:ml-auto">
+						<ul class="flex">
+							{#each thumbs as th, i (th.photo.id)}
+								<li class="-ml-3 first:ml-0">
+									<button
+										type="button"
+										onclick={() => gallery?.open(th.index)}
+										class="block size-16 overflow-hidden rounded-[16px] border-[3px] border-white shadow-[0_4px_0_rgb(0_0_0/0.25)] transition hover:z-10 hover:-translate-y-1 hover:rotate-0 sm:size-20 {['-rotate-6', 'rotate-2', 'rotate-6'][i]}"
+										aria-label={t.gallery.open(th.photo.alt)}
+									>
+										<img src="/bilder/photos/{th.photo.key}-480.webp" alt="" loading="lazy" class="size-full object-cover" style="background: url({th.photo.lqip}) center / cover" />
+									</button>
+								</li>
+							{/each}
+						</ul>
+						<button type="button" onclick={() => gallery?.open(0)} class="btn-line !border-white !bg-transparent !text-white !shadow-none hover:!bg-white/10">
+							<Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}
+						</button>
+					</div>
+			{/if}
 			{#if data.reviews.count}
 				<a href="#gaestebuch" class="inline-flex items-center gap-2 text-sm font-semibold text-white no-underline">
 					<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
@@ -111,13 +139,8 @@
 			{/if}
 		</div>
 	</HeroMotion>
+	<Gallery bind:this={gallery} photos={data.photos} lang={data.lang} title={data.hutName} />
 {/if}
-
-<div id="fotos" class="-mt-1 bg-hill pb-8 pt-3 sm:pb-12">
-	<div class="mx-auto max-w-6xl px-5 sm:px-6">
-		<Gallery photos={data.photos} lang={data.lang} title={data.hutName} />
-	</div>
-</div>
 
 <div class="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] px-5 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-x-16 lg:pt-14">
 	<!-- Part 1: what the hut is -->

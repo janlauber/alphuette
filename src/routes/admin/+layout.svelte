@@ -13,13 +13,19 @@
 	import Inbox from '@lucide/svelte/icons/inbox';
 	import Mail from '@lucide/svelte/icons/mail';
 	import Menu from '@lucide/svelte/icons/menu';
+	import Activity from '@lucide/svelte/icons/activity';
 	import MessageSquareHeart from '@lucide/svelte/icons/message-square-heart';
 	import Printer from '@lucide/svelte/icons/printer';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Tag from '@lucide/svelte/icons/tag';
+	import Banknote from '@lucide/svelte/icons/banknote';
+	import ScrollText from '@lucide/svelte/icons/scroll-text';
+	import Wallet from '@lucide/svelte/icons/wallet';
 	import Users from '@lucide/svelte/icons/users';
 	import X from '@lucide/svelte/icons/x';
+	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import Huettli from '#lib/components/Huettli.svelte';
+	import HelpPanel from '#lib/components/admin/HelpPanel.svelte';
 
 	let { data, children } = $props();
 
@@ -30,6 +36,7 @@
 				{ href: '/admin', label: 'Übersicht', icon: House },
 				{ href: '/admin/buchungen', label: 'Buchungen', icon: Inbox, badge: data.open + data.unread },
 				{ href: '/admin/kalender', label: 'Kalender', icon: CalendarDays },
+				{ href: '/admin/finanzen', label: 'Finanzen', icon: Banknote, badge: data.overdue },
 				{ href: '/admin/gaeste', label: 'Gäste', icon: Users },
 				{ href: '/admin/bewertungen', label: 'Gästebuch', icon: MessageSquareHeart, badge: data.reviews }
 			]
@@ -38,7 +45,9 @@
 			label: 'Website',
 			items: [
 				{ href: '/admin/inhalte', label: 'Texte und Infos', icon: FileText },
+				{ href: '/admin/hausregeln', label: 'Hausregeln', icon: ScrollText },
 				{ href: '/admin/preise', label: 'Preise und Saisons', icon: Tag },
+				{ href: '/admin/gastgeber', label: 'Gastgeber und Zahlung', icon: Wallet },
 				{ href: '/admin/fotos', label: 'Fotos', icon: Images },
 				{ href: '/admin/wanderungen', label: 'Wanderungen', icon: Footprints },
 				{ href: '/admin/drucken', label: 'Drucken', icon: Printer }
@@ -50,7 +59,8 @@
 				{ href: '/admin/analytics', label: 'Besucher', icon: ChartColumn },
 				{ href: '/admin/mails', label: 'Mails', icon: Mail },
 				{ href: '/admin/verlauf', label: 'Verlauf', icon: History },
-				{ href: '/admin/sicherungen', label: 'Sicherungen', icon: DatabaseBackup }
+				{ href: '/admin/sicherungen', label: 'Sicherungen', icon: DatabaseBackup },
+				{ href: '/admin/system', label: 'System', icon: Activity, badge: data.errors }
 			]
 		}
 	]);
@@ -58,6 +68,7 @@
 	const here = $derived(groups.flatMap((g) => g.items).find((i) => current(i.href)));
 
 	let menu = $state(false);
+	let help = $state<HelpPanel>();
 	afterNavigate(() => (menu = false));
 
 	// Message after a change, with an undo button when the change can be undone.
@@ -103,7 +114,10 @@
 			</div>
 		{/each}
 	</nav>
-	<div class="mt-8 grid gap-3 border-t-2 border-line px-3 pt-5 text-sm">
+	<button type="button" onclick={() => ((menu = false), help?.open())} class="mt-6 flex w-full items-center gap-3 rounded-full border-2 border-brand px-3 py-2 font-semibold text-brand hover:bg-wash">
+		<CircleHelp size={19} strokeWidth={2.25} aria-hidden="true" />Hilfe
+	</button>
+	<div class="mt-6 grid gap-3 border-t-2 border-line px-3 pt-5 text-sm">
 		<a href="/" target="_blank" class="flex items-center gap-2 font-semibold text-brand">Website ansehen <ExternalLink size={15} aria-hidden="true" /></a>
 		<p class="break-all text-muted">Angemeldet als {data.admin}</p>
 		<form method="POST" action="/admin/logout"><button class="font-semibold text-brand underline">Abmelden</button></form>
@@ -141,6 +155,8 @@
 			{@render children()}
 		</main>
 	</div>
+
+	<HelpPanel bind:this={help} assistant={data.assistant} />
 
 	{#if toast}
 		<div class="fixed inset-x-3 bottom-4 z-50 mx-auto flex max-w-xl items-center gap-3 rounded-[18px] border-2 border-brand bg-paper px-4 py-3 shadow-[0_5px_0_var(--color-brand)] sm:bottom-6" role="status">

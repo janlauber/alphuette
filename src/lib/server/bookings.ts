@@ -30,6 +30,7 @@ export type Booking = {
 	quote: { lines: { key: string; qty: number; amount: number }[]; nights: number } | null;
 	totalRp: number | null;
 	paidAt: Date | null;
+	confirmedAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -154,7 +155,7 @@ const FROM = { bestaetigt: ['angefragt'], abgelehnt: ['angefragt'], storniert: [
 /** Host changes the status. Returns false if the transition is not allowed. */
 export async function setStatus(id: number, status: keyof typeof STATUS_MAIL, notify = true) {
 	const [b] = await sql<Booking[]>`
-		update bookings set status = ${status}, updated_at = now()
+		update bookings set status = ${status}, updated_at = now(), confirmed_at = ${status === 'bestaetigt' ? sql`now()` : sql`confirmed_at`}
 		where id = ${id} and status in ${sql(FROM[status])} returning *`;
 	if (!b) return false;
 	if (notify) {

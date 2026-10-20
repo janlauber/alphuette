@@ -2,6 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { sql } from '#lib/server/db.ts';
 import { addMessage, guestUrl, messagesOf, setStatus, type Booking } from '#lib/server/bookings.ts';
 import { done, log } from '#lib/server/activity.ts';
+import { dueDate } from '#lib/server/invoice.ts';
 import { getSettings } from '#lib/server/settings.ts';
 
 // Status changes send mails to the guest, so they are logged but have no undo.
@@ -24,7 +25,9 @@ export const load = async ({ params }) => {
 		sql`select count(*)::int as stays from bookings where lower(email) = lower(${b.email}) and status = 'bestaetigt'`,
 		getSettings()
 	]);
-	return { b, messages, stays, guestLink: guestUrl(b), ibanMissing: !settings.host.iban };
+	const [reminder] = await sql`select max(at) as at from booking_mails where booking_id = ${b.id} and kind like 'payment%'`;
+	const due = b.status === 'bestaetigt' ? dueDate({ checkIn: b.checkIn, confirmedAt: (b.confirmedAt ?? b.updatedAt).toISOString().slice(0, 10) }) : null;
+	return { b, messages, stays, guestLink: guestUrl(b), ibanMissing: !settings.host.iban, due, reminded: reminder?.at ? (reminder.at as Date).toISOString().slice(0, 10) : null };
 };
 
 export const actions = {

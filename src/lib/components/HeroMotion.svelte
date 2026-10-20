@@ -29,13 +29,14 @@
 </script>
 
 <!-- phone: image on top, text below; from sm on: text on a band over the image -->
-<section class="relative isolate overflow-hidden bg-brand-dark text-white sm:h-[min(80svh,700px)] sm:min-h-[480px]">
+<section class="relative isolate overflow-hidden bg-brand-dark text-white sm:h-[min(86svh,780px)] sm:min-h-[520px]">
 	<div class="relative h-[46svh] min-h-[260px] overflow-hidden sm:absolute sm:inset-0 sm:h-auto">
-		<Img {photo} eager sizes="100vw" class="glide absolute inset-0 size-full object-cover {paused ? 'still' : ''}" />
+		<!-- anchored at the bottom: the hut usually sits low in the picture, the band must not hide it -->
+		<Img {photo} eager sizes="100vw" class="glide absolute inset-0 size-full object-cover object-bottom {paused ? 'still' : ''}" />
 		{#if useVideo && video}
 			<video
 				bind:this={el}
-				class="absolute inset-0 size-full object-cover transition-opacity duration-1000 {playing ? 'opacity-100' : 'opacity-0'}"
+				class="absolute inset-0 size-full object-cover object-bottom transition-opacity duration-1000 {playing ? 'opacity-100' : 'opacity-0'}"
 				poster={video.poster}
 				autoplay
 				muted
@@ -55,8 +56,8 @@
 	</div>
 
 	<div class="relative sm:absolute sm:inset-x-0 sm:bottom-0 sm:bg-brand-dark/90">
-		<div class="mx-auto max-w-6xl px-5 pb-8 pt-6 sm:px-6 sm:pb-9 sm:pt-7">
-			<div class="max-w-3xl">{@render children()}</div>
+		<div class="mx-auto flex max-w-6xl flex-col px-5 pb-8 pt-6 sm:px-6 sm:pb-9 sm:pt-7">
+			<div class="min-w-0 flex-1">{@render children()}</div>
 		</div>
 	</div>
 </section>
@@ -72,7 +73,7 @@
 	}
 	:global(.glide) {
 		animation: glide 22s ease-in-out infinite alternate;
-		transform-origin: 60% 45%;
+		transform-origin: 50% 100%;
 	}
 	:global(.glide.still) {
 		animation-play-state: paused;

@@ -41,14 +41,20 @@
 			<tr class="font-semibold"><td class="pt-3">{t.card.total}</td><td class="pt-3 text-right tabular-nums">{chf(b.total)}</td></tr>
 		</tfoot>
 	</table>
-	<p class="mt-6">{t.invoice.pay}</p>
+	{#if b.paidAt}
+		<p class="mt-6 rounded-[14px] bg-wash px-4 py-3 font-semibold">{t.invoice.paid(fmtDate(b.paidAt, data.lang, { weekday: undefined }))}</p>
+	{:else}
+		<p class="mt-6 font-semibold">{t.invoice.due(fmtDate(b.due, data.lang, { weekday: undefined }))}</p>
+		<p class="mt-2">{t.invoice.pay}</p>
+		{#if b.reference}<p class="mt-2 text-sm">{t.invoice.reference}: <span class="font-mono">{b.reference}</span></p>{/if}
+	{/if}
 
 	<button class="btn-line mt-6 print:hidden" onclick={() => print()}>{t.invoice.print}</button>
 </div>
 
 {#if data.svg}
 	<div class="qr mx-auto max-w-[210mm] bg-white">{@html data.svg}</div>
-{:else}
+{:else if !b.paidAt}
 	<p class="mx-auto max-w-[210mm] bg-white px-12 py-6 text-rot">{t.invoice.notReady}</p>
 {/if}
 

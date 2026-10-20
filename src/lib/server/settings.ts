@@ -136,8 +136,6 @@ export const DEFAULTS = {
 	content: { de, en },
 	// where mail for the hut goes: notifications and everything sent to @alphuette-kiental.ch. Empty: the admin logins
 	mail: { forward: [] as string[] },
-	// automatic mails, each can be switched off in the admin
-	reminders: { payment: true, arrival: true, review: true, host: true },
 	amenities: [
 		{ icon: 'flame', de: 'Holzkochherd', en: 'Wood-fired stove' },
 		{ icon: 'cooking-pot', de: 'Gasrechaud und Gasgrill', en: 'Gas burner and grill' },
@@ -153,7 +151,7 @@ export const DEFAULTS = {
 	] as Amenity[]
 };
 
-type Stored = { name: string; rates: typeof DEFAULTS.rates; host: typeof DEFAULTS.host; mail: typeof DEFAULTS.mail; reminders: typeof DEFAULTS.reminders; content: { de: Content; en?: Partial<Content> }; amenities: Amenity[] };
+type Stored = { name: string; rates: typeof DEFAULTS.rates; host: typeof DEFAULTS.host; mail: typeof DEFAULTS.mail; content: { de: Content; en?: Partial<Content> }; amenities: Amenity[] };
 export type Settings = Omit<Stored, 'content' | 'amenities'> & { content: Record<Lang, Content>; amenities: (Amenity & Record<Lang, string>)[] };
 
 /** Settings from the database on top of the defaults above, with the texts in every language. */
@@ -179,7 +177,6 @@ export async function stored(): Promise<Stored> {
 		rates: { ...DEFAULTS.rates, ...db.rates },
 		host: { ...DEFAULTS.host, ...db.host },
 		mail: { ...DEFAULTS.mail, ...db.mail },
-		reminders: { ...DEFAULTS.reminders, ...db.reminders },
 		content: { de: { ...DEFAULTS.content.de, ...db.content?.de }, en: db.content?.en },
 		amenities: db.amenities ?? DEFAULTS.amenities
 	};

@@ -1,5 +1,4 @@
 import { fail } from '@sveltejs/kit';
-import { formatIBAN, isIBANValid } from 'swissqrbill/utils';
 import { DEFAULTS, setSetting, stored, type Amenity, type Content } from '#lib/server/settings.ts';
 import { canTranslate, lookup, setManual, TARGETS } from '#lib/server/translate.ts';
 import { syncTranslations } from '#lib/server/sitetexts.ts';
@@ -33,14 +32,9 @@ export const load = async () => {
 	const translations = Object.fromEntries(
 		Object.entries(de).map(([k, v]) => [k, Object.fromEntries(TARGETS.map((l) => [l, v.trim() ? (tr.get(l)?.get(v) ?? null) : '']))])
 	) as Record<keyof Content, Record<(typeof TARGETS)[number], string | null>>;
-	return { name: s.name, host: s.host, content: de, translations, amenities: s.amenities.map(({ icon, de }) => ({ icon, de })), icons: Object.keys(ICONS), fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[], canTranslate };
+	return { content: de, translations, amenities: s.amenities.map(({ icon, de }) => ({ icon, de })), icons: Object.keys(ICONS), fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[], canTranslate };
 };
 
-/** Swiss or Liechtenstein IBAN (the only ones a QR bill accepts), formatted, or null. */
-const validIban = (raw: string) => {
-	const iban = raw.replace(/\s/g, '').toUpperCase();
-	return /^(CH|LI)/.test(iban) && isIBANValid(iban) ? formatIBAN(iban) : null;
-};
 
 const str = (f: FormData, k: string, max = 200) => String(f.get(k) ?? '').trim().slice(0, max);
 
@@ -70,29 +64,6 @@ export const actions = {
 		await setManual(de, lang, text);
 		await log({ actor: locals.admin!, area: AREA, title: `Übersetzung korrigiert: ${LABELS[key] ?? key} (${lang.toUpperCase()})`, link });
 		return done('Übersetzung gespeichert');
-	},
-	host: async ({ request, locals }) => {
-		const f = await request.formData();
-		const ibanRaw = str(f, 'iban', 40);
-		const iban = ibanRaw ? validIban(ibanRaw) : '';
-		if (iban === null) return fail(400, { error: 'Die IBAN stimmt nicht. Bitte prüfe sie.' });
-		const lat = Number(str(f, 'lat'));
-		const lon = Number(str(f, 'lon'));
-		const a = await changeSettings(['name', 'host'], { actor: locals.admin!, area: AREA, title: 'Gastgeber, Adresse oder IBAN geändert', link }, async () => {
-			await setSetting('name', str(f, 'name', 100) || DEFAULTS.name);
-			await setSetting('host', {
-				name: str(f, 'hostName', 100),
-				street: str(f, 'street', 100),
-				zip: str(f, 'zip', 10),
-				city: str(f, 'city', 100),
-				email: str(f, 'email', 200),
-				whatsapp: str(f, 'whatsapp', 30),
-				iban,
-				lat: Number.isFinite(lat) && lat ? lat : DEFAULTS.host.lat,
-				lon: Number.isFinite(lon) && lon ? lon : DEFAULTS.host.lon
-			});
-		});
-		return { saved: ['host'], ...done('Gespeichert', a) };
 	},
 	amenities: async ({ request, locals }) => {
 		const f = await request.formData();

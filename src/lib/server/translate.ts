@@ -9,12 +9,14 @@ import type { Lang } from '#lib/i18n.ts';
 const client = ANTHROPIC_API_KEY ? new Anthropic({ apiKey: ANTHROPIC_API_KEY }) : null;
 export const TARGETS = ['en', 'fr', 'it'] as const;
 const NAMES: Record<Lang, string> = { de: 'German', en: 'English', fr: 'French', it: 'Italian' };
-export const hash = (s: string) => createHash('md5').update(s).digest('hex');
+// keyed by the trimmed German text, so a stray space or newline never loses a translation
+export const hash = (s: string) => createHash('md5').update(s.trim()).digest('hex');
 export const canTranslate = !!client;
 
 const SYSTEM = `You translate for the website of a small alpine hut for rent, "Alphütte Blüemlisalpblick" in Lengschwendi, Kiental, canton of Bern, Switzerland. The host is Tom.
 - Keep the tone plain, warm and short, like the original. Address the reader informally (German "du": "tu" in French and Italian, "you" in English).
 - Keep place names, mountain, hut, restaurant and bus stop names, URLs, phone numbers, amounts, dates and times exactly as written.
+- Keep words in curly braces like {vorname} or {link} exactly as they are, untranslated; they are filled in later.
 - Keep line breaks, blank lines and list markers ("- ") exactly. In FAQ texts a question line is followed by its answer; keep that layout.
 - Use Swiss conventions: CHF, 24-hour times.`;
 
@@ -36,7 +38,7 @@ async function ask<T>(prompt: string, schema: Record<string, unknown>): Promise<
 
 /** Translations of German texts into `lang`, from the table: German text → translation. */
 export async function lookup(texts: string[], langs: readonly Lang[] = TARGETS) {
-	const by = new Map<string, string>(texts.filter(Boolean).map((t) => [hash(t), t]));
+	const by = new Map<string, string>(texts.filter((t) => t?.trim()).map((t) => [hash(t), t]));
 	const out = new Map<string, Map<string, string>>(langs.map((l) => [l, new Map()]));
 	if (!by.size) return out;
 	const rows = await sql`select hash, lang, text from translations where hash = any(${[...by.keys()]}) and lang = any(${langs as unknown as string[]})`;
@@ -73,7 +75,7 @@ export function fill(texts: string[]) {
 			}
 		}
 	};
-	busy = (busy ?? Promise.resolve()).then(run).catch((e) => console.error('translate', e));
+	busy = (busy ?? Promise.resolve()).then(run).catch((e) => import('./monitor.ts').then((m) => m.report(e, 'Übersetzung')));
 	return busy;
 }
 
@@ -90,7 +92,7 @@ export async function translateMessage(text: string, to: Lang): Promise<string |
 		);
 		return res.language === 'same' || !res.translation.trim() ? null : res.translation.trim();
 	} catch (e) {
-		console.error('translate message', e);
+		await import('./monitor.ts').then((m) => m.report(e, 'Übersetzung einer Nachricht'));
 		return null;
 	}
 }

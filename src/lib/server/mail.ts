@@ -25,7 +25,8 @@ export async function sendMail(m: Mail) {
 		body: JSON.stringify({ from: MAIL_FROM, to: m.to, subject: m.subject, text: m.text, html: html(m.text), reply_to: m.replyTo })
 	});
 	// A failed mail must not undo the booking; the host still sees everything in the admin.
-	if (!res.ok) console.error('mail failed', res.status, await res.text());
+	// no alert mail about a broken mail service; it shows on the system page
+	if (!res.ok) await import('./monitor.ts').then(async (m) => m.report(new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`), 'Mail senden', { alert: false }));
 }
 
 /** Address whose replies land in the booking's message thread, if inbound mail is set up. */

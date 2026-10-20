@@ -14,7 +14,7 @@ export const load = async ({ parent }) => {
 		takenRanges(),
 		listPhotos(lang),
 		listHikes(lang),
-		publicReviews()
+		publicReviews(lang)
 	]);
 	const content = settings.content[lang];
 	return {

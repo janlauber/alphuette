@@ -7,16 +7,20 @@ import { fill, hash } from './translate.ts';
 /** Every German text the site shows in other languages. */
 export async function siteTexts() {
 	const s = await stored();
-	const [hikes, photos] = await Promise.all([
+	const [hikes, photos, mails, replies] = await Promise.all([
 		sql`select de, season_de, transit_de, highlights_de, tips_de from hikes`,
-		sql`select alt_de from photos where deleted_at is null`
+		sql`select alt_de from photos where deleted_at is null`,
+		sql`select subject, body from mail_templates where audience = 'gast'`,
+		sql`select reply from reviews where approved and reply is not null`
 	]);
 	return [
 		...Object.values(s.content.de),
 		...s.amenities.map((a) => a.de),
 		...hikes.flatMap((h) => hikeTexts(h as never)),
 		...photos.map((p) => p.altDe as string),
-		...weatherTexts()
+		...weatherTexts(),
+		...mails.flatMap((m) => [m.subject as string, m.body as string]),
+		...replies.map((r) => r.reply as string)
 	];
 }
 

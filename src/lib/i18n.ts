@@ -207,6 +207,9 @@ const de = {
 		saveLink: 'Speichere diesen Link. Damit kommst du jederzeit zurück zu deiner Buchung.'
 	},
 	invoice: {
+		due: (d: string) => `Zahlbar bis ${d}`,
+		paid: (d: string) => `Bezahlt am ${d}. Danke!`,
+		reference: 'Referenz',
 		title: 'Rechnung',
 		pay: 'Bitte zahle innert 30 Tagen, spätestens 14 Tage vor der Anreise. Scanne dazu den QR-Code mit deiner Banking-App.',
 		print: 'Drucken oder als PDF speichern',
@@ -336,17 +339,8 @@ const de = {
 		cancelledText: (from: string, to: string, url: string) => `Deine Buchung vom ${from} bis ${to} ist storniert.\n\n${url}`,
 		messageSubject: (ref: string) => `Nachricht von Tom (${ref})`,
 		messageOriginal: 'Original auf Deutsch:',
-		reviewSubject: 'Wie war deine Woche im Hüttli?',
-		reviewText: (url: string) => `Danke, dass du im Hüttli warst. Tom freut sich, wenn du ihm schreibst, wie es war. Ein paar Zeilen reichen:\n\n${url}`,
 		linksSubject: 'Deine Buchungen für die Alphütte',
 		linksText: (list: string) => `Hier sind die Links zu deinen Buchungen:\n\n${list}\n\nWenn du das nicht angefordert hast, kannst du diese Mail ignorieren.`,
-		paymentSubject: (ref: string) => `Erinnerung: Rechnung für das Hüttli (${ref})`,
-		paymentText: (total: string, due: string, url: string) =>
-			`Kurze Erinnerung: Die Rechnung über ${total} ist bis ${due} fällig. Die QR-Rechnung findest du hier:\n${url}\n\nHast du schon bezahlt? Dann ist alles gut, die Zahlung ist einfach noch nicht bei Tom eingetragen.`,
-		arrivalSubject: (ref: string) => `In einer Woche geht es los (${ref})`,
-		arrivalText: (from: string, time: string, url: string) =>
-			`Am ${from} geht es ins Hüttli, Anreise ab ${time} Uhr. Hier ist das Wichtigste für die Anreise. Alles weitere, die Packliste und den Wetterbericht findest du auf deiner Buchungsseite:\n${url}`,
-		arrivalInfo: 'Infos von Tom'
 	}
 };
 
@@ -538,6 +532,9 @@ const en: Dict = {
 		saveLink: 'Keep this link. It takes you back to your booking at any time.'
 	},
 	invoice: {
+		due: (d) => `Payable by ${d}`,
+		paid: (d) => `Paid on ${d}. Thank you!`,
+		reference: 'Reference',
 		title: 'Invoice',
 		pay: 'Please pay within 30 days, at the latest 14 days before arrival. Scan the QR code with your banking app.',
 		print: 'Print or save as PDF',
@@ -665,17 +662,8 @@ const en: Dict = {
 		cancelledText: (from, to, url) => `Your booking from ${from} to ${to} has been cancelled.\n\n${url}`,
 		messageSubject: (ref) => `Message from Tom (${ref})`,
 		messageOriginal: 'Original in German:',
-		reviewSubject: 'How was your week at the Alphütte?',
-		reviewText: (url) => `Thank you for staying at the Alphütte. Tom would be glad to hear how it was. Writing a few lines takes two minutes:\n\n${url}`,
 		linksSubject: 'Your bookings for the Alphütte',
 		linksText: (list) => `Here are the links to your bookings:\n\n${list}\n\nIf you did not ask for this, ignore this email.`,
-		paymentSubject: (ref) => `Reminder: bill for the hut (${ref})`,
-		paymentText: (total, due, url) =>
-			`A quick reminder: the bill for ${total} is due by ${due}. You find the QR bill here:\n${url}\n\nAlready paid? Then all is well, Tom just has not marked the payment yet.`,
-		arrivalSubject: (ref) => `One week to go (${ref})`,
-		arrivalText: (from, time, url) =>
-			`On ${from} you arrive at the hut, from ${time}. Here is what you need for the journey. Everything else, the packing list and the weather forecast are on your booking page:\n${url}`,
-		arrivalInfo: 'Information from Tom'
 	}
 };
 

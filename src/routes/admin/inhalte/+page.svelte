@@ -17,7 +17,6 @@
 		sleeping: { label: 'Schlafen', hint: 'Betten, Matratzen, Bettwäsche.' },
 		good_to_know: { label: 'Gut zu wissen', hint: 'Was Gäste wissen sollten, bevor sie anfragen.' },
 		faq: { label: 'Häufige Fragen', hint: 'Frage auf eine Zeile, die Antwort darunter. Zwischen zwei Fragen eine leere Zeile.', kind: 'faq', rows: 12 },
-		rules: { label: 'Hausregeln', hint: 'Gäste sehen sie beim Anfragen.' },
 		payment: { label: 'Zahlung und Absage', hint: 'Gäste sehen das beim Anfragen und auf der Buchungsseite.' },
 		packing: { label: 'Packliste', hint: 'Eine Zeile pro Sache, mit «- » am Anfang. Gäste können abhaken.' },
 		arrival: { label: 'Anreise', hint: 'Mit Bus und Auto. Erscheint auf der Startseite und bei den Gästen.' },
@@ -26,7 +25,7 @@
 	};
 	const GROUPS: [string, Key[]][] = [
 		['Startseite', ['tagline', 'intro', 'sleeping', 'good_to_know', 'faq']],
-		['Beim Anfragen', ['rules', 'payment', 'packing']],
+		['Beim Anfragen', ['payment', 'packing']],
 		['Anreise und Umgebung', ['arrival', 'area']],
 		['Nur für bestätigte Gäste', ['guest_info']]
 	];
@@ -74,7 +73,8 @@
 	<nav class="mb-8 flex flex-wrap gap-2" aria-label="Abschnitte">
 		{#each GROUPS as [g] (g)}<a href="#{g}" class="pill no-underline">{g}</a>{/each}
 		<a href="#ausstattung" class="pill no-underline">Ausstattung</a>
-		<a href="#gastgeber" class="pill no-underline">Gastgeber und IBAN</a>
+		<a href="/admin/hausregeln" class="pill no-underline">Hausregeln</a>
+		<a href="/admin/gastgeber" class="pill no-underline">Gastgeber und Zahlung</a>
 	</nav>
 
 	{#each GROUPS as [group, keys] (group)}
@@ -158,30 +158,4 @@
 		</form>
 	</section>
 
-	<section id="gastgeber" class="scroll-mt-20">
-		<h2 class="text-2xl">Gastgeber und Zahlung</h2>
-		<p class="hint mt-1">Steht im Impressum, auf den Rechnungen und in den Mails an Gäste.</p>
-		<form method="POST" action="?/host" use:enhance={keep('host')} class="card mt-4 grid gap-4 p-4 sm:grid-cols-2 sm:p-5">
-			<label class="label sm:col-span-2">Name des Hüttli <input name="name" value={data.name} class="field mt-1 font-normal" /></label>
-			<label class="label">Dein Name <input name="hostName" value={data.host.name} class="field mt-1 font-normal" /></label>
-			<label class="label">E-Mail für Gäste <input name="email" type="email" value={data.host.email} class="field mt-1 font-normal" /></label>
-			<label class="label">Strasse und Nr. <input name="street" value={data.host.street} class="field mt-1 font-normal" /></label>
-			<div class="grid grid-cols-[6rem_1fr] gap-3">
-				<label class="label">PLZ <input name="zip" value={data.host.zip} inputmode="numeric" class="field mt-1 font-normal" /></label>
-				<label class="label">Ort <input name="city" value={data.host.city} class="field mt-1 font-normal" /></label>
-			</div>
-			<label class="label sm:col-span-2">IBAN für die QR-Rechnung
-				<span class="hint block text-sm font-normal">Dein Konto bei einer Schweizer Bank. Ohne IBAN gibt es keine Rechnung für die Gäste.</span>
-				<input name="iban" value={data.host.iban} placeholder="CH00 0000 0000 0000 0000 0" class="field mt-1 font-normal" aria-invalid={form?.error ? 'true' : undefined} />
-			</label>
-			<label class="label">WhatsApp-Nummer <span class="hint block text-sm font-normal">Leer lassen, wenn Gäste dich nicht per WhatsApp erreichen sollen.</span><input name="whatsapp" type="tel" value={data.host.whatsapp} placeholder="079 123 45 67" class="field mt-1 font-normal" /></label>
-			<div class="grid grid-cols-2 gap-3">
-				<label class="label">Breitengrad <input name="lat" inputmode="decimal" value={data.host.lat} class="field mt-1 font-normal" /></label>
-				<label class="label">Längengrad <input name="lon" inputmode="decimal" value={data.host.lon} class="field mt-1 font-normal" /></label>
-			</div>
-			<p class="hint text-sm sm:col-span-2">Die Karte auf der Website zeigt diesen Punkt. Er muss nicht genau beim Hüttli liegen. Die genaue Lage gehört in die Infos für bestätigte Gäste.</p>
-			{#if form?.error}<p class="rounded-[14px] bg-danger-wash px-4 py-3 font-semibold text-danger sm:col-span-2" role="alert">{form.error}</p>{/if}
-			<div class="sm:col-span-2"><button class="btn-blue" disabled={busy === 'host'}>Speichern</button></div>
-		</form>
-	</section>
 </AdminPage>

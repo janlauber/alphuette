@@ -29,6 +29,7 @@ export const variables = defineEnvVars({
 		schema: (v) => (v ?? '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
 	},
 	RESEND_API_KEY: { schema: optional },
+	OWNER_EMAIL: { schema: optional, description: 'Gets a mail when the app breaks, and the help requests from the admin. Default: the first admin email' },
 	ANTHROPIC_API_KEY: { schema: optional, description: 'Translates texts and guest messages. Without it the site shows German where a translation is missing.' },
 	MAIL_FROM: { schema: (v) => v || 'Alphütte <hallo@alphuette-kiental.ch>' },
 	REPLY_DOMAIN: { schema: optional, description: 'Domain receiving replies via Resend inbound' },
