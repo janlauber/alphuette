@@ -108,7 +108,8 @@
 		<h1 class="mt-2 text-[2.4rem] leading-[1.02] !text-white sm:text-[3.4rem] lg:text-[4.2rem]">{data.hutName}</h1>
 		<p class="mt-3 max-w-[48ch] text-lg text-white/90 sm:text-xl">{c.tagline}</p>
 		<div class="mt-5 flex flex-wrap items-center gap-3">
-			<a href="#buchen" class="btn-primary !border-ink !shadow-[0_4px_0_var(--color-ink)]">{t.card.pick}</a>
+			<!-- on phones the bar at the bottom has this button -->
+			<a href="#buchen" class="btn-primary !border-ink !shadow-[0_4px_0_var(--color-ink)] max-lg:!hidden">{t.card.pick}</a>
 			{#if data.photos.length > 1}
 	<div class="flex items-center gap-4 lg:ml-auto">
 						<ul class="flex">
