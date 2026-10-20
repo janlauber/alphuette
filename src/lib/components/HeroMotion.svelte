@@ -4,9 +4,9 @@
 	import Play from '@lucide/svelte/icons/play';
 	import Img, { type Photo } from './Img.svelte';
 
-	// Full-width title image that moves like a drone flight. The photo renders first (fast, it is the
-	// LCP image) and glides slowly; a short muted video loop replaces it once it can play.
-	// No video for reduced motion or data saver. The button stops all motion.
+	// Full-width title image. The photo renders first (fast, it is the LCP image) and stands still;
+	// a short muted video loop replaces it once it can play, with a button to stop it.
+	// No video for reduced motion or data saver.
 	export type Video = { av1: string; h264: string; poster: string };
 	let { photo, video, labels, children }: { photo: Photo; video?: Video; labels: { pause: string; play: string }; children: Snippet } = $props();
 
@@ -32,7 +32,7 @@
 <section class="relative isolate overflow-hidden bg-brand-dark text-white sm:h-[min(86svh,780px)] sm:min-h-[520px]">
 	<div class="relative h-[46svh] min-h-[260px] overflow-hidden sm:absolute sm:inset-0 sm:h-auto">
 		<!-- anchored at the bottom: the hut usually sits low in the picture, the band must not hide it -->
-		<Img {photo} eager sizes="100vw" class="glide absolute inset-0 size-full object-cover object-bottom {paused ? 'still' : ''}" />
+		<Img {photo} eager sizes="100vw" class="absolute inset-0 size-full object-cover object-bottom" />
 		{#if useVideo && video}
 			<video
 				bind:this={el}
@@ -50,9 +50,9 @@
 				<source src={video.h264} type="video/mp4" />
 			</video>
 		{/if}
-		<button type="button" onclick={toggle} class="absolute right-4 top-4 grid size-11 place-items-center rounded-full border-2 border-white/80 bg-brand-dark/60 text-white hover:bg-brand-dark/80" aria-label={paused ? labels.play : labels.pause} aria-pressed={paused}>
+		{#if useVideo && video}<button type="button" onclick={toggle} class="absolute right-4 top-4 grid size-11 place-items-center rounded-full border-2 border-white/80 bg-brand-dark/60 text-white hover:bg-brand-dark/80" aria-label={paused ? labels.play : labels.pause} aria-pressed={paused}>
 			{#if paused}<Play size={18} fill="currentColor" aria-hidden="true" />{:else}<Pause size={18} fill="currentColor" aria-hidden="true" />{/if}
-		</button>
+		</button>{/if}
 	</div>
 
 	<div class="relative sm:absolute sm:inset-x-0 sm:bottom-0 sm:bg-brand-dark/90">
@@ -62,25 +62,3 @@
 	</div>
 </section>
 
-<style>
-	@keyframes glide {
-		from {
-			transform: scale(1.06) translate(-1.5%, 1%);
-		}
-		to {
-			transform: scale(1.16) translate(2.5%, -1.5%);
-		}
-	}
-	:global(.glide) {
-		animation: glide 22s ease-in-out infinite alternate;
-		transform-origin: 50% 100%;
-	}
-	:global(.glide.still) {
-		animation-play-state: paused;
-	}
-	@media (prefers-reduced-motion: reduce) {
-		:global(.glide) {
-			animation: none;
-		}
-	}
-</style>
