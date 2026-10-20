@@ -1,6 +1,5 @@
 <script lang="ts">
-	import '@fontsource/gloock';
-	import '@fontsource-variable/hanken-grotesk';
+	import '@fontsource-variable/outfit';
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';

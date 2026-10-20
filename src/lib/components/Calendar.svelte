@@ -73,26 +73,26 @@
 	<div class="flex items-center justify-between gap-2">
 		<button
 			type="button"
-			class="grid size-9 place-items-center rounded-full hover:bg-sand disabled:opacity-25"
+			class="grid size-10 place-items-center rounded-full border-2 border-brand text-brand hover:bg-wash disabled:opacity-25"
 			aria-label={t.calendar.prev}
 			disabled={month <= today.slice(0, 7)}
 			onclick={() => (month = shift(month, -1))}
 		>
-			<svg viewBox="0 0 16 16" class="size-4" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+			<svg viewBox="0 0 16 16" class="size-4" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
 		</button>
 		<div class="flex flex-1 justify-around">
 			{#each shown as ym (ym)}
-				<p class="font-semibold first-letter:uppercase" aria-live="polite">{monthName(ym)}</p>
+				<p class="font-bold text-brand first-letter:uppercase" aria-live="polite">{monthName(ym)}</p>
 			{/each}
 		</div>
 		<button
 			type="button"
-			class="grid size-9 place-items-center rounded-full hover:bg-sand disabled:opacity-25"
+			class="grid size-10 place-items-center rounded-full border-2 border-brand text-brand hover:bg-wash disabled:opacity-25"
 			aria-label={t.calendar.next}
 			disabled={shift(month, months - 1) >= lastMonth}
 			onclick={() => (month = shift(month, 1))}
 		>
-			<svg viewBox="0 0 16 16" class="size-4" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+			<svg viewBox="0 0 16 16" class="size-4" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
 		</button>
 	</div>
 
@@ -110,9 +110,9 @@
 							<button
 								type="button"
 								class="relative aspect-square text-[0.95rem] tabular-nums transition-colors
-									{edge ? 'z-10 rounded-full bg-geranium font-semibold text-white' : ''}
-									{inRange ? 'bg-blush' : ''}
-									{!edge && enabled(d) ? 'rounded-full hover:outline hover:outline-1 hover:outline-tanne' : ''}
+									{edge ? 'z-10 animate-[pop_220ms_ease-out] rounded-full bg-brand font-bold text-white' : ''}
+									{inRange ? 'bg-wash' : ''}
+									{!edge && enabled(d) ? 'rounded-full font-semibold hover:outline-2 hover:outline-brand' : ''}
 									{!edge && !enabled(d) ? 'text-muted/40' : ''}
 									{isTaken(d, taken) && !edge ? 'line-through decoration-muted/60' : ''}"
 								disabled={!enabled(d) && !edge}

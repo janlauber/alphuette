@@ -12,7 +12,7 @@
 	method="POST"
 	action="?/upload"
 	enctype="multipart/form-data"
-	class="mt-6 flex flex-wrap items-center gap-3 rounded-[3px] border border-dashed border-stein bg-paper p-4"
+	class="mt-6 flex flex-wrap items-center gap-3 rounded-[14px] border border-dashed border-stein bg-paper p-4"
 	use:enhance={() => {
 		uploading = true;
 		return async ({ update }) => {
@@ -31,7 +31,7 @@
 
 <ul class="mt-8 grid gap-4">
 	{#each data.photos as p, i (p.id)}
-		<li class="grid gap-4 rounded-[3px] border border-linie bg-paper p-3 sm:grid-cols-[180px_1fr]">
+		<li class="grid gap-4 rounded-[14px] border border-linie bg-paper p-3 sm:grid-cols-[180px_1fr]">
 			<img
 				src="/bilder/photos/{p.key}-480.webp"
 				alt={p.altDe}
@@ -46,6 +46,11 @@
 					<input type="hidden" name="id" value={p.id} />
 					<label class="text-sm font-semibold">Beschreibung Deutsch <input name="alt_de" value={p.altDe} class="field mt-1 font-normal" /></label>
 					<label class="text-sm font-semibold">Beschreibung Englisch <input name="alt_en" value={p.altEn} class="field mt-1 font-normal" /></label>
+					<label class="text-sm font-semibold">Gruppe in der Galerie
+						<select name="category" class="field mt-1 font-normal">
+							{#each [['', 'Keine'], ['draussen', 'Draussen'], ['drinnen', 'Drinnen'], ['winter', 'Winter']] as [v, l] (v)}<option value={v} selected={p.category === v}>{l}</option>{/each}
+						</select>
+					</label>
 					<div class="flex items-center gap-3">
 						<button class="btn-line !py-1 text-sm">Speichern</button>
 						{#if form?.saved === p.id}<span class="text-sm text-moos">Gespeichert</span>{/if}
@@ -53,7 +58,7 @@
 				</form>
 				<div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
 					{#if p.hero}
-						<span class="rounded-[3px] bg-gelb px-2 py-1 font-semibold">Titelbild</span>
+						<span class="rounded-[14px] bg-gelb px-2 py-1 font-semibold">Titelbild</span>
 					{:else}
 						<form method="POST" action="?/hero" use:enhance><input type="hidden" name="id" value={p.id} /><button class="underline">Als Titelbild</button></form>
 						<form method="POST" action="?/move" use:enhance>

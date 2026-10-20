@@ -9,16 +9,16 @@
 </script>
 
 <div>
-	<p class="flex items-center gap-2 font-semibold"><Bus size={18} class="text-fir" aria-hidden="true" />{title}</p>
+	<p class="flex items-center gap-2.5 font-bold text-brand"><span class="grid size-9 place-items-center rounded-full bg-brand text-white"><Bus size={18} strokeWidth={2.25} aria-hidden="true" /></span>{title}</p>
 	{#if winter}<p class="mt-1 text-sm text-muted">{t.transit.winter}</p>{/if}
 	{#if list.length}
-		<ul class="mt-2 divide-y divide-line">
+		<ul class="mt-3 divide-y-2 divide-dashed divide-line">
 			{#each list as d (d.time + d.line)}
 				<li class="flex items-center justify-between py-2 tabular-nums">
-					<span><strong>{d.time}</strong> <span class="text-muted">– {d.arrival}</span></span>
+					<span><strong class="text-lg text-brand">{d.time}</strong> <span class="text-muted">→ {d.arrival}</span></span>
 					<span class="flex items-center gap-2 text-sm">
-						{#if d.delay}<span class="font-semibold text-geranium">{t.transit.late(d.delay)}</span>{/if}
-						<span class="rounded-md bg-sand px-1.5 py-0.5 font-semibold">{d.line}</span>
+						{#if d.delay}<span class="font-semibold text-accent-dark">{t.transit.late(d.delay)}</span>{/if}
+						<span class="rounded-full border-2 border-brand px-2 py-0.5 text-xs font-bold text-brand">{d.line}</span>
 					</span>
 				</li>
 			{/each}

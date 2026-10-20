@@ -6,7 +6,8 @@
 	import Car from '@lucide/svelte/icons/car';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
-	import MailCheck from '@lucide/svelte/icons/mail-check';
+	import Check from '@lucide/svelte/icons/check';
+	import Huettli from '#lib/components/Huettli.svelte';
 	import Img from '#lib/components/Img.svelte';
 	import Quote from '#lib/components/Quote.svelte';
 	import Seo from '#lib/components/Seo.svelte';
@@ -34,6 +35,7 @@
 	// Steps only exist with JavaScript; without it the whole form shows at once.
 	let js = $state(false);
 	let step = $state(0);
+	let moving = $state(false);
 	let sending = $state(false);
 	let nonce = $state('');
 	let formEl = $state<HTMLFormElement>();
@@ -56,6 +58,8 @@
 			for (const f of fields) if (!f.reportValidity()) return;
 		}
 		step = to;
+		moving = true;
+		setTimeout(() => (moving = false), 650);
 		track('request_step', to);
 		scrollTo({ top: 0, behavior: 'smooth' });
 	}
@@ -85,9 +89,12 @@
 <div class="mx-auto max-w-2xl px-5 pb-10 pt-6 sm:px-6">
 	{#if sent}
 		<div class="flex flex-col gap-6 pt-4">
-			<span class="grid size-14 place-items-center rounded-full bg-blush text-geranium"><MailCheck size={28} aria-hidden="true" /></span>
+			<div class="relative w-fit text-brand">
+				<Huettli face="wink" pose="stand" animate class="w-32" />
+				<svg viewBox="0 0 64 48" class="absolute -right-16 top-6 w-16 animate-float" aria-hidden="true"><path d="M4 30h-4M8 38H2M6 22H1" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><rect x="14" y="6" width="46" height="34" rx="6" fill="#fff" stroke="currentColor" stroke-width="3.5" /><path d="m16 10 21 17 21-17" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round" /></svg>
+			</div>
 			<div>
-				<h1 class="text-[2.1rem]">{t.sent.title}</h1>
+				<h1 class="text-[2.4rem]">{t.sent.title}</h1>
 				<p class="mt-3 text-[1.05rem] leading-relaxed">{t.sent.text(String(form?.email ?? ''))}</p>
 			</div>
 			<Steps
@@ -99,21 +106,31 @@
 					{ title: t.steps.arrive(fmtDate(checkIn, data.lang, { year: undefined })), text: t.steps.arriveText, state: 'next' }
 				]}
 			/>
-			<p class="text-sm text-muted">{t.sent.noMail}</p>
+			<p class="rounded-[18px] bg-accent-wash p-4 text-sm">{t.sent.noMail}</p>
 		</div>
 	{:else}
-		<a href="{localize(data.lang, '/')}#buchen" class="inline-flex items-center gap-1 text-sm text-muted no-underline hover:text-ink"><ChevronLeft size={16} aria-hidden="true" />{data.hutName}</a>
-		<h1 class="mt-3 text-[2.1rem]">{t.request.title}</h1>
+		<a href="{localize(data.lang, '/')}#buchen" class="inline-flex items-center gap-1 text-sm font-semibold text-brand no-underline hover:underline"><ChevronLeft size={16} strokeWidth={2.5} aria-hidden="true" />{data.hutName}</a>
+		<h1 class="mt-3 text-[2.4rem]">{t.request.title}</h1>
 
 		{#if js}
-			<ol class="mt-5 grid grid-cols-3 gap-2" aria-label={t.request.stepOf(step + 1, 3)}>
-				{#each t.request.steps as label, i (label)}
-					<li>
-						<span class="block h-1.5 rounded-full {i <= step ? 'bg-geranium' : 'bg-line'}"></span>
-						<span class="mt-1.5 block text-xs font-semibold {i === step ? '' : 'text-muted'}">{label}</span>
-					</li>
-				{/each}
-			</ol>
+			<!-- The Hüttli runs along the steps -->
+			<div class="relative mt-16 text-brand">
+				<span class="absolute left-[16.66%] right-[16.66%] top-[17px] border-t-2 border-dashed border-line"></span>
+				<span class="absolute left-[16.66%] top-[17px] border-t-2 border-brand transition-all duration-500" style="width: {step * 33.33}%"></span>
+				<span class="absolute -top-14 w-14 -translate-x-1/2 transition-[left] duration-600 ease-out" style="left: {16.66 + step * 33.33}%">
+					<Huettli pose={moving ? 'run' : 'stand'} animate run={moving} face={step === 2 ? 'love' : 'happy'} class="w-full" />
+				</span>
+				<ol class="relative grid grid-cols-3" aria-label={t.request.stepOf(step + 1, 3)}>
+					{#each t.request.steps as label, i (label)}
+						<li class="flex flex-col items-center gap-1.5 text-center" aria-current={i === step ? 'step' : undefined}>
+							<span class="grid size-9 place-items-center rounded-full border-2 font-bold transition-colors {i < step ? 'border-brand bg-brand text-white' : i === step ? 'border-brand bg-accent' : 'border-line bg-paper text-muted'}">
+								{#if i < step}<Check size={16} strokeWidth={3.5} aria-hidden="true" />{:else}{i + 1}{/if}
+							</span>
+							<span class="text-balance text-xs font-bold leading-tight {i === step ? '' : 'text-muted'}">{label}</span>
+						</li>
+					{/each}
+				</ol>
+			</div>
 		{/if}
 
 		<form
@@ -143,23 +160,23 @@
 			<!-- Honeypot: people never see or fill this -->
 			<div class="hidden" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
 
-			{#if serverError}<p class="mb-5 rounded-[12px] bg-blush px-4 py-3 font-semibold text-geranium-dark" role="alert">{serverError}</p>{/if}
+			{#if serverError}<p class="mb-5 rounded-[18px] bg-danger-wash px-4 py-3 font-semibold text-danger" role="alert">{serverError}</p>{/if}
 
 			<fieldset data-step="0" class="flex flex-col gap-5" hidden={!show(0)}>
 				<legend class="sr-only">{t.request.steps[0]}</legend>
 				<div class="card flex gap-4 p-3">
-					{#if data.photo}<Img photo={data.photo} sizes="96px" class="size-24 shrink-0 rounded-[12px] object-cover" />{/if}
+					{#if data.photo}<Img photo={data.photo} sizes="96px" class="size-24 shrink-0 rounded-[16px] object-cover" />{/if}
 					<div class="flex min-w-0 flex-col justify-center gap-0.5">
-						<p class="font-serif text-lg leading-tight">{data.hutName}</p>
+						<p class="text-lg font-bold leading-tight text-brand">{data.hutName}</p>
 						{#if checkIn && checkOut}
 							<p>{fmtDate(checkIn, data.lang, { year: undefined })} – {fmtDate(checkOut, data.lang)}</p>
 						{:else}
-							<p class="text-geranium-dark">{t.errors.dates}</p>
+							<p class="font-semibold text-danger">{t.errors.dates}</p>
 						{/if}
-						<a href="{localize(data.lang, '/')}#buchen" class="text-sm underline">{t.request.change}</a>
+						<a href="{localize(data.lang, '/')}#buchen" class="text-sm font-semibold text-brand underline">{t.request.change}</a>
 					</div>
 				</div>
-				<div class="divide-y divide-line border-y border-line">
+				<div class="divide-y-2 divide-line border-y-2 border-line">
 					<Stepper label={t.card.adults} hint={t.card.adultsHint} bind:value={guests.adults} min={1} max={data.rates.maxGuests - guests.children - guests.infants} lang={data.lang} />
 					<Stepper label={t.card.children} hint={t.card.childrenHint} bind:value={guests.children} max={data.rates.maxGuests - guests.adults - guests.infants} lang={data.lang} />
 					<Stepper label={t.card.infants} hint={t.card.infantsHint} bind:value={guests.infants} max={data.rates.maxGuests - guests.adults - guests.children} lang={data.lang} />
@@ -172,7 +189,7 @@
 			</fieldset>
 
 			<fieldset data-step="1" class="flex flex-col gap-4 {js ? '' : 'mt-10'}" hidden={!show(1)}>
-				<legend class="mb-1 font-serif text-2xl">{t.request.steps[1]}</legend>
+				<legend class="mb-1 text-2xl font-bold text-brand">{t.request.steps[1]}</legend>
 				<label class="label">{t.request.name}
 					<input name="name" autocomplete="name" required minlength="2" maxlength="100" value={v.name ?? ''} aria-invalid={invalid.has('name')} class="field mt-1.5 font-normal" /></label>
 				<label class="label">{t.request.email}
@@ -187,11 +204,11 @@
 				<fieldset>
 					<legend class="label">{t.request.arrival} <span class="hint">({t.request.optional})</span></legend>
 					<div class="grid grid-cols-2 gap-2">
-						<label class="flex cursor-pointer items-center gap-2.5 rounded-[12px] border border-[#d9d0c9] px-3.5 py-3 has-[:checked]:border-ink has-[:checked]:bg-sand">
-							<input type="radio" name="arrival" value="oev" checked={v.arrival === 'oev'} class="sr-only" /><Bus size={20} class="text-fir" aria-hidden="true" />{t.request.bus}
+						<label class="flex cursor-pointer items-center gap-2.5 rounded-[18px] border-2 border-line px-4 py-3 font-semibold transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-wash has-[:checked]:text-brand has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand">
+							<input type="radio" name="arrival" value="oev" checked={v.arrival === 'oev'} class="sr-only" /><Bus size={22} strokeWidth={2.25} class="text-brand" aria-hidden="true" />{t.request.bus}
 						</label>
-						<label class="flex cursor-pointer items-center gap-2.5 rounded-[12px] border border-[#d9d0c9] px-3.5 py-3 has-[:checked]:border-ink has-[:checked]:bg-sand">
-							<input type="radio" name="arrival" value="auto" checked={v.arrival === 'auto'} class="sr-only" /><Car size={20} class="text-fir" aria-hidden="true" />{t.request.car}
+						<label class="flex cursor-pointer items-center gap-2.5 rounded-[18px] border-2 border-line px-4 py-3 font-semibold transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-wash has-[:checked]:text-brand has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand">
+							<input type="radio" name="arrival" value="auto" checked={v.arrival === 'auto'} class="sr-only" /><Car size={22} strokeWidth={2.25} class="text-brand" aria-hidden="true" />{t.request.car}
 						</label>
 					</div>
 				</fieldset>
@@ -206,26 +223,29 @@
 			</fieldset>
 
 			<fieldset data-step="2" class="flex flex-col gap-4 {js ? '' : 'mt-10'}" hidden={!show(2)}>
-				<legend class="mb-1 font-serif text-2xl">{t.request.steps[2]}</legend>
+				<legend class="mb-1 text-2xl font-bold text-brand">{t.request.steps[2]}</legend>
 				{#if q?.ok}
 					<div class="card p-4">
 						<p class="font-semibold">{fmtDate(checkIn, data.lang, { year: undefined })} – {fmtDate(checkOut, data.lang)}</p>
 						<p class="text-sm text-muted">{guests.adults} {t.card.adults}{guests.children ? `, ${guests.children} ${t.card.children}` : ''}{guests.infants ? `, ${guests.infants} ${t.card.infants}` : ''}</p>
-						<div class="mt-3 border-t border-line pt-3">
+						<div class="mt-3 border-t-2 border-line pt-3">
 							<Quote {checkIn} {checkOut} guests={{ ...guests, linen: Math.min(guests.linen, people) }} seasons={data.seasons} rates={data.rates} taken={data.taken} lang={data.lang} />
 						</div>
 					</div>
 				{/if}
 				{#each [{ title: t.sections.rules, html: textToHtml(data.rules) }, { title: t.sections.payment, html: textToHtml(data.payment) }] as d (d.title)}
-					<details class="group border-b border-line py-3">
-						<summary class="flex cursor-pointer list-none items-center justify-between font-semibold">{d.title}<ChevronDown size={18} class="transition group-open:rotate-180" aria-hidden="true" /></summary>
+					<details class="group rounded-[20px] border-2 border-line px-4 py-3 open:border-brand">
+						<summary class="flex cursor-pointer list-none items-center justify-between font-bold">{d.title}<ChevronDown size={20} strokeWidth={2.5} class="text-brand transition group-open:rotate-180" aria-hidden="true" /></summary>
 						<div class="richtext mt-2">{@html d.html}</div>
 					</details>
 				{/each}
-				<p class="text-sm text-muted">{t.request.consent} <a href={localize(data.lang, '/datenschutz')} class="underline">{t.request.privacy}</a></p>
+				<p class="text-sm text-muted">{t.request.consent} <a href={localize(data.lang, '/datenschutz')} class="font-semibold text-brand underline">{t.request.privacy}</a></p>
 				<div class="grid {js ? 'grid-cols-[auto_1fr]' : ''} gap-3">
 					{#if js}<button type="button" class="btn-line" onclick={() => go(1)}>{t.request.back}</button>{/if}
-					<button class="btn-primary" disabled={sending || (js && !nonce)}>{sending || (js && !nonce) ? t.request.sending : t.request.submit}</button>
+					<button class="btn-primary" disabled={sending || (js && !nonce)} aria-busy={sending}>
+						{#if sending}<Huettli run class="-my-2 w-8 text-brand [--paper:var(--color-accent)]" />{/if}
+						{sending || (js && !nonce) ? t.request.sending : t.request.submit}
+					</button>
 				</div>
 				<p class="text-center text-sm text-muted">{t.card.noPay}</p>
 			</fieldset>

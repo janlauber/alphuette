@@ -26,13 +26,13 @@
 <section class="mt-8">
 	<div class="flex items-center justify-between gap-4">
 		<h2 class="text-xl">Texte der Website</h2>
-		<div class="flex rounded-[3px] border border-tanne text-sm" role="tablist">
+		<div class="flex rounded-[14px] border border-tanne text-sm" role="tablist">
 			<button type="button" role="tab" aria-selected={lang === 'de'} class="px-3 py-1 {lang === 'de' ? 'bg-tanne text-kalk' : ''}" onclick={() => (lang = 'de')}>Deutsch</button>
 			<button type="button" role="tab" aria-selected={lang === 'en'} class="px-3 py-1 {lang === 'en' ? 'bg-tanne text-kalk' : ''}" onclick={() => (lang = 'en')}>Englisch</button>
 		</div>
 	</div>
 	{#key lang}
-		<form method="POST" action="?/content" use:enhance={keep} class="mt-4 grid gap-5 rounded-[3px] bg-paper p-4">
+		<form method="POST" action="?/content" use:enhance={keep} class="mt-4 grid gap-5 rounded-[14px] bg-paper p-4">
 			<input type="hidden" name="lang" value={lang} />
 			{#each data.fields as key (key)}
 				<label class="label">
@@ -72,7 +72,7 @@
 
 <section class="mt-12">
 	<h2 class="text-xl">Gastgeber und Zahlung</h2>
-	<form method="POST" action="?/host" use:enhance={keep} class="mt-4 grid gap-3 rounded-[3px] bg-paper p-4 sm:grid-cols-2">
+	<form method="POST" action="?/host" use:enhance={keep} class="mt-4 grid gap-3 rounded-[14px] bg-paper p-4 sm:grid-cols-2">
 		<label class="label text-sm sm:col-span-2">Name des Hüttli <input name="name" value={data.name} class="field mt-1 font-normal" /></label>
 		<label class="label text-sm">Dein Name <input name="hostName" value={data.host.name} class="field mt-1 font-normal" /></label>
 		<label class="label text-sm">E-Mail für Gäste <input name="email" type="email" value={data.host.email} class="field mt-1 font-normal" /></label>

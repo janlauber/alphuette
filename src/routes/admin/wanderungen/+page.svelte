@@ -4,7 +4,13 @@
 
 	let { data, form } = $props();
 	const keep = () => async ({ update }: { update: (o?: { reset?: boolean }) => Promise<void> }) => update({ reset: false });
-	const blank = { id: null, slug: '', name: '', time: '', alpine: false, de: '', en: '', url: '', source: '', profile: null, distanceM: null, ascentM: null, sort: 0 };
+	type Waypoint = { name: string; elev: number; min?: number | null };
+	const blank = {
+		id: null, slug: '', name: '', time: '', alpine: false, de: '', en: '', url: '', source: '', profile: null, distanceM: null, ascentM: null, sort: 0,
+		category: 'wanderweg', sac: '', durationMin: null as number | null, seasonDe: '', seasonEn: '', startName: '', endName: '', transitDe: '', transitEn: '',
+		waypoints: null as Waypoint[] | null, stops: null as string[] | null, highlightsDe: '', highlightsEn: '', tipsDe: '', tipsEn: '', family: false, loop: false, fromHut: false
+	};
+	const wpText = (w: Waypoint[] | null) => (w ?? []).map((p) => [p.name, p.elev, p.min ?? ''].join(' | ')).join('\n');
 </script>
 
 <h1 class="text-3xl">Wanderungen</h1>
@@ -16,16 +22,39 @@
 		{#if h.id}
 			<p class="text-sm text-stein">
 				{h.distanceM ? `${(h.distanceM / 1000).toFixed(1)} km, ${h.ascentM} m Aufstieg` : 'Noch kein Profil'}
-				{h.source === 'gpx' ? ', aus GPX' : h.source === 'wanderland' ? ', Wanderland-Route' : h.source ? ', aus Wegpunkten angenähert' : ''}
+				{h.source === 'gpx' ? ', aus GPX' : h.source === 'wanderland' ? ', Wanderland-Route' : h.source === 'netz' ? ', auf dem Wanderwegnetz berechnet' : h.source ? ', aus Wegpunkten angenähert' : ''}
 			</p>
 		{/if}
 		<form method="POST" action="?/save" use:enhance={keep} class="grid gap-3 sm:grid-cols-6">
 			<input type="hidden" name="id" value={h.id ?? ''} />
 			<label class="label text-sm sm:col-span-3">Name <input name="name" value={h.name} required class="field mt-1 font-normal" /></label>
-			<label class="label text-sm sm:col-span-2">Gehzeit <input name="time" value={h.time} placeholder="2 h 15 min" class="field mt-1 font-normal" /></label>
-			<label class="flex items-end gap-2 pb-3 text-sm"><input type="checkbox" name="alpine" checked={h.alpine} class="size-4 accent-fir" /> Bergweg</label>
+			<label class="label text-sm sm:col-span-2">Gehzeit in Minuten <input name="duration_min" type="number" min="0" value={h.durationMin ?? ''} placeholder="135" class="field mt-1 font-normal" /></label>
+			<label class="label text-sm">SAC-Skala <input name="sac" value={h.sac} placeholder="T2" class="field mt-1 font-normal" /></label>
+			<label class="label text-sm sm:col-span-2">Wegart
+				<select name="category" class="field mt-1 font-normal">
+					{#each [['wanderweg', 'Wanderweg (gelb)'], ['bergwanderweg', 'Bergwanderweg (weiss-rot-weiss)'], ['alpinwanderweg', 'Alpinwanderweg (weiss-blau-weiss)']] as [v, l] (v)}<option value={v} selected={h.category === v}>{l}</option>{/each}
+				</select>
+			</label>
+			<div class="flex flex-wrap items-end gap-4 pb-3 text-sm sm:col-span-4">
+				<label class="flex items-center gap-2"><input type="checkbox" name="family" checked={h.family} class="check" /> Mit Kindern</label>
+				<label class="flex items-center gap-2"><input type="checkbox" name="loop" checked={h.loop} class="check" /> Rundweg</label>
+				<label class="flex items-center gap-2"><input type="checkbox" name="from_hut" checked={h.fromHut} class="check" /> Ab Hüttli zu Fuss</label>
+			</div>
 			<label class="label text-sm sm:col-span-3">Beschreibung Deutsch <textarea name="de" rows="3" class="field mt-1 font-normal">{h.de}</textarea></label>
 			<label class="label text-sm sm:col-span-3">Beschreibung Englisch <textarea name="en" rows="3" class="field mt-1 font-normal">{h.en}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Start <input name="start_name" value={h.startName} class="field mt-1 font-normal" /></label>
+			<label class="label text-sm sm:col-span-3">Ziel <input name="end_name" value={h.endName} class="field mt-1 font-normal" /></label>
+			<label class="label text-sm sm:col-span-3">Saison Deutsch <input name="season_de" value={h.seasonDe} placeholder="Juni bis Oktober" class="field mt-1 font-normal" /></label>
+			<label class="label text-sm sm:col-span-3">Saison Englisch <input name="season_en" value={h.seasonEn} class="field mt-1 font-normal" /></label>
+			<label class="label text-sm sm:col-span-6">Wegpunkte, eine Zeile pro Punkt: Name | Höhe | Minuten ab Start
+				<textarea name="waypoints" rows="5" placeholder={'Griesalp | 1408 |\nBundalp | 1840 | 90'} class="field mt-1 font-mono text-sm font-normal">{wpText(h.waypoints)}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Hin und zurück, Deutsch <textarea name="transit_de" rows="3" class="field mt-1 font-normal">{h.transitDe}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Hin und zurück, Englisch <textarea name="transit_en" rows="3" class="field mt-1 font-normal">{h.transitEn}</textarea></label>
+			<label class="label text-sm sm:col-span-6">Einkehren, eine Zeile pro Ort <textarea name="stops" rows="3" class="field mt-1 font-normal">{(h.stops ?? []).join('\n')}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Unterwegs, Deutsch (eine Zeile pro Punkt) <textarea name="highlights_de" rows="3" class="field mt-1 font-normal">{h.highlightsDe}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Unterwegs, Englisch <textarea name="highlights_en" rows="3" class="field mt-1 font-normal">{h.highlightsEn}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Gut zu wissen, Deutsch <textarea name="tips_de" rows="3" class="field mt-1 font-normal">{h.tipsDe}</textarea></label>
+			<label class="label text-sm sm:col-span-3">Gut zu wissen, Englisch <textarea name="tips_en" rows="3" class="field mt-1 font-normal">{h.tipsEn}</textarea></label>
 			<label class="label text-sm sm:col-span-3">Link mit mehr Infos <input name="url" type="url" value={h.url} class="field mt-1 font-normal" /></label>
 			<label class="label text-sm sm:col-span-2">Adresse <input name="slug" value={h.slug} placeholder="aus dem Namen" class="field mt-1 font-normal" /></label>
 			<label class="label text-sm">Reihenfolge <input name="sort" type="number" value={h.sort} class="field mt-1 font-normal" /></label>

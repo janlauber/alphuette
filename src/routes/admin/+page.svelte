@@ -14,7 +14,7 @@
 		<ul class="mt-3 grid gap-2">
 			{#each data.open as b (b.id)}
 				<li>
-					<a href="/admin/buchungen/{b.id}" class="flex flex-wrap items-center justify-between gap-2 rounded-[3px] border-l-4 border-gelb bg-paper px-4 py-3 no-underline hover:bg-white">
+					<a href="/admin/buchungen/{b.id}" class="flex flex-wrap items-center justify-between gap-2 rounded-[14px] border-l-4 border-gelb bg-paper px-4 py-3 no-underline hover:bg-white">
 						<span><strong>{b.name}</strong> <span class="text-stein">aus {b.city}, {b.people} Pers.</span></span>
 						<span class="flex gap-4 tabular-nums"><span>{d(b.checkIn)} bis {d(b.checkOut)}</span><span>{chf(b.totalRp)}</span></span>
 					</a>
@@ -32,7 +32,7 @@
 		<ul class="mt-3 grid gap-2">
 			{#each data.unread as m (m.id)}
 				<li>
-					<a href="/admin/buchungen/{m.id}#nachrichten" class="flex justify-between rounded-[3px] bg-paper px-4 py-3 no-underline hover:bg-white">
+					<a href="/admin/buchungen/{m.id}#nachrichten" class="flex justify-between rounded-[14px] bg-paper px-4 py-3 no-underline hover:bg-white">
 						<span><strong>{m.name}</strong> <span class="text-stein">{m.ref}</span></span>
 						<span>{m.n} neu</span>
 					</a>

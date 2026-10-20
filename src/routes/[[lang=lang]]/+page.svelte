@@ -2,16 +2,19 @@
 	import BedDouble from '@lucide/svelte/icons/bed-double';
 	import Bus from '@lucide/svelte/icons/bus';
 	import Car from '@lucide/svelte/icons/car';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import Info from '@lucide/svelte/icons/info';
+	import Images from '@lucide/svelte/icons/images';
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import MountainSnow from '@lucide/svelte/icons/mountain-snow';
+	import Plus from '@lucide/svelte/icons/plus';
+	import Quote from '@lucide/svelte/icons/quote';
 	import Ticket from '@lucide/svelte/icons/ticket';
 	import Users from '@lucide/svelte/icons/users';
 	import BookingPanel from '#lib/components/BookingPanel.svelte';
 	import Departures from '#lib/components/Departures.svelte';
 	import Gallery from '#lib/components/Gallery.svelte';
 	import HikeCard from '#lib/components/HikeCard.svelte';
+	import Huettli from '#lib/components/Huettli.svelte';
+	import Panorama from '#lib/components/Panorama.svelte';
 	import Seo from '#lib/components/Seo.svelte';
 	import Stars from '#lib/components/Stars.svelte';
 	import Weather from '#lib/components/Weather.svelte';
@@ -90,191 +93,209 @@
 	{jsonld}
 />
 
-<div class="lg:mx-auto lg:max-w-6xl lg:px-6 lg:pt-6">
-	<Gallery photos={data.photos} lang={data.lang} title={data.hutName} />
+<!-- Hero: the real view from the hut, with the Hüttli running in -->
+<section class="overflow-hidden">
+	<div class="mx-auto max-w-6xl px-5 pt-8 sm:px-6 lg:pt-14">
+		<p class="pill max-w-full overflow-hidden text-sm"><MapPin size={15} strokeWidth={2.5} class="shrink-0" aria-hidden="true" /><span class="truncate">{t.hero.whole}</span></p>
+		<h1 class="mt-4 max-w-[13ch] text-[2.7rem] sm:text-[3.8rem] lg:text-[4.8rem]">{data.hutName}</h1>
+		<p class="mt-4 max-w-[44ch] text-lg sm:text-xl">{c.tagline}</p>
+		{#if data.reviews.count}
+			<a href="#gaestebuch" class="mt-3 inline-flex items-center gap-2 text-sm font-semibold no-underline">
+				<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
+				<span>{data.reviews.avg.toLocaleString(t.locale)}</span>
+				<span class="text-muted underline">{t.review.count(data.reviews.count)}</span>
+			</a>
+		{/if}
+		<div class="mt-7 flex flex-wrap gap-3">
+			<a href="#buchen" class="btn-primary">{t.card.pick}</a>
+			{#if data.photos.length}<a href="#fotos" class="btn-line"><Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}</a>{/if}
+		</div>
+	</div>
+	<div class="mt-6 text-brand lg:mt-2">
+		<Panorama hut={data.lang === 'en' ? 'The Hüttli mascot running down to the valley' : 'Das Hüttli rennt ins Tal'} class="h-[210px] w-full sm:h-[290px] lg:h-[420px]" />
+	</div>
+</section>
+
+<div id="fotos" class="-mt-1 bg-hill pb-8 pt-3 sm:pb-12">
+	<div class="mx-auto max-w-6xl px-5 sm:px-6">
+		<Gallery photos={data.photos} lang={data.lang} title={data.hutName} />
+	</div>
 </div>
 
-<div class="relative -mt-6 rounded-t-[26px] bg-paper lg:mt-0 lg:rounded-none">
-	<div class="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] px-5 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:gap-x-16 lg:pt-10">
-		<!-- Part 1: what the hut is -->
-		<div class="lg:col-start-1">
-			<h1 class="text-[2rem] sm:text-[2.6rem] lg:text-[3.2rem]">{data.hutName}</h1>
-			<p class="mt-2 text-muted">{t.hero.whole}</p>
-			{#if data.reviews.count}
-				<a href="#gaestebuch" class="mt-2 inline-flex items-center gap-2 text-sm no-underline">
-					<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
-					<span class="font-semibold">{data.reviews.avg.toLocaleString(t.locale)}</span>
-					<span class="text-muted underline">{t.review.count(data.reviews.count)}</span>
-				</a>
-			{/if}
+<div class="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] px-5 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-x-16 lg:pt-14">
+	<!-- Part 1: what the hut is -->
+	<div class="lg:col-start-1">
+		<ul class="flex flex-wrap gap-2">
+			<li class="pill"><Users size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.guests(data.rates.maxGuests)}</li>
+			<li class="pill"><BedDouble size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.rooms}</li>
+			<li class="pill"><MountainSnow size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.altitude}</li>
+		</ul>
 
-			<div class="mt-5 grid grid-cols-3 border-y border-line text-center text-sm font-semibold">
-				<div class="flex flex-col items-center gap-1.5 px-1 py-3.5"><Users size={22} strokeWidth={1.75} class="text-fir" aria-hidden="true" />{t.stats.guests(data.rates.maxGuests)}</div>
-				<div class="flex flex-col items-center gap-1.5 border-x border-line px-1 py-3.5"><BedDouble size={22} strokeWidth={1.75} class="text-fir" aria-hidden="true" />{t.stats.rooms}</div>
-				<div class="flex flex-col items-center gap-1.5 px-1 py-3.5"><MountainSnow size={22} strokeWidth={1.75} class="text-fir" aria-hidden="true" />{t.stats.altitude}</div>
+		<div class="mt-7 flex items-center gap-3.5">
+			<span class="grid size-13 shrink-0 place-items-center rounded-full bg-brand text-xl font-bold text-white" aria-hidden="true">{hostFirst[0]}</span>
+			<div>
+				<p class="font-bold">{t.host.title(hostFirst)}</p>
+				<p class="text-muted">{t.host.lives(data.host.city)}</p>
 			</div>
-
-			<div class="mt-5 flex items-center gap-3.5">
-				<span class="grid size-12 shrink-0 place-items-center rounded-full bg-fir font-serif text-xl text-white" aria-hidden="true">{hostFirst[0]}</span>
-				<div>
-					<p class="font-semibold">{t.host.title(hostFirst)}</p>
-					<p class="text-sm text-muted">{t.host.lives(data.host.city)}</p>
-				</div>
-			</div>
-
-			<div class="richtext mt-6 text-[1.06rem] leading-relaxed">{@html textToHtml(c.intro)}</div>
-
-			<section class="mt-10 border-t border-line pt-8">
-				<h2 class="text-[1.65rem]">{t.sections.amenities}</h2>
-				<ul class="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-					{#each data.amenities as a (a.label)}
-						{@const Icon = iconFor(a.icon)}
-						<li class="flex items-center gap-2.5 rounded-[14px] bg-sand px-3 py-3 text-[0.95rem] font-medium">
-							<Icon size={20} strokeWidth={1.75} class="shrink-0 text-fir" aria-hidden="true" />{a.label}
-						</li>
-					{/each}
-				</ul>
-			</section>
 		</div>
 
-		<!-- Booking: sticky card on desktop, its own section on phones -->
-		<aside id="buchen" class="mt-10 border-t border-line pt-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:border-0 lg:pt-0">
-			<div class="lg:card lg:sticky lg:top-20 lg:p-6 lg:shadow-[0_12px_40px_-24px_#2a201b55]">
-				<h2 class="mb-4 text-[1.65rem] lg:hidden">{t.card.pick}</h2>
-				<BookingPanel seasons={data.seasons} taken={data.taken} rates={data.rates} lang={data.lang} bind:checkIn bind:checkOut bind:guests />
-			</div>
-		</aside>
+		<div class="richtext mt-6 text-[1.12rem] leading-relaxed">{@html textToHtml(c.intro)}</div>
 
-		<!-- Part 2: details -->
-		<div class="lg:col-start-1">
-			<section class="mt-10 border-t border-line pt-8">
-				<h2 class="text-[1.65rem]">{t.sections.sleeping}</h2>
-				<div class="richtext mt-4">{@html textToHtml(c.sleeping)}</div>
-				<p class="mt-4 text-sm text-muted">{t.facts.checkIn(data.rates.checkIn)}, {t.facts.checkOut(data.rates.checkOut).toLowerCase()}</p>
-			</section>
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.amenities}</h2>
+			<ul class="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+				{#each data.amenities as a (a.label)}
+					{@const Icon = iconFor(a.icon)}
+					<li class="flex items-center gap-2.5 rounded-[18px] border-2 border-line px-3 py-3 text-[15px] font-medium leading-tight transition-colors hover:border-brand">
+						<Icon size={22} strokeWidth={2} class="shrink-0 text-brand" aria-hidden="true" />{a.label}
+					</li>
+				{/each}
+			</ul>
+		</section>
+	</div>
 
-			<section class="mt-10 rounded-[18px] bg-sand p-5">
-				<h2 class="flex items-center gap-2 text-[1.4rem]"><Info size={22} strokeWidth={1.75} class="text-geranium" aria-hidden="true" />{t.sections.goodToKnow}</h2>
-				<div class="richtext mt-3">{@html textToHtml(c.good_to_know)}</div>
-			</section>
+	<!-- Booking: sticky card on desktop, its own section on phones -->
+	<aside id="buchen" class="mt-14 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0">
+		<div class="card-strong p-5 sm:p-6 lg:sticky lg:top-24">
+			<h2 class="mb-4 text-[1.9rem]">{t.card.pick}</h2>
+			<BookingPanel seasons={data.seasons} taken={data.taken} rates={data.rates} lang={data.lang} bind:checkIn bind:checkOut bind:guests />
+		</div>
+	</aside>
 
-			{#if data.reviews.count}
-				<section id="gaestebuch" class="mt-10 border-t border-line pt-8">
-					<h2 class="text-[1.65rem]">{t.sections.reviews}</h2>
-					<p class="mt-1 flex items-center gap-2"><Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} /> <span class="text-muted">{t.review.count(data.reviews.count)}</span></p>
-					<div class="snap-row -mx-5 mt-4 flex snap-x gap-3 overflow-x-auto px-5 sm:mx-0 sm:px-0">
-						{#each data.reviews.reviews as r (r.id)}
-							<article class="card flex w-[82%] shrink-0 snap-start flex-col gap-2 p-4 sm:w-[340px]">
-								<Stars value={r.rating} size={14} label={t.review.stars(r.rating)} />
-								<p class="line-clamp-6 whitespace-pre-line">{r.body}</p>
-								<p class="mt-auto text-sm font-semibold">{r.name}{#if r.stay}<span class="font-normal text-muted">, {fmtDate(r.stay, data.lang, { weekday: undefined, day: undefined })}</span>{/if}</p>
-								{#if r.reply}<p class="rounded-[10px] bg-sand p-3 text-sm"><span class="font-semibold">{t.review.reply}:</span> {r.reply}</p>{/if}
-							</article>
-						{/each}
-					</div>
-				</section>
-			{/if}
+	<!-- Part 2: details -->
+	<div class="lg:col-start-1">
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.sleeping}</h2>
+			<div class="richtext mt-4">{@html textToHtml(c.sleeping)}</div>
+			<p class="mt-4 flex flex-wrap gap-2 text-sm">
+				<span class="pill">{t.facts.checkIn(data.rates.checkIn)}</span>
+				<span class="pill">{t.facts.checkOut(data.rates.checkOut)}</span>
+			</p>
+		</section>
 
-			<section class="mt-10 border-t border-line pt-8">
-				<h2 class="text-[1.65rem]">{t.sections.location}</h2>
-				<div class="mt-4 aspect-[4/3] overflow-hidden rounded-[18px] bg-sand sm:aspect-[16/9]">
-					<iframe
-						title={t.sections.location}
-						src="https://map.geo.admin.ch/#/embed?lang={data.lang}&center={lv.e},{lv.n}&z=6&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=&crosshair=point"
-						class="size-full"
-						loading="lazy"
-						referrerpolicy="no-referrer"
-					></iframe>
-				</div>
-				<p class="mt-2 flex items-start gap-2 text-sm text-muted"><MapPin size={16} class="mt-0.5 shrink-0" aria-hidden="true" />{t.map.note}</p>
+		<section class="reveal relative mt-14 rounded-[28px] bg-accent-wash p-6 pr-24 sm:pr-32">
+			<h2 class="text-[1.6rem]">{t.sections.goodToKnow}</h2>
+			<div class="richtext mt-3">{@html textToHtml(c.good_to_know)}</div>
+			<Huettli face="wink" pose="stand" class="absolute -top-6 right-3 w-20 text-brand [--paper:var(--color-accent-wash)] sm:w-24" />
+		</section>
 
-				<h3 class="mt-8 font-sans text-lg font-bold">{t.sections.arrival}</h3>
-				<ul class="mt-3 grid gap-3">
-					{#each arrival as a (a.text)}
-						<li class="flex gap-3">
-							<span class="grid size-10 shrink-0 place-items-center rounded-full bg-sand text-fir"><a.icon size={20} strokeWidth={1.75} aria-hidden="true" /></span>
-							<p>{#if a.label}<strong>{a.label}.</strong> {/if}{a.text}</p>
-						</li>
+		{#if data.reviews.count}
+			<section id="gaestebuch" class="reveal mt-14">
+				<h2 class="text-[2rem]">{t.sections.reviews}</h2>
+				<p class="mt-2 flex items-center gap-2"><Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} /> <span class="text-muted">{t.review.count(data.reviews.count)}</span></p>
+				<div class="snap-row -mx-5 mt-5 flex snap-x gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0">
+					{#each data.reviews.reviews as r (r.id)}
+						<article class="card flex w-[82%] shrink-0 snap-start flex-col gap-2 p-5 sm:w-[340px]">
+							<Quote size={26} strokeWidth={2} class="text-brand" aria-hidden="true" />
+							<p class="line-clamp-6 whitespace-pre-line">{r.body}</p>
+							<Stars value={r.rating} size={14} label={t.review.stars(r.rating)} />
+							<p class="mt-auto text-sm font-bold">{r.name}{#if r.stay}<span class="font-normal text-muted">, {fmtDate(r.stay, data.lang, { weekday: undefined, day: undefined })}</span>{/if}</p>
+							{#if r.reply}<p class="rounded-[16px] bg-wash p-3 text-sm"><span class="font-bold">{t.review.reply}:</span> {r.reply}</p>{/if}
+						</article>
 					{/each}
-				</ul>
-				{#await data.buses then buses}
-					{#if buses}
-						<div class="mt-6 rounded-[18px] border border-line p-4">
-							<Departures list={buses.list} winter={buses.winter} lang={data.lang} route="toHut" />
-						</div>
-					{/if}
-				{/await}
+				</div>
 			</section>
+		{/if}
 
-			{#await data.weather then weather}
-				{#if weather?.length}
-					<section class="mt-10 border-t border-line pt-8">
-						<h2 class="text-[1.65rem]">{t.sections.weather}</h2>
-						<div class="mt-4"><Weather days={weather} lang={data.lang} /></div>
-					</section>
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.location}</h2>
+			<div class="mt-5 aspect-[4/3] overflow-hidden rounded-[28px] border-2 border-brand bg-wash sm:aspect-[16/9]">
+				<iframe
+					title={t.sections.location}
+					src="https://map.geo.admin.ch/#/embed?lang={data.lang}&center={lv.e},{lv.n}&z=6&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=&crosshair=point"
+					class="size-full"
+					loading="lazy"
+					referrerpolicy="no-referrer"
+				></iframe>
+			</div>
+			<p class="mt-2 flex items-start gap-2 text-sm text-muted"><MapPin size={16} class="mt-0.5 shrink-0" aria-hidden="true" />{t.map.note}</p>
+
+			<h3 class="mt-10 text-[1.4rem]">{t.sections.arrival}</h3>
+			<ul class="mt-4 grid gap-4">
+				{#each arrival as a (a.text)}
+					<li class="flex gap-3.5">
+						<span class="grid size-11 shrink-0 place-items-center rounded-full border-2 border-brand text-brand"><a.icon size={20} strokeWidth={2.25} aria-hidden="true" /></span>
+						<p class="pt-2">{#if a.label}<strong>{a.label}.</strong> {/if}{a.text}</p>
+					</li>
+				{/each}
+			</ul>
+			{#await data.buses then buses}
+				{#if buses}
+					<div class="card mt-6 p-5">
+						<Departures list={buses.list} winter={buses.winter} lang={data.lang} route="toHut" />
+					</div>
 				{/if}
 			{/await}
+		</section>
 
-			{#if data.hikes.length}
-				<section class="mt-10 border-t border-line pt-8">
-					<div class="flex items-end justify-between gap-4">
-						<h2 class="text-[1.65rem]">{t.sections.hikes}</h2>
-						<a href={localize(data.lang, '/wanderungen')} class="shrink-0 text-sm font-semibold underline">{t.hikes.more}</a>
-					</div>
-					<div class="snap-row -mx-5 mt-4 flex snap-x gap-3 overflow-x-auto px-5 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0">
-						{#each data.hikes.slice(0, 4) as hike (hike.slug)}
-							<div class="w-[78%] shrink-0 snap-start sm:w-auto"><HikeCard {hike} lang={data.lang} /></div>
-						{/each}
-					</div>
+		{#await data.weather then weather}
+			{#if weather?.length}
+				<section class="reveal mt-14">
+					<h2 class="text-[2rem]">{t.sections.weather}</h2>
+					<div class="mt-5"><Weather days={weather} lang={data.lang} /></div>
 				</section>
 			{/if}
+		{/await}
 
-			<section class="mt-10 border-t border-line">
-				{#each [{ title: t.sections.rules, html: textToHtml(c.rules) }, { title: t.sections.payment, html: textToHtml(c.payment) }] as d (d.title)}
-					<details class="group border-b border-line py-4">
-						<summary class="flex cursor-pointer list-none items-center justify-between text-lg font-semibold">
-							{d.title}<ChevronDown size={20} class="transition group-open:rotate-180" aria-hidden="true" />
-						</summary>
-						<div class="richtext mt-3">{@html d.html}</div>
-					</details>
-				{/each}
+		{#if data.hikes.length}
+			<section class="reveal mt-14">
+				<div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+					<h2 class="text-[2rem]">{t.sections.hikes}</h2>
+					<a href={localize(data.lang, '/wanderungen')} class="shrink-0 font-bold text-brand underline">{t.hikes.more}</a>
+				</div>
+				<div class="snap-row -mx-5 mt-5 flex snap-x gap-3 overflow-x-auto px-5 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0">
+					{#each data.hikes.slice(0, 4) as hike (hike.slug)}
+						<div class="w-[80%] shrink-0 snap-start sm:w-auto"><HikeCard {hike} lang={data.lang} /></div>
+					{/each}
+				</div>
 			</section>
+		{/if}
 
-			{#if data.faq.length}
-				<section class="mt-10">
-					<h2 class="text-[1.65rem]">{t.sections.faq}</h2>
-					<div class="mt-3">
-						{#each data.faq as f (f.q)}
-							<details class="group border-b border-line py-4">
-								<summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
-									{f.q}<ChevronDown size={20} class="shrink-0 transition group-open:rotate-180" aria-hidden="true" />
-								</summary>
-								<p class="mt-2 whitespace-pre-line text-muted">{f.a}</p>
-							</details>
-						{/each}
-					</div>
-				</section>
-			{/if}
-		</div>
+		<section class="reveal mt-14 grid gap-3">
+			{#each [{ title: t.sections.rules, html: textToHtml(c.rules) }, { title: t.sections.payment, html: textToHtml(c.payment) }] as d (d.title)}
+				<details class="group rounded-[22px] border-2 border-line px-5 py-4 open:border-brand">
+					<summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold">
+						{d.title}<span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
+					</summary>
+					<div class="richtext mt-3">{@html d.html}</div>
+				</details>
+			{/each}
+		</section>
+
+		{#if data.faq.length}
+			<section class="reveal mt-14">
+				<h2 class="text-[2rem]">{t.sections.faq}</h2>
+				<div class="mt-5 grid gap-3">
+					{#each data.faq as f (f.q)}
+						<details class="group rounded-[22px] border-2 border-line px-5 py-4 open:border-brand">
+							<summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
+								<span class="text-balance">{f.q}</span><span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
+							</summary>
+							<p class="mt-2 whitespace-pre-line text-muted">{f.a}</p>
+						</details>
+					{/each}
+				</div>
+			</section>
+		{/if}
 	</div>
 </div>
 
 <!-- Phones: price and next step always in reach -->
-<div class="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper/95 px-5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
+<div class="fixed inset-x-0 bottom-0 z-20 border-t-2 border-brand bg-paper/95 px-5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
 	<div class="flex items-center justify-between gap-4">
 		<div class="min-w-0">
 			{#if q?.ok}
-				<p class="font-bold">{chf(q.total)}</p>
+				<p class="w-fit rounded-md bg-accent-soft px-1.5 text-lg font-bold">{chf(q.total)}</p>
 				<p class="truncate text-sm text-muted">{fmtDate(checkIn, data.lang, { year: undefined, month: 'short' })} – {fmtDate(checkOut, data.lang, { year: undefined, month: 'short' })}</p>
 			{:else if next}
-				<p class="font-bold">{chf(next.weekly ?? next.nightly)} <span class="font-normal text-muted">{next.weekly ? t.card.perWeek : t.card.perNight}</span></p>
+				<p class="text-lg font-bold text-ink">{chf(next.weekly ?? next.nightly)} <span class="text-base font-normal text-muted">{next.weekly ? t.card.perWeek : t.card.perNight}</span></p>
 				<p class="truncate text-sm text-muted">{t.card.noPay}</p>
 			{/if}
 		</div>
 		{#if q?.ok}
 			<button form="buchen-form" class="btn-primary shrink-0">{t.card.submit}</button>
 		{:else}
-			<a href="#buchen" class="btn-primary shrink-0 no-underline">{t.card.pick}</a>
+			<a href="#buchen" class="btn-primary shrink-0">{t.card.pick}</a>
 		{/if}
 	</div>
 </div>

@@ -20,10 +20,10 @@
 	<p class="text-stein">{b.ref}, {STATUS[b.status]}</p>
 </div>
 
-{#if form?.error}<p class="mt-4 rounded-[3px] bg-rot/10 px-4 py-3 text-rot" role="alert">{form.error}</p>{/if}
+{#if form?.error}<p class="mt-4 rounded-[14px] bg-rot/10 px-4 py-3 text-rot" role="alert">{form.error}</p>{/if}
 
 {#if b.status === 'angefragt'}
-	<div class="mt-6 flex flex-wrap gap-3 rounded-[3px] border-l-4 border-gelb bg-paper p-4">
+	<div class="mt-6 flex flex-wrap gap-3 rounded-[14px] border-l-4 border-gelb bg-paper p-4">
 		<p class="w-full">Wenn du bestätigst, bekommt {b.name} eine Mail mit Rechnung und Infos.</p>
 		<form method="POST" action="?/confirm" use:enhance><button class="btn-gelb">Bestätigen</button></form>
 		<form method="POST" action="?/decline" use:enhance={ask(`Anfrage von ${b.name} ablehnen? ${b.name} bekommt eine Mail.`)}>
@@ -33,7 +33,7 @@
 {/if}
 
 <div class="mt-8 grid gap-8 lg:grid-cols-2">
-	<section class="rounded-[3px] bg-paper p-5">
+	<section class="rounded-[14px] bg-paper p-5">
 		<h2 class="text-xl">Aufenthalt</h2>
 		<dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
 			<dt class="text-stein">Anreise</dt><dd>{fmtDate(b.checkIn, 'de')}</dd>
@@ -63,7 +63,7 @@
 		{/if}
 	</section>
 
-	<section class="rounded-[3px] bg-paper p-5">
+	<section class="rounded-[14px] bg-paper p-5">
 		<h2 class="text-xl">Gast</h2>
 		<dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
 			<dt class="text-stein">E-Mail</dt><dd class="break-all"><a href="mailto:{b.email}">{b.email}</a></dd>

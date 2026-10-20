@@ -1,6 +1,7 @@
 import { sql } from './db.ts';
 import { toLv95 } from '#lib/geo.ts';
 
+type Waypoint = { name: string; elev: number; min?: number | null; distM?: number | null; e?: number; n?: number };
 type Row = {
 	id: number;
 	slug: string;
@@ -17,22 +18,62 @@ type Row = {
 	ascentM: number | null;
 	descentM: number | null;
 	sort: number;
+	category: string;
+	sac: string;
+	durationMin: number | null;
+	seasonDe: string;
+	seasonEn: string;
+	startName: string;
+	endName: string;
+	transitDe: string;
+	transitEn: string;
+	waypoints: Waypoint[] | null;
+	stops: string[] | null;
+	highlightsDe: string;
+	highlightsEn: string;
+	tipsDe: string;
+	tipsEn: string;
+	family: boolean;
+	loop: boolean;
+	fromHut: boolean;
 };
+
+const lines = (s: string) => s.split('\n').map((l) => l.trim()).filter(Boolean);
+const pick = (lang: 'de' | 'en', de: string, en: string) => (lang === 'en' && en) || de;
 
 const forLang = (h: Row, lang: 'de' | 'en') => ({
 	slug: h.slug,
 	name: h.name,
 	time: h.time,
+	durationMin: h.durationMin,
 	alpine: h.alpine,
-	text: (lang === 'en' && h.en) || h.de,
+	category: h.category || (h.alpine ? 'bergwanderweg' : 'wanderweg'),
+	sac: h.sac,
+	text: pick(lang, h.de, h.en),
 	url: h.url,
 	source: h.source,
 	profile: h.profile,
-	// Waypoint routes cut corners, so only GPS tracks get measured numbers.
+	// Waypoint routes cut corners, so only measured routes get numbers.
 	distanceM: h.source === 'wegpunkte' ? null : h.distanceM,
 	ascentM: h.source === 'wegpunkte' ? null : h.ascentM,
-	descentM: h.source === 'wegpunkte' ? null : h.descentM
+	descentM: h.source === 'wegpunkte' ? null : h.descentM,
+	// the 200-point profile can miss a pass by a few metres, a named waypoint can't
+	highest: h.profile?.length ? Math.round(Math.max(...h.profile.map((p) => p[1]), ...(h.waypoints ?? []).map((w) => w.elev ?? 0))) : null,
+	season: pick(lang, h.seasonDe, h.seasonEn),
+	start: h.startName,
+	end: h.endName,
+	transit: pick(lang, h.transitDe, h.transitEn),
+	waypoints: h.waypoints ?? [],
+	stops: h.stops ?? [],
+	highlights: lines(pick(lang, h.highlightsDe, h.highlightsEn)),
+	tips: pick(lang, h.tipsDe, h.tipsEn),
+	family: h.family,
+	loop: h.loop,
+	fromHut: h.fromHut
 });
+
+// ponytail: every n-th vertex is plenty for a 600 px map
+const thinMap = (g: [number, number][] | null, max = 400) => (!g || g.length <= max ? g : g.filter((_, i) => i % Math.ceil(g.length / max) === 0 || i === g.length - 1));
 
 export async function listHikes(lang: 'de' | 'en' = 'de') {
 	const rows = await sql<Row[]>`select * from hikes order by sort, id`;
@@ -41,7 +82,7 @@ export async function listHikes(lang: 'de' | 'en' = 'de') {
 
 export async function hikeBySlug(slug: string, lang: 'de' | 'en') {
 	const [h] = await sql<Row[]>`select * from hikes where slug = ${slug}`;
-	return h ? forLang(h, lang) : null;
+	return h ? { ...forLang(h, lang), geometry: h.source === 'wegpunkte' ? null : thinMap(h.geometry) } : null;
 }
 
 /** GPX track or route points as LV95 coordinates. */

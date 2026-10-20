@@ -12,7 +12,7 @@
 <p class="mt-1 max-w-[60ch] text-stein">Gebucht werden kann nur innerhalb einer Saison. Der Wochenpreis gilt für je 7 Nächte, angebrochene Wochen kosten den Nachtpreis.</p>
 
 {#snippet seasonForm(s: (typeof data.seasons)[number] | null)}
-	<form method="POST" action="?/season" use:enhance={keep} class="grid gap-3 rounded-[3px] bg-paper p-4 sm:grid-cols-6">
+	<form method="POST" action="?/season" use:enhance={keep} class="grid gap-3 rounded-[14px] bg-paper p-4 sm:grid-cols-6">
 		<input type="hidden" name="id" value={s?.id ?? ''} />
 		<label class="label text-sm sm:col-span-2">Name <input name="name" value={s?.name ?? ''} placeholder="Sommer 2028" class="field mt-1 font-normal" /></label>
 		<label class="label text-sm sm:col-span-2">Erste Nacht <input type="date" name="start" value={s?.start ?? ''} required class="field mt-1 font-normal" /></label>
@@ -45,7 +45,7 @@
 
 <section class="mt-12">
 	<h2 class="text-xl">Zuschläge und Taxen</h2>
-	<form method="POST" action="?/rates" use:enhance={keep} class="mt-4 grid gap-3 rounded-[3px] bg-paper p-4 sm:grid-cols-3">
+	<form method="POST" action="?/rates" use:enhance={keep} class="mt-4 grid gap-3 rounded-[14px] bg-paper p-4 sm:grid-cols-3">
 		<label class="label text-sm">Endreinigung, CHF <input name="cleaning" inputmode="decimal" value={chf(data.rates.cleaning)} class="field mt-1 font-normal" /></label>
 		<label class="label text-sm">Bettwäsche pro Set, CHF <input name="linen" inputmode="decimal" value={chf(data.rates.linen)} class="field mt-1 font-normal" /></label>
 		<label class="label text-sm">Max. Personen <input name="maxGuests" type="number" min="1" max="20" value={data.rates.maxGuests} class="field mt-1 font-normal" /></label>

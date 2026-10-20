@@ -4,6 +4,7 @@
 	import Utensils from '@lucide/svelte/icons/utensils';
 	import Info from '@lucide/svelte/icons/info';
 	import Departures from '#lib/components/Departures.svelte';
+	import Huettli from '#lib/components/Huettli.svelte';
 	import Seo from '#lib/components/Seo.svelte';
 	import Weather from '#lib/components/Weather.svelte';
 	import { dict, localize } from '#lib/i18n.ts';
@@ -33,16 +34,21 @@
 />
 
 <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-6">
-	<h1 class="text-[2.2rem] sm:text-[3rem]">{en ? 'Around the hut' : 'Rund ums Hüttli'}</h1>
-	<p class="mt-2 max-w-[58ch] text-muted">
-		{en ? 'The Kiental is a quiet side valley of the Kandertal. Here is what you need nearby.' : 'Das Kiental ist ein ruhiges Seitental des Kandertals. Das findest du in der Nähe.'}
-	</p>
+	<div class="flex items-end justify-between gap-6">
+		<div>
+			<h1 class="text-[2.6rem] sm:text-[3.6rem]">{en ? 'Around the hut' : 'Rund ums Hüttli'}</h1>
+			<p class="mt-3 max-w-[58ch] text-lg">
+				{en ? 'The Kiental is a quiet side valley of the Kandertal. Here is what you need nearby.' : 'Das Kiental ist ein ruhiges Seitental des Kandertals. Das findest du in der Nähe.'}
+			</p>
+		</div>
+		<Huettli face="wink" pose="stand" animate class="hidden w-32 shrink-0 text-brand sm:block" />
+	</div>
 
 	<div class="mt-8 grid gap-4 md:grid-cols-3">
 		{#each cards as c, i (i)}
-			<section class="card p-5">
-				<span class="grid size-11 place-items-center rounded-full bg-sand text-fir"><c.icon size={22} strokeWidth={1.75} aria-hidden="true" /></span>
-				{#if c.label}<h2 class="mt-3 text-[1.4rem]">{c.label}</h2>{/if}
+			<section class="card reveal p-6">
+				<span class="grid size-12 place-items-center rounded-full bg-brand text-white"><c.icon size={22} strokeWidth={2.25} aria-hidden="true" /></span>
+				{#if c.label}<h2 class="mt-4 text-[1.5rem]">{c.label}</h2>{/if}
 				<div class="richtext mt-2">{@html c.html}</div>
 			</section>
 		{/each}
@@ -51,23 +57,23 @@
 	{#await data.weather then weather}
 		{#if weather?.length}
 			<section class="mt-12">
-				<h2 class="text-[1.65rem]">{t.sections.weather}</h2>
+				<h2 class="text-[1.9rem]">{t.sections.weather}</h2>
 				<div class="mt-4"><Weather days={weather} lang={data.lang} /></div>
 			</section>
 		{/if}
 	{/await}
 
 	<section class="mt-12">
-		<h2 class="text-[1.65rem]">{t.sections.transit}</h2>
+		<h2 class="text-[1.9rem]">{t.sections.transit}</h2>
 		<div class="mt-4 grid gap-4 md:grid-cols-2">
 			{#await data.toHut then list}
-				{#if list}<div class="card p-4"><Departures list={list.list} winter={list.winter} lang={data.lang} route="toHut" /></div>{/if}
+				{#if list}<div class="card p-5"><Departures list={list.list} winter={list.winter} lang={data.lang} route="toHut" /></div>{/if}
 			{/await}
 			{#await data.fromHut then list}
-				{#if list}<div class="card p-4"><Departures list={list.list} winter={list.winter} lang={data.lang} route="fromHut" /></div>{/if}
+				{#if list}<div class="card p-5"><Departures list={list.list} winter={list.winter} lang={data.lang} route="fromHut" /></div>{/if}
 			{/await}
 		</div>
 	</section>
 
-	<a href={localize(data.lang, '/wanderungen')} class="btn-line mt-12 no-underline">{t.hikes.more}</a>
+	<a href={localize(data.lang, '/wanderungen')} class="btn-line mt-12">{t.hikes.more}</a>
 </div>

@@ -64,7 +64,7 @@
 		<p class="font-semibold">Besucher pro Tag</p>
 		<div class="mt-4 flex h-40 items-end gap-[2px]" role="img" aria-label="Besucher pro Tag">
 			{#each data.series as s (s.day)}
-				<span class="flex-1 rounded-t-[3px] {s.requests ? 'bg-ink' : 'bg-[#d9cfc7]'}" style="height: {Math.max(2, (s.n / max) * 100)}%" title="{s.day}: {s.n}"></span>
+				<span class="flex-1 rounded-t-[3px] {s.requests ? 'bg-brand' : 'bg-[#c9c5f6]'}" style="height: {Math.max(2, (s.n / max) * 100)}%" title="{s.day}: {s.n}"></span>
 			{/each}
 		</div>
 		<p class="mt-2 text-xs text-muted">Dunkle Balken: Tage mit einer Anfrage</p>

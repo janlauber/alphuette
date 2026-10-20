@@ -34,7 +34,7 @@ export async function deletePhoto(id: number) {
 
 /** Photos for the public site; the hero comes first, then the admin's order. */
 export const listPhotos = (lang: 'de' | 'en') =>
-	sql<{ id: number; key: string; width: number; height: number; widths: number[]; lqip: string; alt: string }[]>`
-		select id, key, width, height, widths, lqip,
+	sql<{ id: number; key: string; width: number; height: number; widths: number[]; lqip: string; alt: string; category: string }[]>`
+		select id, key, width, height, widths, lqip, category,
 			case when ${lang} = 'en' and alt_en <> '' then alt_en else alt_de end as alt
 		from photos order by hero desc, sort, id`;

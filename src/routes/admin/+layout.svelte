@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import Huettli from '#lib/components/Huettli.svelte';
 
 	let { data, children } = $props();
 	const nav = [
@@ -27,14 +28,14 @@
 	<div class="min-h-dvh lg:grid lg:grid-cols-[220px_1fr]">
 		<aside class="border-b border-linie bg-tanne text-kalk lg:min-h-dvh lg:border-b-0">
 			<div class="flex items-center justify-between px-4 py-4 lg:block">
-				<a href="/" class="font-serif text-lg no-underline">Alphütte</a>
+				<a href="/" class="flex items-center gap-2 text-lg font-bold no-underline"><Huettli mini class="size-9 text-white [--paper:var(--color-tanne)]" />Alphütte</a>
 				<form method="POST" action="/admin/logout" class="lg:hidden"><button class="text-sm underline">Abmelden</button></form>
 			</div>
 			<nav class="flex gap-1 overflow-x-auto px-2 pb-2 lg:flex-col lg:px-3">
 				{#each nav as [href, label] (href)}
 					<a
 						{href}
-						class="flex items-center justify-between gap-2 whitespace-nowrap rounded-[3px] px-3 py-2 no-underline {current(href) ? 'bg-kalk text-tanne' : 'hover:bg-moos'}"
+						class="flex items-center justify-between gap-2 whitespace-nowrap rounded-[14px] px-3 py-2 no-underline {current(href) ? 'bg-kalk font-semibold text-tanne' : 'hover:bg-moos'}"
 						aria-current={current(href) ? 'page' : undefined}
 					>
 						{label}

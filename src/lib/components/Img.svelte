@@ -1,5 +1,5 @@
 <script lang="ts">
-	export type Photo = { id: number; key: string; width: number; height: number; widths: number[]; lqip: string; alt: string };
+	export type Photo = { id: number; key: string; width: number; height: number; widths: number[]; lqip: string; alt: string; category?: string };
 
 	let {
 		photo,

@@ -35,12 +35,12 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="border-t border-linie font-semibold">
-				<td class="pt-2">{t.card.total}</td>
-				<td class="pt-2 text-right tabular-nums">{chf(q.total)}</td>
+			<tr class="border-t-2 border-line text-lg font-bold">
+				<td class="pt-2.5">{t.card.total}</td>
+				<td class="pt-2.5 text-right tabular-nums"><mark class="rounded-md bg-accent-soft px-1.5 text-ink">{chf(q.total)}</mark></td>
 			</tr>
 		</tfoot>
 	</table>
 {:else}
-	<p class="text-rot" role="alert">{errorText(q.error)}</p>
+	<p class="rounded-[16px] bg-danger-wash px-4 py-3 font-semibold text-danger" role="alert">{errorText(q.error)}</p>
 {/if}

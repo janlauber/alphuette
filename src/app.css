@@ -1,28 +1,55 @@
 @import 'tailwindcss';
 
-/* Design C "Geranie": white, dark wood, geranium red like the flowers on chalet windows. */
+/* Design "Linie": gentian blue lines like the Hüttli mascot, and one warm coral for what matters most.
+   Confirmed is solid blue, waiting is coral, taken or cancelled is grey, only form errors are red. */
 @theme {
 	--color-paper: #ffffff;
-	--color-ink: #2a201b;
-	--color-muted: #6e625a;
-	--color-sand: #f3efeb;
-	--color-line: #eae4df;
-	--color-fir: #2f5d46;
-	--color-geranium: #d2373f;
-	--color-geranium-dark: #b42b33;
-	--color-blush: #fde4e5;
+	--color-brand: #3b30e3;
+	--color-brand-dark: #2a20b8;
+	--color-ink: #1b1847;
+	--color-muted: #5f5c86;
+	--color-wash: #f1f0ff;
+	--color-line: #dedcfb;
+	--color-accent: #ff8a6b;
+	--color-accent-soft: #ffd9cc;
+	--color-accent-wash: #fff1ec;
+	--color-accent-dark: #a8432a;
+	--color-hill: #d9d6ff;
+	--color-off: #efeef6;
+	--color-off-text: #7b7999;
+	--color-danger: #d92d3a;
+	--color-danger-wash: #ffe9eb;
 
 	/* older names, still used in the admin */
-	--color-kalk: #f7f5f3;
-	--color-tanne: #2a201b;
-	--color-moos: #2f5d46;
-	--color-stein: #6e625a;
-	--color-linie: #eae4df;
-	--color-gelb: #fde4e5;
-	--color-rot: #d2373f;
+	--color-sand: #f1f0ff;
+	--color-fir: #3b30e3;
+	--color-geranium: #3b30e3;
+	--color-geranium-dark: #2a20b8;
+	--color-blush: #ecebff;
+	--color-kalk: #f6f5ff;
+	--color-tanne: #1b1847;
+	--color-moos: #2f2a8a;
+	--color-stein: #5f5c86;
+	--color-linie: #dedcfb;
+	--color-gelb: #ecebff;
+	--color-rot: #d92d3a;
 
-	--font-serif: 'Gloock', Georgia, serif;
-	--font-sans: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-serif: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+
+	--animate-bob: bob 0.32s ease-in-out infinite alternate;
+	--animate-float: float 4s ease-in-out infinite alternate;
+
+	@keyframes bob {
+		to {
+			translate: 0 -4px;
+		}
+	}
+	@keyframes float {
+		to {
+			translate: 0 -8px;
+		}
+	}
 }
 
 @layer base {
@@ -35,28 +62,35 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 	body {
-		font-size: 1rem;
+		font-size: 1.0625rem;
 		line-height: 1.55;
+	}
+	p,
+	li,
+	dd {
+		text-wrap: pretty;
 	}
 	h1,
 	h2,
 	h3 {
-		font-family: var(--font-serif);
-		font-weight: 400;
-		line-height: 1.08;
-		letter-spacing: -0.005em;
+		color: var(--color-brand);
+		font-weight: 700;
+		line-height: 1.05;
+		letter-spacing: -0.025em;
 		text-wrap: balance;
 	}
 	a {
-		text-underline-offset: 0.18em;
-		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: 2px;
 	}
 	:focus-visible {
-		outline: 2px solid var(--color-ink);
-		outline-offset: 2px;
+		outline: 3px solid var(--color-brand);
+		outline-offset: 3px;
+		border-radius: 8px;
 	}
 	::selection {
-		background: var(--color-blush);
+		background: var(--color-brand);
+		color: #fff;
 	}
 	@media (prefers-reduced-motion: reduce) {
 		*,
@@ -69,105 +103,234 @@
 	}
 }
 
-/* Text that Tom edits in the admin, rendered by textToHtml */
-.richtext p + p,
-.richtext p + ul,
-.richtext ul + p {
-	margin-top: 0.85em;
+/* Sections slide in while they scroll into view, where the browser supports it. */
+@supports (animation-timeline: view()) {
+	.reveal {
+		animation: reveal linear both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 35%;
+	}
 }
-.richtext ul {
-	display: grid;
-	gap: 0.4em;
-}
-.richtext li {
-	position: relative;
-	padding-left: 1.25em;
-}
-.richtext li::before {
-	content: '';
-	position: absolute;
-	left: 0.15em;
-	top: 0.62em;
-	width: 0.4em;
-	height: 0.4em;
-	border-radius: 50%;
-	background: var(--color-geranium);
-}
-.richtext a {
-	text-decoration: underline;
+@keyframes reveal {
+	from {
+		opacity: 0;
+		translate: 0 16px;
+	}
 }
 
-.btn-primary,
-.btn-gelb {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	min-height: 3rem;
-	padding: 0.75rem 1.35rem;
-	border-radius: 12px;
-	background: var(--color-geranium);
-	color: #fff;
-	font-weight: 700;
-	transition: background-color 120ms;
-}
-.btn-primary:hover,
-.btn-gelb:hover {
-	background: var(--color-geranium-dark);
-}
-.btn-primary:disabled,
-.btn-gelb:disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
-}
-.btn-line {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	min-height: 2.75rem;
-	padding: 0.6rem 1.1rem;
-	border: 1px solid #d9d0c9;
-	border-radius: 12px;
-	font-weight: 600;
-	background: var(--color-paper);
-}
-.btn-line:hover {
-	border-color: var(--color-ink);
+@layer components {
+	/* Text that Tom edits in the admin, rendered by textToHtml */
+	.richtext p + p,
+	.richtext p + ul,
+	.richtext ul + p {
+		margin-top: 0.85em;
+	}
+	.richtext ul {
+		display: grid;
+		gap: 0.45em;
+	}
+	.richtext li {
+		position: relative;
+		padding-left: 1.4em;
+	}
+	.richtext li::before {
+		content: '';
+		position: absolute;
+		left: 0.1em;
+		top: 0.5em;
+		width: 0.6em;
+		height: 0.6em;
+		border: 2px solid var(--color-brand);
+		border-radius: 50%;
+	}
+	.richtext a {
+		color: var(--color-brand);
+		text-decoration: underline;
+	}
+
+	/* Buttons sit on a solid "shadow" and press down when tapped. */
+	.btn-primary,
+	.btn-gelb,
+	.btn-blue,
+	.btn-line {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-height: 3.1rem;
+		padding: 0.7rem 1.5rem;
+		border: 2px solid var(--color-brand);
+		border-radius: 999px;
+		font-weight: 700;
+		line-height: 1.2;
+		white-space: nowrap;
+		text-decoration: none;
+		box-shadow: 0 4px 0 var(--color-brand);
+		transition:
+			translate 120ms,
+			box-shadow 120ms,
+			background-color 120ms;
+	}
+	/* The one thing to do on a page: coral. Strong secondary actions: blue. */
+	.btn-primary,
+	.btn-gelb {
+		background: var(--color-accent);
+		color: var(--color-ink);
+	}
+	.btn-blue {
+		background: var(--color-brand);
+		color: #fff;
+		box-shadow: 0 4px 0 var(--color-brand-dark);
+	}
+	.btn-line {
+		background: var(--color-paper);
+		color: var(--color-brand);
+		box-shadow: 0 4px 0 var(--color-brand);
+	}
+	:is(.btn-primary, .btn-gelb, .btn-blue, .btn-line):hover:not(:disabled) {
+		translate: 0 -1px;
+		box-shadow: 0 5px 0 var(--color-brand);
+	}
+	.btn-primary:hover:not(:disabled) {
+		background: #ff9d82;
+	}
+	.btn-blue:hover:not(:disabled) {
+		box-shadow: 0 5px 0 var(--color-brand-dark);
+	}
+	.btn-line:hover:not(:disabled) {
+		background: var(--color-wash);
+		box-shadow: 0 5px 0 var(--color-brand);
+	}
+	:is(.btn-primary, .btn-gelb, .btn-blue, .btn-line):active:not(:disabled) {
+		translate: 0 3px;
+		box-shadow: 0 1px 0 var(--color-brand);
+	}
+	:is(.btn-primary, .btn-gelb, .btn-blue, .btn-line):disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+	}
+	:is(.btn-primary, .btn-blue, .btn-line)[aria-busy='true'] {
+		opacity: 1;
+		cursor: progress;
+	}
+
+	.field {
+		display: block;
+		width: 100%;
+		min-height: 3.2rem;
+		border: 2px solid #c9c5f6;
+		background: #fff;
+		border-radius: 16px;
+		padding: 0.7rem 0.95rem;
+		color: var(--color-ink);
+		transition:
+			border-color 120ms,
+			box-shadow 120ms;
+	}
+	.field::placeholder {
+		color: #9a97bf;
+	}
+	.field:hover {
+		border-color: #a6a0f2;
+	}
+	.field:focus {
+		outline: none;
+		border-color: var(--color-brand);
+		box-shadow: 0 0 0 4px #3b30e326;
+	}
+	.field[aria-invalid='true'] {
+		border-color: var(--color-danger);
+		box-shadow: 0 0 0 4px #d92d3a1f;
+	}
+	.label {
+		display: block;
+		font-weight: 600;
+		margin-bottom: 0.35rem;
+	}
+	.hint {
+		color: var(--color-muted);
+		font-weight: 400;
+	}
+
+	/* Checkboxes drawn in the same line style */
+	.check {
+		appearance: none;
+		display: inline-grid;
+		place-content: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		border: 2px solid var(--color-brand);
+		border-radius: 8px;
+		background: #fff;
+		transition: background-color 120ms;
+	}
+	.check:checked {
+		background: var(--color-brand)
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+			center / 80% no-repeat;
+		animation: pop 220ms ease-out;
+	}
+	@keyframes pop {
+		50% {
+			scale: 1.18;
+		}
+	}
 }
 
 @utility card {
-	border: 1px solid var(--color-line);
-	border-radius: 18px;
+	border: 2px solid var(--color-line);
+	border-radius: 24px;
 	background: var(--color-paper);
 }
-
-.field {
-	display: block;
-	width: 100%;
-	min-height: 3rem;
-	border: 1px solid #d9d0c9;
-	background: #fff;
-	border-radius: 12px;
-	padding: 0.7rem 0.85rem;
+@utility card-strong {
+	border: 2px solid var(--color-brand);
+	border-radius: 28px;
+	background: var(--color-paper);
+	box-shadow: 0 6px 0 var(--color-brand);
 }
-.field:focus {
-	outline: 2px solid var(--color-ink);
-	outline-offset: 0;
-	border-color: var(--color-ink);
-}
-.field[aria-invalid='true'] {
-	border-color: var(--color-geranium);
-	box-shadow: 0 0 0 1px var(--color-geranium);
-}
-.label {
-	display: block;
+@utility pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	border: 2px solid var(--color-brand);
+	border-radius: 999px;
+	padding: 0.3rem 0.8rem;
+	color: var(--color-brand);
 	font-weight: 600;
-	margin-bottom: 0.35rem;
+	line-height: 1.2;
+	white-space: nowrap;
 }
-.hint {
-	color: var(--color-muted);
-	font-weight: 400;
+
+/* Status chips: what state a week or booking is in, by colour and word */
+@utility chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	border-radius: 999px;
+	padding: 0.15rem 0.65rem;
+	font-size: 0.8rem;
+	font-weight: 700;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+.chip-ok {
+	background: var(--color-brand);
+	color: #fff;
+}
+.chip-wait {
+	background: var(--color-accent-soft);
+	color: var(--color-accent-dark);
+}
+.chip-todo {
+	background: var(--color-accent-wash);
+	color: var(--color-accent-dark);
+	box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+.chip-no,
+.chip-off {
+	background: var(--color-off);
+	color: var(--color-off-text);
 }
 
 /* Horizontal scrollers without visible scrollbar on touch devices */

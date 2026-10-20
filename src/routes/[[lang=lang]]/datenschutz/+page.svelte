@@ -8,9 +8,9 @@
 
 <Seo title={en ? 'Privacy policy' : 'Datenschutz'} description={data.hutName} path="/datenschutz" lang={data.lang} siteUrl={data.siteUrl} />
 
-<div class="richtext mx-auto max-w-[62ch] px-4 pt-8 sm:px-6 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2+p]:mt-3">
+<div class="richtext mx-auto max-w-[62ch] px-4 pt-8 sm:px-6 [&_h2]:mt-10 [&_h2]:text-[1.6rem] [&_h2+p]:mt-3">
 	{#if en}
-		<h1 class="text-4xl">Privacy policy</h1>
+		<h1 class="text-[2.6rem]">Privacy policy</h1>
 		<p class="mt-6">This website collects the data needed to handle your stay and counts visits anonymously. There is no advertising, no third-party tracking and no cookie on the public pages.</p>
 		<h2>Who is responsible</h2>
 		<p>{contact}</p>
@@ -31,7 +31,7 @@
 		<h2>Your rights</h2>
 		<p>You can ask what data we hold about you, have it corrected or deleted, by writing to {data.host.email}. You can also complain to the Federal Data Protection and Information Commissioner (FDPIC).</p>
 	{:else}
-		<h1 class="text-4xl">Datenschutz</h1>
+		<h1 class="text-[2.6rem]">Datenschutz</h1>
 		<p class="mt-6">Diese Website sammelt die Daten, die es für deinen Aufenthalt braucht, und zählt Besuche anonym. Es gibt keine Werbung, kein Tracking von Drittanbietern und auf den öffentlichen Seiten kein Cookie.</p>
 		<h2>Verantwortlich</h2>
 		<p>{contact}</p>

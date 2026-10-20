@@ -3,8 +3,8 @@ import { sql } from '#lib/server/db.ts';
 import { addPhoto, deletePhoto } from '#lib/server/images.ts';
 
 export const load = async () => ({
-	photos: await sql<{ id: number; key: string; width: number; height: number; widths: number[]; lqip: string; altDe: string; altEn: string; hero: boolean }[]>`
-		select id, key, width, height, widths, lqip, alt_de, alt_en, hero from photos order by hero desc, sort, id`
+	photos: await sql<{ id: number; key: string; width: number; height: number; widths: number[]; lqip: string; altDe: string; altEn: string; hero: boolean; category: string }[]>`
+		select id, key, width, height, widths, lqip, alt_de, alt_en, hero, category from photos order by hero desc, sort, id`
 });
 
 const id = (f: FormData) => Number(f.get('id'));
@@ -30,7 +30,8 @@ export const actions = {
 	},
 	save: async ({ request }) => {
 		const f = await request.formData();
-		await sql`update photos set alt_de = ${String(f.get('alt_de')).slice(0, 300)}, alt_en = ${String(f.get('alt_en')).slice(0, 300)} where id = ${id(f)}`;
+		const category = ['draussen', 'drinnen', 'winter'].includes(String(f.get('category'))) ? String(f.get('category')) : '';
+		await sql`update photos set alt_de = ${String(f.get('alt_de')).slice(0, 300)}, alt_en = ${String(f.get('alt_en')).slice(0, 300)}, category = ${category} where id = ${id(f)}`;
 		return { saved: id(f) };
 	},
 	move: async ({ request }) => {

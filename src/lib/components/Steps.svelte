@@ -10,15 +10,15 @@
 		<li class="flex gap-3.5">
 			<div class="flex flex-col items-center">
 				<span
-					class="grid size-7 shrink-0 place-items-center rounded-full border-2
-						{s.state === 'done' ? 'border-fir bg-fir text-white' : s.state === 'now' ? 'border-geranium bg-paper' : 'border-[#d9d0c9] bg-paper'}"
+					class="grid size-8 shrink-0 place-items-center rounded-full border-2
+						{s.state === 'done' ? 'border-brand bg-brand text-white' : s.state === 'now' ? 'border-brand bg-accent' : 'border-line bg-paper'}"
 				>
-					{#if s.state === 'done'}<Check size={14} strokeWidth={3} />{/if}
+					{#if s.state === 'done'}<Check size={16} strokeWidth={3.5} />{:else if s.state === 'now'}<span class="size-2.5 rounded-full bg-brand"></span>{/if}
 				</span>
-				{#if i < steps.length - 1}<span class="w-0.5 flex-1 {s.state === 'done' ? 'bg-fir' : 'bg-line'}"></span>{/if}
+				{#if i < steps.length - 1}<span class="my-1 w-0 flex-1 border-l-2 {s.state === 'done' ? 'border-brand' : 'border-dashed border-line'}"></span>{/if}
 			</div>
-			<div class="pb-5 pt-0.5">
-				<p class={s.state === 'now' ? 'font-bold' : 'font-medium'}>{s.title}</p>
+			<div class="pb-6 pt-1">
+				<p class={s.state === 'now' ? 'font-bold text-brand' : s.state === 'done' ? 'font-semibold' : 'font-medium text-muted'}>{s.title}</p>
 				<p class="text-sm text-muted">{s.text}</p>
 			</div>
 		</li>

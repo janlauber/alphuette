@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Huettli from '#lib/components/Huettli.svelte';
 	import { chf } from '#lib/booking.ts';
 	import { dict, fmtDate } from '#lib/i18n.ts';
 
@@ -16,7 +17,7 @@
 <div class="invoice mx-auto max-w-[210mm] bg-white px-6 py-10 text-[15px] text-black sm:px-12">
 	<div class="flex flex-wrap justify-between gap-6">
 		<div>
-			<p class="font-serif text-2xl">{data.hutName}</p>
+			<p class="flex items-center gap-2 text-2xl font-bold text-brand"><Huettli mini class="size-10" />{data.hutName}</p>
 			<p class="mt-1">{data.host.name}<br />{data.host.street}<br />{data.host.zip} {data.host.city}<br />{data.host.email}</p>
 		</div>
 		<div class="text-right">

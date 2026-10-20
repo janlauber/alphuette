@@ -58,7 +58,7 @@
 </div>
 
 <section class="mt-12 grid gap-8 lg:grid-cols-2">
-	<form method="POST" action="?/block" use:enhance class="rounded-[3px] bg-paper p-5">
+	<form method="POST" action="?/block" use:enhance class="rounded-[14px] bg-paper p-5">
 		<h2 class="text-xl">Zeit sperren</h2>
 		<p class="text-sm text-stein">Zum Beispiel wenn du selbst im Hüttli bist. Gesperrte Tage sind auf der Website belegt.</p>
 		<div class="mt-4 grid grid-cols-2 gap-3">
@@ -74,7 +74,7 @@
 		<h2 class="text-xl">Sperren</h2>
 		<ul class="mt-3 grid gap-2">
 			{#each data.bookings.filter((b) => b.status === 'gesperrt') as b (b.id)}
-				<li class="flex items-center justify-between gap-3 rounded-[3px] bg-paper px-4 py-2">
+				<li class="flex items-center justify-between gap-3 rounded-[14px] bg-paper px-4 py-2">
 					<span>{d(b.checkIn)} bis {d(b.checkOut)} <span class="text-stein">{b.hostNote ?? ''}</span></span>
 					<form method="POST" action="?/unblock" use:enhance><input type="hidden" name="id" value={b.id} /><button class="text-sm underline">Freigeben</button></form>
 				</li>

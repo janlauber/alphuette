@@ -1,0 +1,546 @@
+{
+  "hikes": [
+    {
+      "slug": "wildwasserweg",
+      "name": "Wildwasserweg",
+      "distanceKm": 2,
+      "durationMin": 60,
+      "durationReverseMin": 35,
+      "ascentM": 250,
+      "descentM": null,
+      "highestPoint": { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+      "lowestPoint": { "name": "Kiental, Tschingel (Haltestelle)", "elevationM": 1164, "elevSrc": "DHM" },
+      "trailCategory": "wanderweg",
+      "sacScale": "T1",
+      "sacScaleNote": "T1 gilt laut Post-PDF für die ganze Route Griesalp–Kiental, die den Wildwasserweg enthält",
+      "difficulty": "leicht",
+      "start": { "place": "Tschingel", "elevationM": 1164, "elevSrc": "DHM", "stop": "Kiental, Tschingel", "line": "PostAuto 220 (nur Griesalp-Saison)", "onFootFromHut": "ja: Guggerwäg bis Bir Alperue, dann am Tschingelsee entlang nach Tschingel (Abschnitt von Bärenpfad bzw. Griesalp–Kiental)" },
+      "end": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)" },
+      "waypoints": [
+        { "name": "Kiental, Tschingel", "elevationM": 1164, "elevSrc": "DHM", "timeFromStartMin": 0 },
+        { "name": "Hexenkessel und Pochtenfall (Griesschlucht)", "elevationM": null, "timeFromStartMin": null },
+        { "name": "Pochtenalp (Hotel Waldrand-Pochtenalp)", "elevationM": 1358, "elevSrc": "DHM", "timeFromStartMin": null },
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "timeFromStartMin": 60 }
+      ],
+      "season": "Ende Mai bis Mitte Oktober (BLS, für alle Kientaler Wanderwege); Wassermenge Juni bis August am grössten (Schneeschmelze, BLS); Bus bis Griesalp 23.5.–18.10.2026",
+      "highlights": [
+        "Pochtenfall: das Gornerewasser stürzt über eine senkrechte Felswand",
+        "Hexenkessel: schäumender Strudeltopf mit geschnitzter Holzhexe",
+        "Griesschlucht mit Wasserfällen und Strudeltöpfen",
+        "Metallbrücke zu einem Wasserfall"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Griesalp (Ziel)" },
+        { "name": "Hotel Waldrand-Pochtenalp", "onRoute": true, "where": "Pochtenalp" },
+        { "name": "Berggasthaus Golderli", "onRoute": false, "where": "wenige hundert Meter oberhalb Griesalp" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": null,
+      "sources": [
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+        "https://www.interlaken.swiss/erlebnisse/tour/wandern-am-wasser-gornerewasser",
+        "https://www.interlaken.swiss/en/experiences/tour/hiking-by-the-water-gornerewasser",
+        "https://wandern.post.ch/-/media/post-maxisites/wandern/wanderungen/kiental-be/Kiental-BE-DE.pdf",
+        "https://adelboden-lenk-kandersteg.ch/aktivitaeten/tour/detail/alpenruhe-baerenpfad-wildwasserweg-tschingel",
+        "https://www.postauto.ch/de/freizeitangebote/ausflugstipps/kiental-griesalp-linie",
+        "https://www.griesalp-hotels.ch/"
+      ],
+      "notes": [
+        "BLS: Der Weg ist gestuft und gut auch in Gegenrichtung begehbar (Griesalp–Tschingel 35 min).",
+        "Nasse Stege, Brücken und Felsplatten sind teils rutschig (interlaken.swiss).",
+        "Der Bus fährt daneben die steilste PostAuto-Strecke mit bis zu 28 % Steigung zwischen Tschingel und Griesalp; keine Velomitnahme auf diesem Abschnitt (PostAuto).",
+        "Abwärts nennt das Post-PDF ab Griesalp: Pochtenalp 10 min, Hexenkessel 30 min.",
+        "Pochtenfall und Hexenkessel sind Namen aus den Tourismusquellen; die swisstopo-Namensuche liefert keinen Treffer dafür."
+      ]
+    },
+    {
+      "slug": "griesalp-kiental",
+      "name": "Griesalp–Kiental (wilde Wasser im Kiental)",
+      "distanceKm": 7.3,
+      "durationMin": 120,
+      "ascentM": 100,
+      "descentM": 570,
+      "highestPoint": { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+      "lowestPoint": { "name": null, "elevationM": 922, "elevSrc": "interlaken (Bezeichnung aus Zahlenfolge abgeleitet)" },
+      "trailCategory": "wanderweg",
+      "sacScale": "T1",
+      "difficulty": "leicht (interlaken); Post: technisch T1, Kondition gering",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "ja, über diese Route in Gegenrichtung (aufwärts)" },
+      "end": { "place": "Kiental", "elevationM": 958, "elevSrc": "DHM", "stop": "Kiental, Dorf", "line": "PostAuto 220 (ganzjährig)" },
+      "waypoints": [
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "km": 0, "timeFromStartMin": 0 },
+        { "name": "Pochtenalp", "elevationM": 1358, "elevSrc": "DHM (Hotel Waldrand-Pochtenalp)", "km": 0.5, "timeFromStartMin": 10 },
+        { "name": "Hexenkessel", "elevationM": null, "km": 1.4, "timeFromStartMin": 30 },
+        { "name": "Ehemaliger Tschingelsee", "elevationM": 1151, "elevSrc": "DHM", "km": 2.8, "timeFromStartMin": 50 },
+        { "name": "Bir Alperue", "elevationM": 1141, "elevSrc": "DHM", "km": 3.3, "timeFromStartMin": 60 },
+        { "name": "Fulbrunni (Post-PDF und Haltestelle: Faulbrunni)", "elevationM": null, "km": 4.3, "timeFromStartMin": 75 },
+        { "name": "Kiental", "elevationM": 958, "elevSrc": "DHM (Haltestelle Kiental, Dorf)", "km": 7.3, "timeFromStartMin": 120 }
+      ],
+      "waypointTimesSource": "Post-PDF (Zeiten und km aus Tabelle bzw. Höhenprofil)",
+      "season": "Ende Mai bis Mitte Oktober (BLS, allgemein); Bus bis Griesalp 23.5.–18.10.2026",
+      "highlights": [
+        "Pochtenfall in der Griesschlucht",
+        "Hexenkessel: das Bachbett verengt sich zu einem schmalen Einschnitt",
+        "Ehemaliger Tschingelsee: nach einem Hagelwetter vor rund 50 Jahren entstanden, verlandet allmählich, Lebensraum für Wasservögel (Post)",
+        "Tschingelsee als Auengebiet von nationaler Bedeutung (interlaken.swiss)",
+        "Feuerstelle am ehemaligen Tschingelsee (Symbol im Post-PDF)"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Griesalp (Start)" },
+        { "name": "Hotel Waldrand-Pochtenalp", "onRoute": true, "where": "Pochtenalp" },
+        { "name": "Restaurant Alpenruh (Bir Alperue)", "onRoute": true, "where": "nach 1 h; interlaken beschreibt es als kurzen Abstecher" },
+        { "name": "Hotel Bären und weitere Gastronomie", "onRoute": true, "where": "Kiental (Ziel)" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": null,
+      "alternativeFigures": [
+        { "source": "https://www.interlaken.swiss/erlebnisse/tour/zu-den-schoenheiten-des-kientals", "distanceKm": 7.67, "durationMin": 130, "ascentM": 80, "descentM": 530, "highestM": 1409, "lowestM": 922, "note": "Höhen ohne Beschriftung auf der Seite; über Loosplatte und Talstation Sesselbahn" },
+        { "source": "https://www.interlaken.swiss/erlebnisse/tour/schaeumendes-wildwasser-im-kiental", "distanceKm": 7.77, "durationMin": 130, "ascentM": 36, "descentM": 550, "highestM": 1410, "lowestM": 922, "note": "Höhen ohne Beschriftung" }
+      ],
+      "sources": [
+        "https://wandern.post.ch/-/media/post-maxisites/wandern/wanderungen/kiental-be/Kiental-BE-DE.pdf",
+        "https://www.interlaken.swiss/erlebnisse/tour/zu-den-schoenheiten-des-kientals",
+        "https://www.interlaken.swiss/erlebnisse/tour/schaeumendes-wildwasser-im-kiental",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege"
+      ],
+      "notes": [
+        "Korrektur: Lengschwendi liegt nicht auf dieser Route. Der Talweg führt laut GPX von interlaken.swiss rund 270 m Luftlinie am swisstopo-Punkt Lengschwendi vorbei.",
+        "Nächste Haltestelle zur Hütte: Kiental, Faulbrunni (rund 630 m Luftlinie vom Punkt Lengschwendi), nur in der Griesalp-Saison bedient."
+      ]
+    },
+    {
+      "slug": "baerenpfad",
+      "name": "Bärenpfad (Alpenruhe–Bärenpfad–Wildwasserweg–Tschingel)",
+      "distanceKm": 6.6,
+      "durationMin": 135,
+      "ascentM": 319,
+      "descentM": 319,
+      "highestPoint": { "name": "bei Golderli/Gorneren", "elevationM": 1443, "elevSrc": "ALK" },
+      "lowestPoint": { "name": "bei Bir Alperue", "elevationM": 1133, "elevSrc": "ALK" },
+      "trailCategory": "wanderweg",
+      "sacScale": "T1",
+      "sacScaleNote": "T1 nennt Bergwelten für den Abschnitt Tschingelsee–Bärepfad–Gorneren; ALK und BLS nennen keine T-Stufe",
+      "difficulty": "leicht",
+      "start": { "place": "Bir Alperue (Restaurant Alpenruh)", "elevationM": 1141, "elevSrc": "DHM", "stop": "Kiental, Rest. Alpenruhe", "line": "PostAuto 220 (nur Griesalp-Saison)", "onFootFromHut": "ja, über den Guggerwäg (Lengschwendi–Bir Alperue rund 1,7 km)" },
+      "end": { "place": "Tschingel", "elevationM": 1164, "elevSrc": "DHM", "stop": "Kiental, Tschingel", "line": "PostAuto 220 (nur Griesalp-Saison)" },
+      "waypoints": [
+        { "name": "Bir Alperue / Restaurant Alpenruh", "elevationM": 1141, "elevSrc": "DHM" },
+        { "name": "Ehemaliger Tschingelsee", "elevationM": 1151, "elevSrc": "DHM" },
+        { "name": "Abzweigung Bärenpfad (geschnitzter Bär)", "elevationM": null },
+        { "name": "Wasserfall, Aufstieg über die Fluh", "elevationM": null },
+        { "name": "Gorneren", "elevationM": 1433, "elevSrc": "DHM" },
+        { "name": "Berggasthaus Golderli", "elevationM": 1439, "elevSrc": "DHM" },
+        { "name": "Pochtenalp", "elevationM": 1358, "elevSrc": "DHM (Hotel Waldrand-Pochtenalp)" },
+        { "name": "Hexenkessel (geschnitzte Holzhexe), Metallbrücke zum Wasserfall", "elevationM": null },
+        { "name": "Kiental, Tschingel", "elevationM": 1164, "elevSrc": "DHM" }
+      ],
+      "waypointTimesSource": null,
+      "season": "Ende Mai bis Mitte Oktober (BLS, allgemein); Bergwelten: Mai bis Oktober für den Abschnitt zum Naturfreundehaus Gorneren",
+      "highlights": [
+        "Waldweg mit moosbewachsenen Felsblöcken zum Tschingelsee",
+        "Geschnitzter Bär an der Abzweigung zum Bärenpfad",
+        "Wasserfall am Bärenpfad",
+        "Aussicht ab Gorneren auf Gspaltenhorn, Bütlasse und Blüemlisalp",
+        "Wildwasserweg mit Hexenkessel"
+      ],
+      "refreshments": [
+        { "name": "Restaurant Alpenruh", "onRoute": true, "where": "Start" },
+        { "name": "Berggasthaus Golderli", "onRoute": true },
+        { "name": "Pochtenalp (Hotel Waldrand-Pochtenalp)", "onRoute": true, "where": "ALK nennt Pochtenalp als Rastplatz" },
+        { "name": "Naturfreundehaus Gorneren", "onRoute": false, "where": "wenige Minuten ab Golderli (Bergwelten)" }
+      ],
+      "familyFriendly": "teilweise belegt: Bergwelten nennt Tschingelsee–Bärepfad–Gorneren leicht und familienfreundlich; ALK und BLS äussern sich nicht",
+      "pramFriendly": null,
+      "sources": [
+        "https://adelboden-lenk-kandersteg.ch/aktivitaeten/tour/detail/alpenruhe-baerenpfad-wildwasserweg-tschingel",
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/alpenruhe-baerenpfad-wildwasserweg-tschingel-kiental",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+        "https://www.bergwelten.com/t/w/35912"
+      ],
+      "notes": [
+        "Das GPX von ALK ist ein Rundweg, der von Tschingel zurück nach Alpenruhe führt; die 6,6 km gelten für diese Runde. Wer in Tschingel den Bus nimmt, geht weniger.",
+        "Parkplätze: öffentlich und kostenpflichtig beim Naturschutzgebiet Tschingel; der Parkplatz Alpenruhe ist privat (ALK).",
+        "Schreibweise: BLS und ALK schreiben Bärenpfad, Bergwelten Bärepfad."
+      ]
+    },
+    {
+      "slug": "guggerwaeg",
+      "name": "Guggerwäg",
+      "distanceKm": 4.9,
+      "durationMin": 80,
+      "ascentM": 59,
+      "descentM": 360,
+      "highestPoint": { "name": "Ramslauenen", "elevationM": 1408, "elevSrc": "interlaken" },
+      "lowestPoint": { "name": null, "elevationM": 1116, "elevSrc": "interlaken und ALK" },
+      "trailCategory": ["wanderweg", "bergwanderweg"],
+      "sacScale": null,
+      "difficulty": "leicht",
+      "start": { "place": "Ramslauenen (Bergstation Sesselbahn)", "elevationM": 1404, "elevSrc": "SAC", "stop": "Kiental, Ramslauenen (Bus), dann rund 150 m zur Talstation und 15 min Sesselbahn", "line": "PostAuto 220 (ganzjährig bis Kiental, Ramslauenen) + Sesselbahn Kiental–Ramslauenen", "onFootFromHut": "ja, aufwärts auf der gleichen Route (Lengschwendi–Ramslauenen rund 3,2 km)" },
+      "end": { "place": "Bir Alperue (Hotel-Restaurant Alpenruh)", "elevationM": 1141, "elevSrc": "DHM", "stop": "Kiental, Rest. Alpenruhe", "line": "PostAuto 220 (nur Griesalp-Saison); sonst Talweg nach Kiental, rund 1 h (interlaken)" },
+      "waypoints": [
+        { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC", "timeFromStartMin": 0 },
+        { "name": "Lengschwendi (Standort der Hütte)", "elevationM": 1184, "elevSrc": "DHM am Weg", "timeFromStartMin": 52, "timeSrc": "aus GPX interlaken.swiss berechnet" },
+        { "name": "Gürmschi", "elevationM": 1185, "elevSrc": "DHM am Weg (Obers Gürmschi)", "timeFromStartMin": 65, "timeSrc": "aus GPX interlaken.swiss berechnet" },
+        { "name": "Bir Alperue", "elevationM": 1141, "elevSrc": "DHM", "timeFromStartMin": 80 }
+      ],
+      "season": "Sesselbahn Sommer 2026: 9.5.–11.10. mit wechselnden Betriebstagen (siehe chairlift)",
+      "highlights": [
+        "Themenweg zum Kuckuck (Gugger) mit Infotafeln",
+        "Tier-Schaukästen: Steinadler, Gämse, Kuckuck, Regenwurm, Schneehase, Birkhuhn, Steinbock",
+        "Eidgenössischer Jagdbannbezirk Kiental",
+        "Rätselblatt ab Bergstation, kleiner Preis im Tal",
+        "Aussicht auf Niesenkette, Thunersee, Wätterlatte und Latrejespitz",
+        "Ab Lengschwendi Blick ins hintere Kiental und auf die Gamchilücke zwischen Blüemlisalp und Gspaltenhorn"
+      ],
+      "refreshments": [
+        { "name": "Berghaus Ramslauenen", "onRoute": true, "where": "Start; Saison 2026 bereits beendet" },
+        { "name": "Hotel-Restaurant Alpenruh", "onRoute": true, "where": "Ziel" }
+      ],
+      "familyFriendly": true,
+      "pramFriendly": null,
+      "alternativeFigures": [
+        { "source": "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/guggerwag-kiental", "distanceKm": 4.9, "durationMin": 80, "ascentM": 58, "descentM": 323, "highestM": 1405, "lowestM": 1116, "note": "Auf- und Abstieg ohne Beschriftung" },
+        { "source": "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege", "durationMin": 90, "note": "ca. 1.5 Std." }
+      ],
+      "sources": [
+        "https://www.interlaken.swiss/erlebnisse/tour/auf-dem-kientaler-guggerwaeg",
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/guggerwag-kiental",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+        "https://www.sac-cas.ch/en/huts-and-tours/sac-route-portal/gehrihore-gehrihorn-761/ski-touring/de-ramslauenen-kiental-1021/",
+        "https://adelboden-lenk-kandersteg.ch/buchen/angebote/gaestekarte",
+        "https://www.kiental-sesselbahn.ch/"
+      ],
+      "notes": [
+        "Sesselbahn mit Gästekarte gratis (ALK: inkludiert, Öffnungszeiten beachten).",
+        "Wegkategorie widersprüchlich: interlaken schreibt im Sicherheitshinweis durchwegs Wanderwege, in der Beschreibung Bergwanderweg mit Hartbelag im Tal; ALK schreibt gelb bzw. weiss-rot-weiss markiert.",
+        "Belag laut interlaken: 44 % Pfad, 28 % Weg, 18 % Asphalt, 11 % Schotter; Kinderwagen wird nirgends erwähnt.",
+        "Die Route führt 36 m am swisstopo-Punkt Lengschwendi vorbei. Ab der Hütte bis Bir Alperue rund 1,7 km und rund 30 min (aus GPX)."
+      ]
+    },
+    {
+      "slug": "gamchi",
+      "name": "Aussichtsreiche Rundtour zum Gamchi",
+      "distanceKm": 10.27,
+      "durationMin": 240,
+      "ascentM": 760,
+      "descentM": 760,
+      "highestPoint": { "name": "Moränenkamm zwischen Oberloch und Bundläger", "elevationM": 2033, "elevSrc": "interlaken" },
+      "lowestPoint": { "name": "Griesalp", "elevationM": 1394, "elevSrc": "interlaken" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": null,
+      "difficulty": "mittel (interlaken: Schwierigkeit mittel, Kondition leicht)",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "nur über Griesalp–Kiental in Gegenrichtung, sonst Bus ab Kiental, Faulbrunni" },
+      "end": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)" },
+      "waypoints": [
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+        { "name": "Berggasthaus Golderli", "elevationM": 1439, "elevSrc": "DHM" },
+        { "name": "Kapelle", "elevationM": null },
+        { "name": "Steineberg", "elevationM": 1467, "elevSrc": "DHM am Weg" },
+        { "name": "Bürgli", "elevationM": 1612, "elevSrc": "DHM" },
+        { "name": "Gamchi (Alphütte Gamchi; Abzweigung Gspaltenhornhütte)", "elevationM": 1675, "elevSrc": "DHM" },
+        { "name": "Oberloch (Wegkreuzung)", "elevationM": 1967, "elevSrc": "interlaken (P. 1967)" },
+        { "name": "Bundläger", "elevationM": 1951, "elevSrc": "DHM" },
+        { "name": "Oberi Bundalp (Berghaus Bundalp)", "elevationM": 1840, "elevSrc": "DHM" },
+        { "name": "Dündemittelberg", "elevationM": 1727, "elevSrc": "DHM" },
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" }
+      ],
+      "waypointTimesSource": null,
+      "season": "Ende Mai bis Mitte Oktober (BLS, allgemein); Berghaus Bundalp täglich Mitte Juni bis Ende September; Bus bis Griesalp 23.5.–18.10.2026",
+      "highlights": [
+        "Bergwanderweg durch eine kleine Schlucht über dem Gamchibach",
+        "Weiter Talkessel der Alp Gamchi",
+        "Aussichtsreiche Alpweiden",
+        "Blick auf den Niesen ab Bundläger",
+        "Blick ins Kiental ab Dündemittelberg"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Start und Ziel" },
+        { "name": "Berggasthaus Golderli", "onRoute": true },
+        { "name": "Berghaus Bundalp (interlaken: Gasthaus Oberi Bundalp)", "onRoute": true, "where": "täglich Mitte Juni bis Ende September" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": false,
+      "alternativeFigures": [
+        { "source": "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege", "distanceKm": 9.5, "durationMin": 270, "ascentM": 962, "descentM": 962, "difficulty": "mittel", "note": "Rundwanderung Griesalp in Gegenrichtung: Griesalp–Dündenalp–Bundalp–Oberloch–Gamchi–Bürgli–Golderli–Griesalp" }
+      ],
+      "sources": [
+        "https://www.interlaken.swiss/erlebnisse/tour/aussichtsreiche-rundtour-zum-gamchi",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+        "https://www.myswitzerland.com/en/experiences/food-wine/restaurant/berghaus-bundalp/"
+      ],
+      "notes": [
+        "Ganz oder teilweise auf Bergwanderwegen; interlaken empfiehlt Bergschuhe, Stöcke, Regenschutz und Picknick.",
+        "Zahlen auf interlaken.swiss stehen ohne Beschriftung (760 m zweimal, 2033 m, 1394 m); die Zuordnung folgt der Reihenfolge.",
+        "pramFriendly false folgt aus 57 % Pfad und dem Bergwanderweg-Hinweis, nicht aus einer expliziten Quellenaussage."
+      ]
+    },
+    {
+      "slug": "hohtuerli",
+      "name": "Hohtürli: Griesalp–Kandersteg (Via Alpina, Route 1, Etappe 13)",
+      "distanceKm": 17,
+      "durationMin": 435,
+      "durationReverseMin": 455,
+      "ascentM": 1450,
+      "descentM": 1700,
+      "highestPoint": { "name": "Hohtürli", "elevationM": 2778, "elevSrc": "SAC" },
+      "lowestPoint": { "name": "Kandersteg", "elevationM": 1176, "elevSrc": "SAC" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": "T2 (SAC, Griesalp–Blüemlisalphütte) / T3 (BLS) / T3+ (ALK)",
+      "difficulty": "SchweizMobil: technisch mittelschwer, konditionell schwierig; ALK und interlaken: schwer; BLS-Übersicht: mittel",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "nur über Griesalp–Kiental in Gegenrichtung, sonst Bus ab Kiental, Faulbrunni" },
+      "end": { "place": "Kandersteg", "elevationM": 1176, "elevSrc": "SAC", "stop": "Kandersteg (Bahnhof)", "line": "BLS; Variante: ab Oeschinen (Bergstation, 1683 m) mit der Gondelbahn nach Kandersteg" },
+      "waypoints": [
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+        { "name": "Underi Bundalp", "elevationM": 1684, "elevSrc": "DHM" },
+        { "name": "Oberi Bundalp (Berghaus Bundalp)", "elevationM": 1840, "elevSrc": "DHM" },
+        { "name": "Bundläger", "elevationM": 1951, "elevSrc": "DHM" },
+        { "name": "Uf dr Wart", "elevationM": 2459, "elevSrc": "SAC (P. 2459)" },
+        { "name": "Hohtürli", "elevationM": 2778, "elevSrc": "SAC" },
+        { "name": "Blüemlisalphütte SAC", "elevationM": 2840, "elevSrc": "SAC" },
+        { "name": "Oberbärgli", "elevationM": 1977, "elevSrc": "SAC" },
+        { "name": "Underbärgli", "elevationM": 1783, "elevSrc": "DHM" },
+        { "name": "Oeschinensee", "elevationM": 1578, "elevSrc": "BLS" },
+        { "name": "Oeschinen (Bergstation Gondelbahn)", "elevationM": 1683, "elevSrc": "SAC" },
+        { "name": "Kandersteg", "elevationM": 1176, "elevSrc": "SAC" }
+      ],
+      "waypointTimesSource": null,
+      "season": "Juni bis September (SchweizMobil); Blüemlisalphütte bewartet Juli bis September, teilweise Juni und Oktober (SAC), laut BLS Mitte Juni bis Mitte/Ende Oktober offen; Gondelbahn Oeschinen 9.5.–20.9.2026 08.30–18.00, 21.9.–8.11.2026 08.30–17.00 (BLS)",
+      "highlights": [
+        "Gletscherwelt an der Nordflanke der Blüemlisalp",
+        "Passhöhe Hohtürli, Blüemlisalphütte wenige Minuten oberhalb",
+        "Holztreppen entlang der Felswand zum Hohtürli",
+        "Oeschinensee"
+      ],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Start" },
+        { "name": "Berghaus Bundalp", "onRoute": true, "where": "täglich Mitte Juni bis Ende September" },
+        { "name": "Blüemlisalphütte SAC", "onRoute": true, "where": "rund 60 m über dem Pass; Übernachtung nur mit Reservation" },
+        { "name": "Berghaus Oberbärgli", "onRoute": true, "where": "Bewirtung nicht aus Primärquelle bestätigt" },
+        { "name": "Berghotel Oeschinensee", "onRoute": true },
+        { "name": "Berghaus Oeschinensee", "onRoute": true },
+        { "name": "Hotels in Kandersteg", "onRoute": true, "where": "Ziel" }
+      ],
+      "familyFriendly": false,
+      "pramFriendly": false,
+      "alternativeFigures": [
+        { "source": "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/hohtuerli-passwanderung", "distanceKm": 13, "durationMin": 420, "ascentM": 1540, "descentM": 1270, "sacScale": "T3", "note": "bis Oeschinensee bzw. Gondelbahn; BLS nennt Griesalp mit 1440 m" },
+        { "source": "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/griesalp-bundalp-hohtuerli-kandersteg-1", "distanceKm": 17.2, "durationMin": 450, "ascentM": 1371, "descentM": 1608, "highestM": 2779, "lowestM": 1171, "sacScale": "T3+", "note": "Auf- und Abstieg ohne Beschriftung" },
+        { "source": "https://www.interlaken.swiss/erlebnisse/tour/im-banne-der-blueemlisalp-hohtuerli", "distanceKm": 14.15, "durationMin": 380, "ascentM": 1300, "descentM": 1600, "highestM": 2831, "lowestM": 1408, "note": "Gegenrichtung Oeschinen–Griesalp, mit Gondelbahn; Zahlen ohne Beschriftung" },
+        { "source": "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/blueemlisalphuette-sac-2147000036/berg-und-alpinwandern/von-der-griesalp-471/", "durationMin": 240, "ascentM": 1450, "sacScale": "T2", "note": "nur Aufstieg Griesalp–Blüemlisalphütte" }
+      ],
+      "sources": [
+        "https://www.myswitzerland.com/de-ch/erlebnisse/route/via-alpina-1_13/",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/hohtuerli-passwanderung",
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/griesalp-bundalp-hohtuerli-kandersteg-1",
+        "https://www.interlaken.swiss/erlebnisse/tour/im-banne-der-blueemlisalp-hohtuerli",
+        "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/blueemlisalphuette-sac-2147000036/",
+        "https://www.sac-cas.ch/de/huetten-und-touren/sac-tourenportal/blueemlisalphuette-sac-2147000036/berg-und-alpinwandern/von-der-griesalp-471/",
+        "https://sac-cas.ch/en/huts-and-tours/sac-route-portal/blueemlisalphuette-sac-2147000036/mountain-hiking/from-the-top-station-of-the-kandersteg-oeschinen-cableway-470",
+        "https://www.myswitzerland.com/en/experiences/food-wine/restaurant/berghaus-bundalp/"
+      ],
+      "notes": [
+        "Die Hütte liegt auf 2840 m (SAC), der Pass auf 2778 m. Die BLS-Seite nennt 2778 m einmal fälschlich für die Hütte.",
+        "SAC: oberhalb Bundläger wird der Weg steiler; Holztreppen führen der Felswand entlang zum Hohtürli.",
+        "interlaken: Abstieg auf die Kientaler Seite sehr steil; bei Nebel und Schnee Route meiden.",
+        "ALK: Schnee kann Teile des Wegs auch nach der offiziellen Öffnung bedecken; teils exponiert, Trittsicherheit nötig.",
+        "Eine Aussage «Schnee bis Juli» fand sich in keiner offiziellen Quelle; belegt ist nur die allgemeine Schneewarnung.",
+        "Ketten oder Seile nennen nur private Tourenberichte, keine offizielle Quelle; deshalb hier weggelassen.",
+        "SchweizMobil/MySwitzerland: Umleitungen oder Sperrungen möglich, vorher prüfen.",
+        "Talfahrt Gondelbahn Oeschinen: Erwachsene CHF 26.20, mit Halbtax/GA und Kinder 6–15 CHF 14.10 (BLS, 2026)."
+      ]
+    }
+  ],
+  "additional": [
+    {
+      "slug": "gehrihorn",
+      "name": "Ramslauenen–Gehrihorn–Grathütte–Ramslauenen",
+      "distanceKm": 8.1,
+      "durationMin": 230,
+      "ascentM": 754,
+      "descentM": 754,
+      "highestPoint": { "name": "Gehrihore", "elevationM": 2130, "elevSrc": "SAC (ALK: 2129)" },
+      "lowestPoint": { "name": null, "elevationM": 1376, "elevSrc": "ALK" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": null,
+      "difficulty": "mittel (ALK, englische Seite: moderate)",
+      "start": { "place": "Ramslauenen (Bergstation Sesselbahn)", "elevationM": 1404, "elevSrc": "SAC", "stop": "Kiental, Ramslauenen + Sesselbahn", "line": "PostAuto 220 + Sesselbahn Kiental–Ramslauenen", "onFootFromHut": "ja, auf dem Guggerwäg aufwärts (rund 3,2 km), sonst Sesselbahn" },
+      "end": { "place": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC", "stop": "Sesselbahn Ramslauenen", "line": "Sesselbahn Kiental–Ramslauenen" },
+      "waypoints": [
+        { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC" },
+        { "name": "Gehrihore", "elevationM": 2130, "elevSrc": "SAC" },
+        { "name": "Grathütte", "elevationM": 2074, "elevSrc": "DHM" },
+        { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC" }
+      ],
+      "season": "an die Betriebszeiten der Sesselbahn gebunden (Sommer 2026: 9.5.–11.10.)",
+      "highlights": [
+        "Gipfelsicht auf Thunersee, Niesenkette, unteres Kandertal und Kiental",
+        "Blick auf das Blüemlisalp-Massiv und das Gspaltenhorn"
+      ],
+      "refreshments": [
+        { "name": "Berghaus Ramslauenen", "onRoute": true, "where": "Start und Ziel" },
+        { "name": "Grathütte", "onRoute": true, "where": "bewartet, Imbiss (interlaken)" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": false,
+      "sources": [
+        "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/ramslauenen-gehrihorn-grathuette-ramslauenen",
+        "https://www.interlaken.swiss/erlebnisse/tour/katzensprung-vom-rummel-in-die-einsamkeit",
+        "https://www.sac-cas.ch/en/huts-and-tours/sac-route-portal/gehrihore-gehrihorn-761/ski-touring/de-ramslauenen-kiental-1021/"
+      ],
+      "notes": [
+        "ALK nennt 754 m zweimal ohne Beschriftung.",
+        "Die Wegkategorie stammt von der interlaken-Tour über den Gehrihorn nach Mitholz: Bergwanderweg, nur für trittsichere und schwindelfreie Wanderer; steiler Aufstieg ab der Sesselbahnstation."
+      ]
+    },
+    {
+      "slug": "ramslauenen-griesalp",
+      "name": "Heiteres Auf und Ab im Kiental (Ramslauenen–Griesalp)",
+      "distanceKm": 8.75,
+      "durationMin": 180,
+      "ascentM": 540,
+      "descentM": 530,
+      "highestPoint": { "name": null, "elevationM": 1511, "elevSrc": "interlaken (Bezeichnung aus Zahlenfolge abgeleitet)" },
+      "lowestPoint": { "name": null, "elevationM": 1201, "elevSrc": "interlaken (Bezeichnung aus Zahlenfolge abgeleitet)" },
+      "trailCategory": "bergwanderweg",
+      "sacScale": null,
+      "difficulty": "leicht (Kondition sehr leicht)",
+      "start": { "place": "Ramslauenen (Bergstation Sesselbahn)", "elevationM": 1404, "elevSrc": "SAC", "stop": "Kiental, Ramslauenen + Sesselbahn", "line": "PostAuto 220 + Sesselbahn Kiental–Ramslauenen", "onFootFromHut": "die Route führt rund 300 m Luftlinie am Punkt Lengschwendi vorbei (aus GPX)" },
+      "end": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)" },
+      "waypoints": [
+        { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC" },
+        { "name": "Brüggerbärgli", "elevationM": 1407, "elevSrc": "DHM am Weg" },
+        { "name": "Gure", "elevationM": 1410, "elevSrc": "DHM am Weg" },
+        { "name": "Mittelberg (swisstopo: Mittelberg-Schwand)", "elevationM": 1497, "elevSrc": "DHM am Weg" },
+        { "name": "Dündefall (Steg)", "elevationM": null },
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" }
+      ],
+      "season": "Sesselbahn 9.5.–11.10.2026 und Bus ab Griesalp 23.5.–18.10.2026; praktisch also 23.5.–11.10.",
+      "highlights": [
+        "Infotafeln des Guggerwägs",
+        "Blick auf die Blüemlisalp-Kette, den Tschingelsee, den Thunersee und den Niesen",
+        "Dündefall: kräftiger Wasserfall, der Steg führt nahe vorbei",
+        "Rückfahrt über die steilste Postautostrecke"
+      ],
+      "refreshments": [
+        { "name": "Berghaus Ramslauenen", "onRoute": true, "where": "Start" },
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Ziel" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": false,
+      "sources": [
+        "https://www.interlaken.swiss/erlebnisse/tour/heiteres-auf-und-ab-im-kiental"
+      ],
+      "notes": [
+        "interlaken nennt unterwegs keine Einkehr und empfiehlt Picknick und genug Getränke.",
+        "Belag: 57 % Pfad, 25 % Weg, 16 % Strasse, 2 % Schotter.",
+        "interlaken schreibt Dündenfall, swisstopo Dündefall."
+      ]
+    },
+    {
+      "slug": "spiggengrund",
+      "name": "Tageswanderung Griesalp–Kiental über Spiggegrund",
+      "distanceKm": 9.5,
+      "durationMin": 270,
+      "ascentM": 670,
+      "descentM": 1150,
+      "highestPoint": { "name": null, "elevationM": null },
+      "lowestPoint": { "name": "Kiental", "elevationM": 958, "elevSrc": "DHM" },
+      "trailCategory": null,
+      "sacScale": null,
+      "difficulty": "mittel",
+      "start": { "place": "Griesalp", "elevationM": 1408, "elevSrc": "SAC", "stop": "Griesalp, Kurhaus", "line": "PostAuto 220 (23.5.–18.10.2026)", "onFootFromHut": "nur über Griesalp–Kiental in Gegenrichtung, sonst Bus ab Kiental, Faulbrunni" },
+      "end": { "place": "Kiental", "elevationM": 958, "elevSrc": "DHM", "stop": "Kiental, Dorf", "line": "PostAuto 220 (ganzjährig)" },
+      "waypoints": [
+        { "name": "Griesalp", "elevationM": 1408, "elevSrc": "SAC" },
+        { "name": "Golderli", "elevationM": 1439, "elevSrc": "DHM" },
+        { "name": "Hasebode", "elevationM": null },
+        { "name": "Chanzel", "elevationM": null },
+        { "name": "Aabeberg", "elevationM": null },
+        { "name": "Mittelberg", "elevationM": null },
+        { "name": "Spiggegrund", "elevationM": null },
+        { "name": "Loosplatte", "elevationM": 956, "elevSrc": "DHM am Talweg" },
+        { "name": "Kiental", "elevationM": 958, "elevSrc": "DHM" }
+      ],
+      "season": "Ende Mai bis Mitte Oktober (BLS, allgemein); Bus bis Griesalp 23.5.–18.10.2026",
+      "highlights": [],
+      "refreshments": [
+        { "name": "Griesalp Hotels / Restaurant Berghaus", "onRoute": true, "where": "Start" },
+        { "name": "Berggasthaus Golderli", "onRoute": true },
+        { "name": "Gastronomie in Kiental", "onRoute": true, "where": "Ziel" }
+      ],
+      "familyFriendly": null,
+      "pramFriendly": null,
+      "sources": [
+        "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege"
+      ],
+      "notes": [
+        "Einzige gefundene Quelle ist BLS; dort heisst es, ab der Postauto-Endstation den braunen Wegweisern Richtung Golderli–Abendberg zu folgen.",
+        "BLS schreibt Hasenboden, Kanzel, Aabebärg, Spiggengrund und Losplatte; die swisstopo-Formen sind Hasebode, Chanzel, Aabeberg, Spiggegrund und Loosplatte.",
+        "Vor Veröffentlichung vor Ort oder bei Kiental-Reichenbach Tourismus prüfen."
+      ]
+    }
+  ],
+  "chairlift": {
+    "name": "Sesselbahn Kiental–Ramslauenen",
+    "operator": "Sportbahnen Kiental-Ramslauenen (BAV-Anlage 74.027, SKRAG)",
+    "valleyStation": { "name": "Kiental, Sesselbahn Talstation", "elevationM": 948, "elevSrc": "SAC", "address": "Lengschwendistrasse 6, 3723 Kiental", "busStop": "Kiental, Ramslauenen (PostAuto 220), rund 150 m Fussweg (ALK)" },
+    "mountainStation": { "name": "Ramslauenen", "elevationM": 1404, "elevSrc": "SAC" },
+    "rideMin": 15,
+    "summer2026": [
+      { "period": "9.5.–30.6.", "days": "Sa, So und Feiertage" },
+      { "period": "1.7.–16.8.", "days": "Mi bis So" },
+      { "period": "17.8.–13.9.", "days": "Sa und So (Mi bis Fr je nach Wetter)" },
+      { "period": "16.9.–11.10.", "days": "Mi bis So" }
+    ],
+    "summerHours": "09.00–17.00 durchgehend",
+    "winterHours": "09.00–16.00 (teilweise nur 13.00–16.00); Winterdaten auf der Website nicht als Text publiziert",
+    "pricesSummerCHF": { "adultSingle": 10, "adultReturn": 15, "child6to15Single": 10, "child6to15Return": 10, "under6": 0, "bike": 5 },
+    "magicPass": true,
+    "guestCardFree": true,
+    "restaurant": "Berghaus Ramslauenen (Saison 2026 beendet)",
+    "sources": [
+      "https://www.kiental-sesselbahn.ch/",
+      "https://www.kiental-sesselbahn.ch/betriebsinfo",
+      "https://www.kiental-sesselbahn.ch/tarife",
+      "https://adelboden-lenk-kandersteg.ch/en/places/poi/detail/sesselbahn-ramslauenen-1",
+      "https://adelboden-lenk-kandersteg.ch/buchen/angebote/gaestekarte",
+      "https://www.sac-cas.ch/en/huts-and-tours/sac-route-portal/gehrihore-gehrihorn-761/ski-touring/de-ramslauenen-kiental-1021/",
+      "https://adelboden-lenk-kandersteg.ch/en/activities/tour/detail/guggerwag-kiental"
+    ]
+  },
+  "guestCard": {
+    "name": "Gästekarte Adelboden-Lenk-Kandersteg",
+    "eligibility": "alle kurtaxenzahlenden Gäste der Gemeinden Adelboden, Frutigen, Kandergrund, Kandersteg und Kiental-Reichenbach ab 6 Jahren; automatisch ab 1 Übernachtung; gültig vom Anreise- bis zum Abreisetag; persönlich",
+    "chairliftRamslauenen": { "included": true, "quote": "inkludiert: Sesselbahn Kiental- Ramslauenen (Öffnungszeiten beachten)" },
+    "busReichenbachKientalRamslauenen": { "included": true, "quote": "Reichenbach-Kiental/Ramslauenen (ohne Griesalp)" },
+    "busKientalGriesalp": { "included": false, "quote": "Die Buslinien Gilbach-Geils, Kandersteg-Gasterntal sowie Kiental-Griesalp sind nicht inkludiert." },
+    "otherIncluded": [
+      "PostAuto Frutigen–Reichenbach",
+      "BLS Mülenen–Kandersteg (2. Klasse)",
+      "AFA-Bus Adelboden–Frutigen–Kandersteg und Ortsverkehr Adelboden, Kandersteg, Lenk",
+      "Achseten–Elsigbach (Sommer)"
+    ],
+    "excluded": [ "An- und Abreise", "Fahrten ausserhalb des Gültigkeitsgebiets", "Hunde", "Velos, Bikes, E-Bikes", "Kandersteg–Gasterntal", "Kiental–Griesalp", "Bahnersatzbus Gilbach–Geils" ],
+    "busLine220": {
+      "line": "PostAuto 220 Reichenbach i. K., Bahnhof – Kiental, Dorf – Kiental, Ramslauenen – Kiental, Faulbrunni – Kiental, Rest. Alpenruhe – Kiental, Tschingel – Griesalp, Kurhaus",
+      "griesalpSeason2026": "täglich 23.5.–18.10.2026",
+      "offSeason": "Linie endet bei Kiental, Ramslauenen; Faulbrunni, Rest. Alpenruhe und Tschingel werden dann nicht bedient (Fahrplandaten 18. und 21.10.2026)",
+      "gradient": "bis 28 % zwischen Tschingel und Griesalp; PostAuto: «die steilste PostAuto-Strecke»; MySwitzerland und BLS: steilste Postautostrecke Europas",
+      "fareReichenbachGriesalpCHF": { "adult": 20.40, "halbtax": 10.20, "childUnder16": 10.20, "GA": 0, "juniorKarte": 0 },
+      "notes": [
+        "Kurs 17.38 ab Kiental, Dorf fährt nur Sa, So und Feiertage bis Griesalp; freitags nur mit Reservation bis 16.00 am Vortag.",
+        "Gruppen ab 10 Personen: Platzreservation bis zwei Arbeitstage vorher, 15.00.",
+        "Keine Velomitnahme zwischen Tschingel und Griesalp."
+      ]
+    },
+    "sources": [
+      "https://adelboden-lenk-kandersteg.ch/buchen/angebote/gaestekarte",
+      "https://adelboden-lenk-kandersteg.ch/buchen/angebote/gaestekarte/oev-inklusive",
+      "https://adelboden-lenk-kandersteg.ch/en/booking/guest-card/public-transport-included",
+      "https://www.postauto.ch/de/freizeitangebote/ausflugstipps/kiental-griesalp-linie",
+      "https://www.bls.ch/de/freizeit-und-ferien/ausfluege/kiental-kientaler-wanderwege",
+      "https://transport.opendata.ch/v1/stationboard"
+    ]
+  }
+}

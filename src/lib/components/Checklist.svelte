@@ -21,8 +21,8 @@
 <ul class="grid gap-2">
 	{#each items as item (item)}
 		<li>
-			<label class="flex cursor-pointer items-center gap-3 rounded-[12px] bg-sand px-3.5 py-3">
-				<input type="checkbox" checked={!!done[item]} onchange={() => toggle(item)} class="size-5 accent-fir" />
+			<label class="flex cursor-pointer items-center gap-3 rounded-[18px] border-2 px-4 py-3 transition-colors {done[item] ? 'border-brand bg-wash' : 'border-line hover:border-brand'}">
+				<input type="checkbox" checked={!!done[item]} onchange={() => toggle(item)} class="check" />
 				<span class={done[item] ? 'text-muted line-through' : ''}>{item}</span>
 			</label>
 		</li>

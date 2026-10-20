@@ -28,13 +28,13 @@
 <ol class="grid gap-3">
 	{#each messages as m (m.id)}
 		<li class="max-w-[85%] {m.author === me ? 'justify-self-end' : ''}">
-			<div class="whitespace-pre-line rounded-[3px] px-4 py-2.5 {m.author === me ? 'bg-tanne text-kalk' : 'border border-linie bg-paper'}">{m.body}</div>
-			<p class="mt-1 text-xs text-stein {m.author === me ? 'text-right' : ''}">
+			<div class="whitespace-pre-line rounded-[22px] px-4 py-2.5 {m.author === me ? 'rounded-br-[6px] bg-brand text-white' : 'rounded-bl-[6px] border-2 border-line bg-paper'}">{m.body}</div>
+			<p class="mt-1 text-xs text-muted {m.author === me ? 'text-right' : ''}">
 				{names[m.author]}, {when(m.createdAt)}{m.via === 'mail' ? ' · Mail' : ''}
 			</p>
 		</li>
 	{:else}
-		<li class="text-stein">{empty}</li>
+		<li class="text-muted">{empty}</li>
 	{/each}
 </ol>
 
@@ -52,5 +52,5 @@
 >
 	<label class="sr-only" for="body">{placeholder}</label>
 	<textarea id="body" name="body" rows="3" required maxlength="5000" {placeholder} class="field"></textarea>
-	<button class="btn-line justify-self-end" disabled={sending}>{send}</button>
+	<button class="btn-primary justify-self-end" disabled={sending}>{send}</button>
 </form>

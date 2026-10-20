@@ -53,8 +53,7 @@
 		onpick?.();
 	}
 
-	const day = (iso: string) =>
-		new Date(iso + 'T00:00:00Z').toLocaleDateString(t.locale, { timeZone: 'UTC', day: 'numeric', month: 'short' });
+	const day = (iso: string) => new Date(iso + 'T00:00:00Z').toLocaleDateString(t.locale, { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 </script>
 
 {#if weekly}
@@ -62,7 +61,7 @@
 		<p class="text-sm text-muted">{t.weeks.hint}</p>
 		{#if !free}<p class="mt-3 font-semibold">{t.weeks.none}</p>{/if}
 		{#each months as m (m.name)}
-			<p class="mb-2 mt-4 text-sm font-bold first-letter:uppercase">{m.name}</p>
+			<p class="mb-2 mt-5 font-bold text-brand first-letter:uppercase">{m.name}</p>
 			<div class="grid grid-cols-2 gap-2">
 				{#each m.weeks as w (w.start)}
 					{@const selected = !!checkIn && w.start >= checkIn && w.end <= checkOut}
@@ -71,11 +70,16 @@
 						disabled={w.taken}
 						aria-pressed={selected}
 						onclick={() => pick(w)}
-						class="rounded-[14px] border-[1.5px] px-3 py-2.5 text-left transition-colors
-							{selected ? 'border-geranium bg-geranium text-white' : w.taken ? 'border-transparent bg-sand/70 text-muted' : 'border-line bg-paper hover:border-ink'}"
+						class="rounded-[18px] border-2 px-3 py-2.5 text-left transition-colors
+							{selected ? 'animate-[pop_220ms_ease-out] border-brand bg-brand text-white' : w.taken ? 'taken border-line text-muted' : 'border-line bg-paper hover:border-brand'}"
 					>
-						<span class="block font-bold tabular-nums {w.taken ? 'line-through decoration-muted/60' : ''}">{day(w.start)} – {day(w.end)}</span>
-						<span class="block text-sm {selected ? 'text-white/90' : 'text-muted'}">{w.taken ? t.weeks.taken : chf(w.price)}</span>
+						<span class="block whitespace-nowrap text-[1.05rem] font-bold tabular-nums">{day(w.start)}</span>
+						<span class="block whitespace-nowrap text-sm {selected ? 'text-white/85' : 'text-muted'}">{t.weeks.until(day(w.end))}</span>
+						{#if w.taken}
+							<span class="chip chip-no mt-1.5">{t.weeks.taken}</span>
+						{:else}
+							<span class="mt-1.5 flex items-center gap-1.5 text-sm font-bold {selected ? 'text-white' : 'text-ink'}"><span class="size-2 rounded-full {selected ? 'bg-white' : 'bg-brand'}"></span>{chf(w.price)}</span>
+						{/if}
 					</button>
 				{/each}
 			</div>
@@ -84,3 +88,10 @@
 {:else}
 	<Calendar {seasons} {taken} {lang} bind:checkIn bind:checkOut />
 {/if}
+
+<style>
+	/* taken weeks are hatched, so they read as "not available" at a glance */
+	.taken {
+		background: repeating-linear-gradient(-45deg, var(--color-off) 0 6px, #fff 6px 12px);
+	}
+</style>

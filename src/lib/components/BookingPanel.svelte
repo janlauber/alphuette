@@ -31,7 +31,7 @@
 <form id="buchen-form" method="get" action={localize(lang, '/anfrage')} class="flex flex-col gap-4">
 	{#if next}
 		<p class="text-muted">
-			{t.card.from} <span class="font-serif text-[1.7rem] text-ink">{chf(next.weekly ?? next.nightly)}</span>
+			{t.card.from} <mark class="rounded-lg bg-accent-soft px-1.5 text-[1.9rem] font-bold tracking-tight text-ink">{chf(next.weekly ?? next.nightly)}</mark>
 			{next.weekly ? t.card.perWeek : t.card.perNight}
 		</p>
 	{/if}
@@ -40,10 +40,10 @@
 		<WeekPicker {seasons} {taken} {lang} bind:checkIn bind:checkOut onpick={() => track('week_selected')} />
 	</div>
 	{#if checkIn}
-		<button type="button" class="self-start text-sm underline" onclick={() => ((checkIn = ''), (checkOut = ''))}>{t.card.clear}</button>
+		<button type="button" class="self-start text-sm font-semibold text-brand underline" onclick={() => ((checkIn = ''), (checkOut = ''))}>{t.card.clear}</button>
 	{/if}
 
-	<div class="divide-y divide-line border-y border-line">
+	<div class="divide-y-2 divide-line border-y-2 border-line">
 		<Stepper label={t.card.adults} hint={t.card.adultsHint} bind:value={guests.adults} min={1} max={rates.maxGuests - guests.children - guests.infants} {lang} />
 		<Stepper label={t.card.children} hint={t.card.childrenHint} bind:value={guests.children} max={rates.maxGuests - guests.adults - guests.infants} {lang} />
 		<Stepper label={t.card.infants} hint={t.card.infantsHint} bind:value={guests.infants} max={rates.maxGuests - guests.adults - guests.children} {lang} />
