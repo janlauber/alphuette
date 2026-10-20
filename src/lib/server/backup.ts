@@ -1,7 +1,4 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
-import { UPLOAD_DIR } from '$app/env/private';
 import { sql } from './db.ts';
 import { del, get, list, put } from './storage.ts';
 
@@ -110,18 +107,3 @@ export async function nightlyBackup() {
 	for (const b of (await listBackups()).slice(10)) if (b.at < cutoff) await del(PREFIX + b.name);
 }
 
-/**
- * One-off: backups made while they still lived on the volume (/data/backups) go into the bucket.
- * Files already there are skipped. ponytail: delete this once the volume is detached.
- */
-export async function importOldBackups() {
-	const dir = `${dirname(UPLOAD_DIR)}/backups`;
-	const have = new Set((await listBackups()).map((b) => b.name));
-	let n = 0;
-	for (const name of await readdir(dir).catch(() => [] as string[])) {
-		if (!NAME.test(name) || have.has(name)) continue;
-		await put(PREFIX + name, await readFile(`${dir}/${name}`));
-		n++;
-	}
-	return n;
-}
