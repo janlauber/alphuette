@@ -28,13 +28,13 @@
 </script>
 
 {#if rows.length}
-	<div class="card overflow-hidden px-3 pb-3 pt-2 sm:px-5 sm:pb-5">
+	<div class="card @container overflow-hidden px-3 pb-3 pt-2 sm:px-5 sm:pb-5">
 		{#each rows as row (row.year)}
 			<div class="mt-3 grid grid-cols-[3rem_minmax(0,1fr)] items-end gap-2 sm:grid-cols-[3.5rem_minmax(0,1fr)]">
 				<p class="pb-3 text-lg font-bold tabular-nums {row.year < thisYear ? 'text-off-text' : 'text-brand'}">{row.year}</p>
 				<div>
 					<div class="grid grid-cols-12 text-[11px] font-semibold uppercase text-muted sm:text-xs" aria-hidden="true">
-						{#each months as m, i (i)}<span class="truncate border-l-2 border-line pl-1"><span class="sm:hidden">{m[0]}</span><span class="hidden sm:inline">{m}</span></span>{/each}
+						{#each months as m, i (i)}<span class="truncate border-l-2 border-line pl-1"><span class="@xl:hidden">{m[0]}</span><span class="hidden @xl:inline">{m}</span></span>{/each}
 					</div>
 					<div class="relative mt-1 h-14 rounded-[14px] bg-wash">
 						{#each row.bars as b (b.s.id)}
