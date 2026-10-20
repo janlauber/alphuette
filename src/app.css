@@ -1,37 +1,37 @@
 @import 'tailwindcss';
 
-/* Design "Linie": gentian blue lines like the Hüttli mascot, and one warm coral for what matters most.
-   Confirmed is solid blue, waiting is coral, taken or cancelled is grey, only form errors are red. */
+/* Design "Linie": dark fir green lines like the Hüttli mascot, and one fresh meadow green for what matters most.
+   Confirmed is solid fir green, waiting is light meadow green, taken or cancelled is grey, only form errors are red. */
 @theme {
-	--color-paper: #ffffff;
-	--color-brand: #3b30e3;
-	--color-brand-dark: #2a20b8;
-	--color-ink: #1b1847;
-	--color-muted: #5f5c86;
-	--color-wash: #f1f0ff;
-	--color-line: #dedcfb;
-	--color-accent: #ff8a6b;
-	--color-accent-soft: #ffd9cc;
-	--color-accent-wash: #fff1ec;
-	--color-accent-dark: #a8432a;
-	--color-hill: #d9d6ff;
-	--color-off: #efeef6;
-	--color-off-text: #7b7999;
+	--color-paper: #fcfdf9;
+	--color-brand: #2f5b3c;
+	--color-brand-dark: #1e3d2a;
+	--color-ink: #17251c;
+	--color-muted: #56655b;
+	--color-wash: #eef3e7;
+	--color-line: #dbe4d3;
+	--color-accent: #a6d785;
+	--color-accent-soft: #dff0d2;
+	--color-accent-wash: #f1f8ea;
+	--color-accent-dark: #4b6b1f;
+	--color-hill: #dfe9d2;
+	--color-off: #e8ebe5;
+	--color-off-text: #5f6a60;
 	--color-danger: #d92d3a;
 	--color-danger-wash: #ffe9eb;
 
 	/* older names, still used in the admin */
-	--color-sand: #f1f0ff;
-	--color-fir: #3b30e3;
-	--color-geranium: #3b30e3;
-	--color-geranium-dark: #2a20b8;
-	--color-blush: #ecebff;
-	--color-kalk: #f6f5ff;
-	--color-tanne: #1b1847;
-	--color-moos: #2f2a8a;
-	--color-stein: #5f5c86;
-	--color-linie: #dedcfb;
-	--color-gelb: #ecebff;
+	--color-sand: #eef3e7;
+	--color-fir: #2f5b3c;
+	--color-geranium: #2f5b3c;
+	--color-geranium-dark: #1e3d2a;
+	--color-blush: #e6eedf;
+	--color-kalk: #f4f7f0;
+	--color-tanne: #17251c;
+	--color-moos: #24492f;
+	--color-stein: #56655b;
+	--color-linie: #dbe4d3;
+	--color-gelb: #e6eedf;
 	--color-rot: #d92d3a;
 
 	--font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
@@ -236,7 +236,7 @@
 	.field:focus {
 		outline: none;
 		border-color: var(--color-brand);
-		box-shadow: 0 0 0 4px #3b30e326;
+		box-shadow: 0 0 0 4px #2f5b3c26;
 	}
 	.field[aria-invalid='true'] {
 		border-color: var(--color-danger);

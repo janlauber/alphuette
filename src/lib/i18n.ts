@@ -14,7 +14,9 @@ const de = {
 		close: 'Schliessen',
 		share: 'Teilen',
 		copied: 'Link kopiert',
-		mascot: 'Das Hüttli rennt ins Tal'
+		mascot: 'Das Hüttli rennt ins Tal',
+		pause: 'Bewegung anhalten',
+		play: 'Bewegung starten'
 	},
 	seo: {
 		home: (name: string) => `${name}: Alphütte im Kiental mieten`,
@@ -360,7 +362,9 @@ const en: Dict = {
 		close: 'Close',
 		share: 'Share',
 		copied: 'Link copied',
-		mascot: 'The Hüttli mascot running down to the valley'
+		mascot: 'The Hüttli mascot running down to the valley',
+		pause: 'Stop the motion',
+		play: 'Start the motion'
 	},
 	seo: {
 		home: (name) => `${name}: alpine hut for rent in the Kiental`,

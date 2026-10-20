@@ -5,7 +5,7 @@ import { getSeasons, getSettings } from '#lib/server/settings.ts';
 import { listHikes } from '#lib/server/hikes.ts';
 import { LANGS, localize, type Lang } from '#lib/i18n.ts';
 
-const qr = (url: string) => renderSVG(url, { ecc: 'M', border: 0, blackColor: '#1b1847', whiteColor: '#ffffff' });
+const qr = (url: string) => renderSVG(url, { ecc: 'M', border: 0, blackColor: '#17251c', whiteColor: '#ffffff' });
 const sbb = (lang: Lang) =>
 	`https://www.sbb.ch/${{ de: 'de/kaufen', en: 'en/buying', fr: 'fr/acheter', it: 'it/acquistare' }[lang]}/pages/fahrplan/fahrplan.xhtml?von=${encodeURIComponent('Kiental, Abzw. Spiggengrund')}&nach=${encodeURIComponent('Reichenbach im Kandertal')}`;
 

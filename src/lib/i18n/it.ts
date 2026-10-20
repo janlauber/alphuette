@@ -10,7 +10,9 @@ export const it: Dict = {
 		close: 'Chiudi',
 		share: 'Condividi',
 		copied: 'Link copiato',
-		mascot: 'La baita corre giù a valle'
+		mascot: 'La baita corre giù a valle',
+		pause: 'Ferma il movimento',
+		play: 'Riavvia il movimento'
 	},
 	seo: {
 		home: (name) => `${name}: baita alpina in affitto nel Kiental`,

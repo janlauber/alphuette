@@ -2,11 +2,11 @@
 	import { enhance } from '$app/forms';
 	import AdminPage from '#lib/components/admin/AdminPage.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 	const when = (d: Date) => new Date(d).toLocaleString('de-CH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich' });
 </script>
 
-<AdminPage title="Automatische Mails" intro="Diese Mails schickt die Website selbst, damit du nicht daran denken musst. Jede geht pro Buchung nur einmal raus.">
+<AdminPage title="Mails" intro="Wohin Mails an die Hütte gehen, und welche Mails die Website selbst an Gäste schickt.">
 	{#snippet help()}
 		<ul>
 			<li>Hake ab, welche Mails rausgehen sollen, und tippe auf «Speichern».</li>
@@ -16,6 +16,20 @@
 		</ul>
 	{/snippet}
 
+	<section class="card-strong mb-10 p-5">
+		<h2 class="text-2xl">Wohin gehen Mails an die Hütte?</h2>
+		<p class="mt-1 text-muted">Alles, was jemand an eine Adresse <strong>@{data.domain}</strong> schickt (zum Beispiel hallo@{data.domain}), und die Meldungen zu neuen Anfragen und Nachrichten gehen an diese Adressen. Antworten von Gästen auf eine Buchung landen direkt bei der Buchung.</p>
+		<form method="POST" action="?/forward" use:enhance={() => async ({ update }) => update({ reset: false })} class="mt-4 grid gap-3">
+			<label class="label" for="forward">Weiterleiten an <span class="hint font-normal">(eine oder mehrere, mit Komma getrennt)</span></label>
+			<input id="forward" name="forward" value={form?.forwardValue ?? data.forward.join(', ')} placeholder={data.fallback.join(', ')} aria-invalid={form?.forwardError ? 'true' : undefined} aria-describedby="forward-hint" class="field" />
+			<p id="forward-hint" class="hint text-sm">{data.forward.length ? '' : `Leer: Es geht an ${data.fallback.join(', ')}. `}Adressen bei {data.domain} gehen hier nicht, sonst kreist die Mail im Kreis.</p>
+			{#if form?.forwardError}<p class="rounded-[14px] bg-danger-wash px-4 py-3 font-semibold text-danger" role="alert">{form.forwardError}</p>{/if}
+			<div><button class="btn-blue">Speichern</button></div>
+		</form>
+	</section>
+
+	<h2 class="mb-1 text-2xl">Automatische Mails</h2>
+	<p class="mb-4 text-muted">Die Website schickt sie selbst, damit du nicht daran denken musst. Jede geht pro Buchung nur einmal raus.</p>
 	<form method="POST" action="?/save" use:enhance={() => async ({ update }) => update({ reset: false })} class="grid gap-4">
 		{#each data.kinds as k (k.key)}
 			<div class="card p-4 sm:p-5">

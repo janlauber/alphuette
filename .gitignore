@@ -6,3 +6,6 @@ node_modules
 .env.*
 !.env.example
 .DS_Store
+
+# raw videos and other large originals, never committed
+media/

@@ -62,7 +62,15 @@ export async function receivedText(emailId: string) {
 			.replace(/&amp;/g, '&')
 			.replace(/&lt;/g, '<')
 			.replace(/&gt;/g, '>');
-	return { from: String(mail.from ?? ''), text: stripQuote(text), dmarc: mail.authentication?.dmarc as string | undefined };
+	return {
+		from: String(mail.from ?? ''),
+		to: ([] as string[]).concat(mail.to ?? []).join(', '),
+		subject: String(mail.subject ?? ''),
+		text: stripQuote(text),
+		full: text.trim(),
+		attachments: Array.isArray(mail.attachments) ? mail.attachments.length : 0,
+		dmarc: mail.authentication?.dmarc as string | undefined
+	};
 }
 
 // ponytail: cuts the quoted history at common reply markers; mail clients vary, the full text stays in Resend.

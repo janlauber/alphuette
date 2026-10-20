@@ -14,7 +14,7 @@
 	import Gallery from '#lib/components/Gallery.svelte';
 	import HikeCard from '#lib/components/HikeCard.svelte';
 	import Huettli from '#lib/components/Huettli.svelte';
-	import Panorama from '#lib/components/Panorama.svelte';
+	import HeroMotion from '#lib/components/HeroMotion.svelte';
 	import Seo from '#lib/components/Seo.svelte';
 	import Stars from '#lib/components/Stars.svelte';
 	import Weather from '#lib/components/Weather.svelte';
@@ -93,28 +93,25 @@
 	{jsonld}
 />
 
-<!-- Hero: the real view from the hut, with the Hüttli running in -->
-<section class="overflow-hidden">
-	<div class="mx-auto max-w-6xl px-5 pt-8 sm:px-6 lg:pt-14">
-		<p class="pill max-w-full overflow-hidden text-sm"><MapPin size={15} strokeWidth={2.5} class="shrink-0" aria-hidden="true" /><span class="truncate">{t.hero.whole}</span></p>
-		<h1 class="mt-4 max-w-[13ch] text-[2.7rem] sm:text-[3.8rem] lg:text-[4.8rem]">{data.hutName}</h1>
-		<p class="mt-4 max-w-[44ch] text-lg sm:text-xl">{c.tagline}</p>
-		{#if data.reviews.count}
-			<a href="#gaestebuch" class="mt-3 inline-flex items-center gap-2 text-sm font-semibold no-underline">
-				<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
-				<span>{data.reviews.avg.toLocaleString(t.locale)}</span>
-				<span class="text-muted underline">{t.review.count(data.reviews.count)}</span>
-			</a>
-		{/if}
-		<div class="mt-7 flex flex-wrap gap-3">
-			<a href="#buchen" class="btn-primary">{t.card.pick}</a>
-			{#if data.photos.length}<a href="#fotos" class="btn-line"><Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}</a>{/if}
+<!-- Hero: the hut, moving slowly like a drone flight -->
+{#if hero}
+	<HeroMotion photo={hero} labels={{ pause: t.hero.pause, play: t.hero.play }}>
+		<p class="flex items-center gap-1.5 text-sm font-semibold text-white/90 sm:text-base"><MapPin size={16} strokeWidth={2.5} class="shrink-0" aria-hidden="true" />{t.hero.whole}</p>
+		<h1 class="mt-2 text-[2.4rem] leading-[1.02] !text-white sm:text-[3.4rem] lg:text-[4.2rem]">{data.hutName}</h1>
+		<p class="mt-3 max-w-[48ch] text-lg text-white/90 sm:text-xl">{c.tagline}</p>
+		<div class="mt-5 flex flex-wrap items-center gap-3">
+			<a href="#buchen" class="btn-primary !border-ink !shadow-[0_4px_0_var(--color-ink)]">{t.card.pick}</a>
+			{#if data.photos.length}<a href="#fotos" class="btn-line !border-white !bg-transparent !text-white !shadow-none hover:!bg-white/10"><Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}</a>{/if}
+			{#if data.reviews.count}
+				<a href="#gaestebuch" class="inline-flex items-center gap-2 text-sm font-semibold text-white no-underline">
+					<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
+					<span>{data.reviews.avg.toLocaleString(t.locale)}</span>
+					<span class="underline">{t.review.count(data.reviews.count)}</span>
+				</a>
+			{/if}
 		</div>
-	</div>
-	<div class="mt-6 text-brand lg:mt-2">
-		<Panorama hut={t.hero.mascot} class="h-[210px] w-full sm:h-[290px] lg:h-[420px]" />
-	</div>
-</section>
+	</HeroMotion>
+{/if}
 
 <div id="fotos" class="-mt-1 bg-hill pb-8 pt-3 sm:pb-12">
 	<div class="mx-auto max-w-6xl px-5 sm:px-6">

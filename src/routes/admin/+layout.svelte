@@ -48,7 +48,7 @@
 			label: 'Hintergrund',
 			items: [
 				{ href: '/admin/analytics', label: 'Besucher', icon: ChartColumn },
-				{ href: '/admin/mails', label: 'Automatische Mails', icon: Mail },
+				{ href: '/admin/mails', label: 'Mails', icon: Mail },
 				{ href: '/admin/verlauf', label: 'Verlauf', icon: History },
 				{ href: '/admin/sicherungen', label: 'Sicherungen', icon: DatabaseBackup }
 			]

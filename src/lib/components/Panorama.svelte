@@ -50,7 +50,7 @@
 		fill: var(--paper, #fff);
 	}
 	.sun {
-		fill: var(--color-accent);
+		fill: var(--color-paper);
 	}
 	.ground {
 		fill: currentColor;

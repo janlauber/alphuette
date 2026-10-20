@@ -77,7 +77,7 @@
 	<div>
 		{#if checkIn && checkOut}
 			<!-- step 2 stays in view while the list scrolls -->
-			<div class="sticky top-[4.75rem] z-10 rounded-[18px] border-2 border-brand bg-paper px-3 lg:top-0 shadow-[0_6px_12px_-8px_#1b184733]">
+			<div class="sticky top-[4.75rem] z-10 rounded-[18px] border-2 border-brand bg-paper px-3 lg:top-0 shadow-[0_6px_12px_-8px_#17251c33]">
 				<Stepper label={t.weeks.length} hint={t.weeks.range(day(checkIn), day(checkOut))} bind:value={weeks.value} min={1} max={most} {lang} />
 				{#if count === most && most < 8}<p class="-mt-1 pb-2.5 text-xs font-semibold text-accent-dark">{t.weeks.maxed}</p>{/if}
 			</div>

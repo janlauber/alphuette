@@ -16,7 +16,7 @@
 				<span class="min-w-0 flex-1 truncate font-bold">{p.name}</span>
 				<span class="shrink-0 text-sm font-bold tabular-nums">{i === 0 ? start : p.min != null ? hours(p.min) : ''}</span>
 				{#if category === 'wanderweg'}
-					<svg viewBox="0 0 16 16" class="size-3.5 shrink-0" aria-hidden="true"><path d="M8 1 15 8 8 15 1 8Z" fill="#ffcf3f" stroke="#1b1847" stroke-width="1.5" /></svg>
+					<svg viewBox="0 0 16 16" class="size-3.5 shrink-0" aria-hidden="true"><path d="M8 1 15 8 8 15 1 8Z" fill="#ffcf3f" stroke="#17251c" stroke-width="1.5" /></svg>
 				{:else}
 					<svg viewBox="0 0 18 12" class="h-3 w-[18px] shrink-0 rounded-[2px] ring-1 ring-ink/40" aria-hidden="true"><rect width="18" height="12" fill="#fff" /><rect y="4" width="18" height="4" fill={band} /></svg>
 				{/if}

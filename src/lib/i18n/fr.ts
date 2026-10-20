@@ -13,7 +13,9 @@ export const fr: Dict = {
 		close: 'Fermer',
 		share: 'Partager',
 		copied: 'Lien copié',
-		mascot: 'Le petit chalet descend en courant vers la vallée'
+		mascot: 'Le petit chalet descend en courant vers la vallée',
+		pause: 'Arrêter le mouvement',
+		play: 'Relancer le mouvement'
 	},
 	seo: {
 		home: (name) => `${name}${_}: chalet d’alpage à louer au Kiental`,

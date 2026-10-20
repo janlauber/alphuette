@@ -1,11 +1,11 @@
 import { randomBytes } from 'node:crypto';
-import { ADMIN_EMAILS, SITE_URL } from '$app/env/private';
+import { SITE_URL } from '$app/env/private';
 import { mac, safeEqual } from './signing.ts';
 import { quote, chf, type Guests, type Range } from '#lib/booking.ts';
 import { dict, fmtDate, localize, type Lang } from '#lib/i18n.ts';
 import { sql } from './db.ts';
 import { sendMail, threadAddress } from './mail.ts';
-import { getSeasons, getSettings } from './settings.ts';
+import { getSeasons, getSettings, hostInbox } from './settings.ts';
 import { translateMessage } from './translate.ts';
 
 export type Booking = {
@@ -134,7 +134,7 @@ export async function confirmEmail(id: number) {
 		text: `${m.hello(b.name)}\n\n${m.requestText(fmtDate(b.checkIn, b.lang), fmtDate(b.checkOut, b.lang), people, guestUrl(b))}${replyTo(b.ref) ? `\n\n${m.canReply}` : ''}`
 	});
 	await sendMail({
-		to: ADMIN_EMAILS,
+		to: await hostInbox(),
 		replyTo: replyTo(b.ref),
 		subject: `Neue Anfrage: ${b.name}, ${fmtDate(b.checkIn, 'de', { year: undefined })} bis ${fmtDate(b.checkOut, 'de', { year: undefined })}`,
 		text: `${b.name} aus ${b.city} fragt an:\n\n${when}\nErwachsene: ${b.adults}, Kinder: ${b.children}, Kleinkinder: ${b.infants}\nTotal ${chf(b.totalRp ?? 0)}\n${b.note ? `\nNachricht:\n${b.note}\n` : ''}\nBestätigen oder ablehnen:\n${SITE_URL}/admin/buchungen/${b.id}${replyTo(b.ref) ? '\n\nWenn du auf diese Mail antwortest, geht die Antwort an den Gast.' : ''}`
@@ -173,7 +173,7 @@ export async function withdraw(id: number) {
 		where id = ${id} and status in ('unbestaetigt', 'angefragt') returning *`;
 	if (b && prev?.status === 'angefragt')
 		await sendMail({
-			to: ADMIN_EMAILS,
+			to: await hostInbox(),
 			subject: `Anfrage zurückgezogen: ${b.name} (${b.ref})`,
 			text: `${b.name} hat die Anfrage vom ${fmtDate(b.checkIn, 'de')} bis ${fmtDate(b.checkOut, 'de')} zurückgezogen. Die Daten sind wieder frei.`
 		});
@@ -189,7 +189,7 @@ export async function addMessage(b: Booking, author: 'gast' | 'host', body: stri
 	await sql`insert into messages (booking_id, author, body, via, translation) values (${b.id}, ${author}, ${body}, ${via}, ${translation})`;
 	if (author === 'gast') {
 		await sendMail({
-			to: ADMIN_EMAILS,
+			to: await hostInbox(),
 			replyTo: replyTo(b.ref),
 			subject: `Nachricht von ${b.name} (${b.ref})`,
 			text: `${translation ? `${translation}\n\n(automatisch übersetzt, Original:)\n${body}` : body}\n\n---\n${SITE_URL}/admin/buchungen/${b.id}${replyTo(b.ref) ? '\nAntworte direkt auf diese Mail oder im Admin. Schreib ruhig auf Deutsch, der Gast bekommt es übersetzt.' : ''}`

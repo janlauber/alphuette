@@ -1,10 +1,10 @@
-import { ADMIN_EMAILS, SITE_URL } from '$app/env/private';
+import { SITE_URL } from '$app/env/private';
 import { chf } from '#lib/booking.ts';
 import { dict, fmtDate } from '#lib/i18n.ts';
 import { sql } from './db.ts';
 import { guestUrl, type Booking } from './bookings.ts';
 import { sendMail } from './mail.ts';
-import { getSettings } from './settings.ts';
+import { getSettings, inbox } from './settings.ts';
 import { log } from './activity.ts';
 
 // Mails the website sends by itself. Each kind goes out once per booking (booking_mails),
@@ -37,7 +37,7 @@ export function compose(kind: Kind, b: Booking, s: Awaited<ReturnType<typeof get
 	if (kind === 'review') return { to: b.email, subject: m.reviewSubject, text: hello + m.reviewText(`${guestUrl(b)}#bewertung`) };
 	const de = (iso: string) => fmtDate(iso, 'de');
 	return {
-		to: ADMIN_EMAILS,
+		to: inbox(s),
 		subject: `Morgen kommt ${b.name}`,
 		text: `Morgen, ${de(b.checkIn)}, kommt ${b.name}${b.city ? ` aus ${b.city}` : ''}. Abreise ${de(b.checkOut)}.\n\nErwachsene: ${b.adults}, Kinder: ${b.children}, Kleinkinder: ${b.infants}, Bettwäsche: ${b.linen}\nZahlung: ${b.paidAt ? 'bezahlt' : `noch offen, ${chf(b.totalRp ?? 0)}`}\nTelefon: ${b.phone ?? 'nicht angegeben'}\n${b.arrival === 'oev' ? 'Kommt mit dem Postauto.\n' : b.arrival === 'auto' ? 'Kommt mit dem Auto.\n' : ''}\nDenk an die Meldung in Deskline für die Gästekarte.\n\n${SITE_URL}/admin/buchungen/${b.id}`
 	};

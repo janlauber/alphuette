@@ -2,6 +2,7 @@ import { sql } from './db.ts';
 import type { Rates, Season } from '#lib/booking.ts';
 import { LANGS, type Lang } from '#lib/i18n.ts';
 import { lookup } from './translate.ts';
+import { ADMIN_EMAILS } from '$app/env/private';
 
 const de = {
 	tagline: 'Einfaches Alphüttli auf 1200 m im Kiental, für 1 bis 6 Personen.',
@@ -126,13 +127,15 @@ export const DEFAULTS = {
 		street: '',
 		zip: '3713',
 		city: 'Reichenbach im Kandertal',
-		email: 'alt@example.ch',
+		email: 'hallo@alphuette-kiental.ch',
 		whatsapp: '',
 		iban: '',
 		lat: 46.5691,
 		lon: 7.7283
 	},
 	content: { de, en },
+	// where mail for the hut goes: notifications and everything sent to @alphuette-kiental.ch. Empty: the admin logins
+	mail: { forward: [] as string[] },
 	// automatic mails, each can be switched off in the admin
 	reminders: { payment: true, arrival: true, review: true, host: true },
 	amenities: [
@@ -150,7 +153,7 @@ export const DEFAULTS = {
 	] as Amenity[]
 };
 
-type Stored = { name: string; rates: typeof DEFAULTS.rates; host: typeof DEFAULTS.host; reminders: typeof DEFAULTS.reminders; content: { de: Content; en?: Partial<Content> }; amenities: Amenity[] };
+type Stored = { name: string; rates: typeof DEFAULTS.rates; host: typeof DEFAULTS.host; mail: typeof DEFAULTS.mail; reminders: typeof DEFAULTS.reminders; content: { de: Content; en?: Partial<Content> }; amenities: Amenity[] };
 export type Settings = Omit<Stored, 'content' | 'amenities'> & { content: Record<Lang, Content>; amenities: (Amenity & Record<Lang, string>)[] };
 
 /** Settings from the database on top of the defaults above, with the texts in every language. */
@@ -175,11 +178,16 @@ export async function stored(): Promise<Stored> {
 		name: db.name ?? DEFAULTS.name,
 		rates: { ...DEFAULTS.rates, ...db.rates },
 		host: { ...DEFAULTS.host, ...db.host },
+		mail: { ...DEFAULTS.mail, ...db.mail },
 		reminders: { ...DEFAULTS.reminders, ...db.reminders },
 		content: { de: { ...DEFAULTS.content.de, ...db.content?.de }, en: db.content?.en },
 		amenities: db.amenities ?? DEFAULTS.amenities
 	};
 }
+
+/** Where mail for the hut goes: the forwarding addresses from the admin, else the admin logins. */
+export const inbox = (s: Pick<Stored, 'mail'>) => (s.mail.forward.length ? s.mail.forward : ADMIN_EMAILS);
+export const hostInbox = async () => inbox(await stored());
 
 export async function setSetting<K extends keyof Stored>(key: K, value: Stored[K]) {
 	await sql`insert into settings (key, value) values (${key}, ${sql.json(value as never)})
