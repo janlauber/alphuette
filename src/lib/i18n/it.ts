@@ -332,6 +332,7 @@ export const it: Dict = {
 		againButton: 'Scegli un’altra settimana',
 		invoiceButton: 'Vedi la fattura',
 		reviewButton: 'Scrivi un messaggio',
+		precheckinButton: 'Inserisci i dati',
 		calendar: 'Aggiungi al calendario',
 		guests: 'Persone',
 		invoiceAttached: 'La fattura con codice QR è allegata in PDF.',

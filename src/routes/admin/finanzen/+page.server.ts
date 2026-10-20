@@ -6,7 +6,7 @@ import { compose, type Template } from '#lib/server/reminders.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import type { Booking } from '#lib/server/bookings.ts';
 import { changeRow, done, log } from '#lib/server/activity.ts';
-import { invoices, years } from './finance.ts';
+import { invoices, quarters, years } from './finance.ts';
 
 export const load = async ({ url }) => {
 	const all = await years();
@@ -15,20 +15,16 @@ export const load = async ({ url }) => {
 	const year = all.includes(asked) ? asked : (all.find((y) => y >= now) ?? all.at(-1) ?? now);
 	const [rows, s] = await Promise.all([invoices(year), getSettings()]);
 	const sum = (f: (r: (typeof rows)[number]) => number, only?: (r: (typeof rows)[number]) => boolean) => rows.filter(only ?? (() => true)).reduce((a, r) => a + f(r), 0);
-	const months = [...Map.groupBy(rows, (r) => r.checkIn.slice(0, 7)).entries()].map(([month, rs]) => ({
-		month,
-		stays: rs.length,
-		nights: rs.reduce((a, r) => a + r.nights, 0),
-		adults: rs.reduce((a, r) => a + r.adults, 0),
-		children: rs.reduce((a, r) => a + r.children, 0),
-		tax: rs.reduce((a, r) => a + r.tax, 0),
-		levy: rs.reduce((a, r) => a + r.levy, 0)
-	}));
+	const bills = new Map(
+		(await sql<{ quarter: string; invoicedRp: number | null; invoicedAt: string | null; paidAt: string | null }[]>`select * from levy_quarters where quarter like ${year + '-%'}`).map((q) => [q.quarter, q])
+	);
+	const levies = quarters(rows).map((q) => ({ ...q, invoiced: bills.get(q.quarter)?.invoicedRp ?? null, invoicedAt: bills.get(q.quarter)?.invoicedAt ?? null, paidAt: bills.get(q.quarter)?.paidAt ?? null }));
 	return {
 		year,
 		years: all.includes(now) ? all : [...all, now].sort(),
 		rows,
-		months,
+		levies,
+		rates: s.rates,
 		totals: {
 			total: sum((r) => r.total),
 			paid: sum((r) => r.total, (r) => r.state === 'bezahlt'),
@@ -45,6 +41,18 @@ export const load = async ({ url }) => {
 const id = (f: FormData) => Number(f.get('id'));
 
 export const actions = {
+	quarter: async ({ request, locals }) => {
+		const f = await request.formData();
+		const quarter = String(f.get('quarter'));
+		if (!/^\d{4}-Q[1-4]$/.test(quarter)) return fail(400);
+		const date = (k: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(f.get(k))) ? String(f.get(k)) : null);
+		const chfIn = String(f.get('invoiced') ?? '').replace(',', '.').replace(/[^\d.]/g, '');
+		const invoiced = chfIn ? Math.round(Number(chfIn) * 100) : null;
+		await sql`insert into levy_quarters (quarter, invoiced_rp, invoiced_at, paid_at) values (${quarter}, ${invoiced}, ${date('invoicedAt')}, ${date('paidAt')})
+			on conflict (quarter) do update set invoiced_rp = excluded.invoiced_rp, invoiced_at = excluded.invoiced_at, paid_at = excluded.paid_at`;
+		await log({ actor: locals.admin!, area: 'Finanzen', title: `Kurtaxen-Rechnung ${quarter.replace('-Q', ', Quartal ')} eingetragen`, link: '/admin/finanzen' });
+		return done('Gespeichert');
+	},
 	paid: async ({ request, locals }) => {
 		const f = await request.formData();
 		const date = /^\d{4}-\d{2}-\d{2}$/.test(String(f.get('date'))) ? String(f.get('date')) : new Date().toISOString().slice(0, 10);

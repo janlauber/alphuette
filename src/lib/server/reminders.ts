@@ -13,7 +13,9 @@ import { log } from './activity.ts';
 export const TRIGGERS = {
 	before_arrival: 'Tage vor der Anreise',
 	unpaid_before_arrival: 'Tage vor der Anreise, wenn noch nicht bezahlt',
-	after_departure: 'Tage nach der Abreise'
+	after_departure: 'Tage nach der Abreise',
+	unregistered_before_arrival: 'Tage vor der Anreise, wenn noch nicht in Deskline erfasst',
+	unregistered_after_departure: 'Tage nach der Abreise, wenn noch nicht in Deskline erfasst'
 } as const;
 export type Trigger = keyof typeof TRIGGERS;
 
@@ -37,7 +39,8 @@ export const PLACEHOLDERS: Record<string, string> = {
 	telefon: 'Telefon',
 	gaeste: 'Gäste nach Alter und Bettwäsche',
 	zahlung: 'bezahlt oder offen',
-	verwaltung: 'Link zur Buchung in der Verwaltung'
+	verwaltung: 'Link zur Buchung in der Verwaltung',
+	voranmeldung: 'Link zur Gästemeldung in Deskline (Pre-Check-in), unter Gastgeber hinterlegt'
 };
 
 export type Template = { id: number; key: string | null; label: string; audience: 'gast' | 'host'; trigger: Trigger; days: number; subject: string; body: string; active: boolean };
@@ -68,7 +71,8 @@ export function values(b: Booking, lang: Lang, s: Settings): Record<string, stri
 		telefon: b.phone ?? 'nicht angegeben',
 		gaeste: `Erwachsene: ${b.adults}, Kinder: ${b.children}, Kleinkinder: ${b.infants}, Bettwäsche: ${b.linen}`,
 		zahlung: b.paidAt ? 'bezahlt' : `noch offen, ${chf(b.totalRp ?? 0)}`,
-		verwaltung: `${SITE_URL}/admin/buchungen/${b.id}`
+		verwaltung: `${SITE_URL}/admin/buchungen/${b.id}`,
+		voranmeldung: s.host.precheckin
 	};
 }
 
@@ -88,7 +92,7 @@ export async function compose(t: Template, b: Booking, s: Settings, files = true
 	}
 	const v = values(b, b.lang, s);
 	const m = dict[b.lang].mail;
-	const button = uses('rechnung') ? { label: m.invoiceButton, url: v.rechnung } : uses('bewertung') ? { label: m.reviewButton, url: v.bewertung } : uses('link') ? { label: m.bookingButton, url: v.link } : undefined;
+	const button = uses('rechnung') ? { label: m.invoiceButton, url: v.rechnung } : uses('bewertung') ? { label: m.reviewButton, url: v.bewertung } : uses('voranmeldung') ? { label: m.precheckinButton, url: v.voranmeldung } : uses('link') ? { label: m.bookingButton, url: v.link } : undefined;
 	// the payment reminder carries the bill
 	const bill = files && (t.trigger === 'unpaid_before_arrival' || uses('rechnung')) ? (await bookingFiles(b)).filter((f) => f.type === 'application/pdf') : [];
 	const title = render(subject, v);
@@ -97,10 +101,11 @@ export async function compose(t: Template, b: Booking, s: Settings, files = true
 
 const due = (t: Template) => {
 	const confirmed = sql`status = 'bestaetigt'`;
-	if (t.trigger === 'after_departure')
-		return sql<Booking[]>`select * from bookings where ${confirmed} and check_out + ${t.days}::int <= current_date and check_out + ${t.days}::int > current_date - 14`;
+	const unregistered = t.trigger.startsWith('unregistered') ? sql`and deskline_at is null` : sql``;
+	if (t.trigger.endsWith('after_departure'))
+		return sql<Booking[]>`select * from bookings where ${confirmed} and check_out + ${t.days}::int <= current_date and check_out + ${t.days}::int > current_date - 14 ${unregistered}`;
 	return sql<Booking[]>`select * from bookings where ${confirmed} and check_in - ${t.days}::int <= current_date and check_in > current_date
-		${t.trigger === 'unpaid_before_arrival' ? sql`and paid_at is null` : sql``}`;
+		${t.trigger === 'unpaid_before_arrival' ? sql`and paid_at is null` : sql``} ${unregistered}`;
 };
 
 const kind = (t: Template) => t.key ?? `tpl:${t.id}`;
@@ -113,7 +118,8 @@ export const templates = () => sql<Template[]>`select * from mail_templates orde
 export async function sendReminders() {
 	const s = await getSettings();
 	for (const t of await templates()) {
-		if (!t.active) continue;
+		// the Deskline link mail waits until Tom has put the link in
+		if (!t.active || (t.body.includes('{voranmeldung}') && !s.host.precheckin)) continue;
 		for (const b of await due(t)) {
 			if (!(await claim(b.id, kind(t)))) continue;
 			await sendMail(await compose(t, b, s));
@@ -131,6 +137,6 @@ export const exampleBooking = (): Booking => {
 	return {
 		id: 0, ref: 'BEISPL', status: 'bestaetigt', checkIn: inDays(21), checkOut: inDays(28), name: 'Anna Muster', email: 'anna@example.ch',
 		phone: '079 123 45 67', city: 'Bern', country: 'CH', lang: 'de', adults: 2, children: 2, infants: 0, linen: 4, arrival: 'oev', note: null, hostNote: null,
-		quote: null, totalRp: 74000, paidAt: null, confirmedAt: new Date(), createdAt: new Date(), updatedAt: new Date()
+		quote: null, totalRp: 74000, paidAt: null, confirmedAt: new Date(), desklineAt: null, createdAt: new Date(), updatedAt: new Date()
 	};
 };

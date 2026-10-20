@@ -28,7 +28,7 @@
 			<li>Fällig ist eine Rechnung 30 Tage nach der Bestätigung, spätestens 14 Tage vor der Anreise. Ist sie danach noch offen, steht sie rot als «überfällig» oben.</li>
 			<li>Ist das Geld auf deinem Konto, tippe «Bezahlt». Das Datum kannst du ändern, falls die Zahlung früher kam. Fehler machst du im <a href="/admin/verlauf">Verlauf</a> rückgängig.</li>
 			<li>Die Zahlungserinnerung geht automatisch raus (einstellbar unter <a href="/admin/mails">Mails</a>). «Erinnern» schickt sie sofort nochmals.</li>
-			<li>Kurtaxe und Beherbergungsabgabe zahlen die Gäste mit der Rechnung; abgerechnet werden sie über Deskline. Die Tabelle unten zeigt die Beträge pro Monat. «Als Tabelle (CSV)» öffnet alles in Excel, zum Beispiel für die Steuererklärung.</li>
+			<li>Kurtaxe und Beherbergungsabgabe zahlen die Gäste mit der Rechnung; abgerechnet wird pro Quartal über Deskline und die Tourismusorganisation (TALK). Unten stehen die Logiernächte und Beträge pro Quartal; trag die Rechnung von TALK ein, dann siehst du, ob sie stimmt. «Als Tabelle (CSV)» öffnet alles in Excel, zum Beispiel für die Steuererklärung.</li>
 		</ul>
 	{/snippet}
 
@@ -96,20 +96,39 @@
 		{/if}
 	</section>
 
-	{#if data.months.length}
+	{#if data.levies.length}
 		<section class="mt-10">
-			<h2 class="text-2xl">Kurtaxe und Beherbergungsabgabe</h2>
-			<p class="text-muted">Pro Monat der Anreise. Kinder unter 6 zahlen nichts und sind nicht mitgezählt.</p>
-			<div class="card mt-3 overflow-x-auto">
-				<table class="w-full min-w-[34rem] text-left tabular-nums">
-					<thead class="text-sm text-muted"><tr><th class="px-4 py-2 font-semibold">Monat</th><th class="px-2 font-semibold">Aufenthalte</th><th class="px-2 font-semibold">Nächte</th><th class="px-2 font-semibold">Erw. / Kinder</th><th class="px-2 text-right font-semibold">Kurtaxe</th><th class="px-4 text-right font-semibold">Beherbergung</th></tr></thead>
-					<tbody>
-						{#each data.months as m (m.month)}
-							<tr class="border-t-2 border-line"><td class="px-4 py-2 font-semibold">{month(m.month)}</td><td class="px-2">{m.stays}</td><td class="px-2">{m.nights}</td><td class="px-2">{m.adults} / {m.children}</td><td class="px-2 text-right">{chf(m.tax)}</td><td class="px-4 text-right">{chf(m.levy)}</td></tr>
-						{/each}
-					</tbody>
-					<tfoot><tr class="border-t-2 border-brand font-bold"><td class="px-4 py-2" colspan="4">Total {data.year}</td><td class="px-2 text-right">{chf(data.months.reduce((a, m) => a + m.tax, 0))}</td><td class="px-4 text-right">{chf(data.months.reduce((a, m) => a + m.levy, 0))}</td></tr></tfoot>
-				</table>
+			<h2 class="text-2xl">Kurtaxe und Beherbergungsabgabe pro Quartal</h2>
+			<p class="max-w-[64ch] text-muted">So rechnet die Tourismusorganisation (TALK) ab, nach Monat der Anreise: Kurtaxe {chf(data.rates.taxAdult)} pro Nacht ab 16 und {chf(data.rates.taxChild)} von 6 bis 15, Beherbergungsabgabe {chf(data.rates.levyAdult)} ab 16, unter 6 gratis. Trag ihre Rechnung ein, dann siehst du, ob es übereinstimmt.</p>
+			<div class="mt-3 grid gap-3">
+				{#each data.levies as q (q.quarter)}
+					{@const ours = q.tax + q.levy}
+					<article class="card p-4">
+						<div class="flex flex-wrap items-baseline justify-between gap-2">
+							<h3 class="text-lg">{q.quarter.slice(6)}. Quartal {q.quarter.slice(0, 4)}</h3>
+							<p class="font-bold tabular-nums">{chf(ours)}</p>
+						</div>
+						<dl class="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-sm tabular-nums sm:grid-cols-3 lg:grid-cols-6">
+							<div><dt class="text-muted">Aufenthalte</dt><dd class="font-semibold">{q.stays}</dd></div>
+							<div><dt class="text-muted">Nächte ab 16</dt><dd class="font-semibold">{q.adultNights}</dd></div>
+							<div><dt class="text-muted">Nächte 6 bis 15</dt><dd class="font-semibold">{q.childNights}</dd></div>
+							<div><dt class="text-muted">Nächte unter 6</dt><dd class="font-semibold">{q.infantNights}</dd></div>
+							<div><dt class="text-muted">Kurtaxe</dt><dd class="font-semibold">{chf(q.tax)}</dd></div>
+							<div><dt class="text-muted">Beherbergungsabgabe</dt><dd class="font-semibold">{chf(q.levy)}</dd></div>
+						</dl>
+						<form method="POST" action="?/quarter" use:enhance={() => async ({ update }) => update({ reset: false })} class="mt-3 flex flex-wrap items-end gap-3 border-t-2 border-line pt-3">
+							<input type="hidden" name="quarter" value={q.quarter} />
+							<label class="text-sm font-semibold">Rechnung TALK in CHF<input name="invoiced" inputmode="decimal" value={q.invoiced === null ? '' : (q.invoiced / 100).toString()} class="field mt-1 !min-h-0 w-32 !py-1.5 font-normal" /></label>
+							<label class="text-sm font-semibold">erhalten am<input name="invoicedAt" type="date" value={q.invoicedAt ?? ''} class="field mt-1 !min-h-0 w-auto !py-1.5 font-normal" /></label>
+							<label class="text-sm font-semibold">bezahlt am<input name="paidAt" type="date" value={q.paidAt ?? ''} class="field mt-1 !min-h-0 w-auto !py-1.5 font-normal" /></label>
+							<button class="btn-line !min-h-0 !px-4 !py-1.5 text-sm">Speichern</button>
+							{#if q.invoiced !== null}
+								<span class="chip {q.invoiced === ours ? 'chip-ok' : 'chip-wait'}">{q.invoiced === ours ? 'Stimmt überein' : `Differenz ${chf(Math.abs(q.invoiced - ours))}`}</span>
+							{/if}
+							{#if q.paidAt}<span class="chip chip-ok">Bezahlt</span>{/if}
+						</form>
+					</article>
+				{/each}
 			</div>
 		</section>
 	{/if}

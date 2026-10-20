@@ -35,3 +35,19 @@ export async function invoices(year: number): Promise<Row[]> {
 		};
 	});
 }
+
+export const quarterOf = (iso: string) => `${iso.slice(0, 4)}-Q${Math.ceil(Number(iso.slice(5, 7)) / 3)}`;
+
+/** Kurtaxe and Beherbergungsabgabe per quarter of arrival, the way the tourism office bills them: nights per age group and the amounts. */
+export function quarters(rows: Row[]) {
+	const sum = (rs: Row[], f: (r: Row) => number) => rs.reduce((a, r) => a + f(r), 0);
+	return [...Map.groupBy(rows, (r) => quarterOf(r.checkIn)).entries()].map(([quarter, rs]) => ({
+		quarter,
+		stays: rs.length,
+		adultNights: sum(rs, (r) => r.nights * r.adults),
+		childNights: sum(rs, (r) => r.nights * r.children),
+		infantNights: sum(rs, (r) => r.nights * r.infants),
+		tax: sum(rs, (r) => r.tax),
+		levy: sum(rs, (r) => r.levy)
+	}));
+}

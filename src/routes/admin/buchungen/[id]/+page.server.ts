@@ -27,7 +27,7 @@ export const load = async ({ params }) => {
 	]);
 	const [reminder] = await sql`select max(at) as at from booking_mails where booking_id = ${b.id} and kind like 'payment%'`;
 	const due = b.status === 'bestaetigt' ? dueDate({ checkIn: b.checkIn, confirmedAt: (b.confirmedAt ?? b.updatedAt).toISOString().slice(0, 10) }) : null;
-	return { b, messages, stays, guestLink: guestUrl(b), ibanMissing: !settings.host.iban, due, reminded: reminder?.at ? (reminder.at as Date).toISOString().slice(0, 10) : null };
+	return { b, messages, stays, guestLink: guestUrl(b), ibanMissing: !settings.host.iban, precheckin: !!settings.host.precheckin, due, reminded: reminder?.at ? (reminder.at as Date).toISOString().slice(0, 10) : null };
 };
 
 export const actions = {
@@ -52,6 +52,12 @@ export const actions = {
 		await sql`update bookings set paid_at = ${paid ? sql`now()` : null}, updated_at = now() where id = ${Number(params.id)}`;
 		await note(params.id, locals.admin!, (n) => `${n}: ${paid ? 'als bezahlt markiert' : 'wieder als offen markiert'}`);
 		return done(paid ? 'Als bezahlt markiert' : 'Wieder als offen markiert');
+	},
+	deskline: async ({ params, request, locals }) => {
+		const done_ = (await request.formData()).get('done') === '1';
+		await sql`update bookings set deskline_at = ${done_ ? sql`now()` : null} where id = ${Number(params.id)}`;
+		await note(params.id, locals.admin!, (n) => `${n}: ${done_ ? 'in Deskline erfasst' : 'Deskline-Häkchen entfernt'}`);
+		return done(done_ ? 'Als in Deskline erfasst markiert' : 'Häkchen entfernt');
 	},
 	note: async ({ params, request, locals }) => {
 		const text = String((await request.formData()).get('note') ?? '').slice(0, 5000);

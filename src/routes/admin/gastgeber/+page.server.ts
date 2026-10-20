@@ -35,6 +35,7 @@ export const actions = {
 				email: str(f, 'email', 200),
 				whatsapp: str(f, 'whatsapp', 30),
 				iban,
+				precheckin: /^https:\/\//.test(str(f, 'precheckin', 500)) ? str(f, 'precheckin', 500) : '',
 				lat: Number.isFinite(lat) && lat ? lat : DEFAULTS.host.lat,
 				lon: Number.isFinite(lon) && lon ? lon : DEFAULTS.host.lon
 			});

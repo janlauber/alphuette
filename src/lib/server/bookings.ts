@@ -33,6 +33,7 @@ export type Booking = {
 	totalRp: number | null;
 	paidAt: Date | null;
 	confirmedAt: Date | null;
+	desklineAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date;
 };

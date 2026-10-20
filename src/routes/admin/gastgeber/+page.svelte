@@ -48,6 +48,7 @@
 				<label class="label">Ort <input name="city" value={data.host.city} class="field mt-1 font-normal" /></label>
 			</div>
 			<label class="label sm:col-span-2">WhatsApp-Nummer <span class="hint block text-sm font-normal">Leer lassen, wenn Gäste dich nicht per WhatsApp erreichen sollen.</span><input name="whatsapp" type="tel" value={data.host.whatsapp} placeholder="079 123 45 67" class="field mt-1 font-normal" /></label>
+			<label class="label sm:col-span-2">Deskline: Link für den Pre-Check-in <span class="hint block text-sm font-normal">Im Deskline WebClient den Pre-Check-in-Link kopieren und hier einfügen. Die Website schickt ihn jedem Gast 7 Tage vor der Anreise. Der Gast trägt seine Angaben selber ein und bekommt die Gästekarte. Leer lassen, wenn du die Gäste selber erfasst.</span><input name="precheckin" type="url" value={data.host.precheckin} placeholder="https://…" class="field mt-1 font-normal" /></label>
 		</section>
 
 		<section class="card-strong grid gap-3 p-4 sm:p-5">

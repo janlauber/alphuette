@@ -25,9 +25,11 @@
 	const past = $derived(b.checkOut < today);
 	const people = $derived(b.adults + b.children + b.infants);
 	const long = (iso: string) => fmtDate(iso, 'de');
+	/** A timestamp as the day it was in Zurich (toISOString would give the UTC day). */
+	const onDay = (t: Date | string) => long(new Date(t).toLocaleDateString('sv-SE', { timeZone: 'Europe/Zurich' }));
 	// Deskline wants Swiss dates: 20.06.2027
 	const swiss = (iso: string) => iso.split('-').reverse().join('.');
-	const paidOn = $derived(b.paidAt ? long(new Date(b.paidAt).toISOString().slice(0, 10)) : '');
+	const paidOn = $derived(b.paidAt ? onDay(b.paidAt) : '');
 
 
 	// copy buttons: which one was just used
@@ -39,15 +41,20 @@
 		clearTimeout(timer);
 		timer = setTimeout(() => (copied = ''), 2000);
 	}
+	// in the order of the Deskline WebClient form; the last word of the name counts as the surname
+	const surname = $derived(b.name.trim().split(/\s+/).at(-1) ?? '');
+	const given = $derived(b.name.trim().split(/\s+/).slice(0, -1).join(' '));
 	const deskline = $derived([
-		['Name', b.name],
-		['E-Mail', b.email],
 		['Anreise', swiss(b.checkIn)],
 		['Abreise', swiss(b.checkOut)],
+		['Name', surname],
+		['Vorname', given],
+		['Land', b.country ?? ''],
+		['PLZ und Ort', b.city ?? ''],
 		['Erwachsene (ab 16)', String(b.adults)],
 		['Kinder (6 bis 15)', String(b.children)],
-		['Kleinkinder (unter 6)', String(b.infants)],
-		['Land', b.country ?? '']
+		['Kinder (unter 6)', String(b.infants)],
+		['E-Mail', b.email]
 	]);
 </script>
 
@@ -178,8 +185,18 @@
 	<section class="card mt-6 p-5" aria-labelledby="deskline">
 		<h2 id="deskline" class="text-xl">Für Deskline und Gästekarte</h2>
 		<p class="hint mt-1">
-			Trag diese Angaben im Deskline WebClient ein. {b.name} bekommt dann von Deskline den Link für den Pre-Check-in und die Gästekarte. Gäste aus dem Ausland zeigen bei der Ankunft ihren Ausweis.
+			{#if data.precheckin}
+				Die Website schickt {b.name} 7 Tage vor der Anreise den Link für den Pre-Check-in. Dort tragen die Gäste ihre Angaben selber ein und bekommen die Gästekarte. Prüf danach im WebClient, ob alles da ist, und setz das Häkchen.
+			{:else}
+				Trag diese Angaben bis spätestens 2 Tage vor der Anreise im Deskline WebClient ein, mit E-Mail, dann geht die Gästekarte automatisch raus. Einfacher: den Pre-Check-in-Link unter <a href="/admin/gastgeber">Gastgeber</a> hinterlegen, dann erfassen sich die Gäste selber.
+			{/if}
+			Nationalität und Mitreisende fragt Deskline beim Pre-Check-in ab. Ausweisnummern speichert die Website nicht.
 		</p>
+		<form method="POST" action="?/deskline" use:enhance class="mt-4 flex flex-wrap items-center gap-3 rounded-[14px] px-3 py-2 {b.desklineAt ? 'bg-accent-wash' : 'bg-wash'}">
+			<input type="hidden" name="done" value={b.desklineAt ? '0' : '1'} />
+			<span class="font-semibold">{b.desklineAt ? `In Deskline erfasst am ${onDay(b.desklineAt)}` : 'Noch nicht in Deskline erfasst'}</span>
+			<button class="{b.desklineAt ? 'text-sm font-semibold text-brand underline' : 'btn-primary !min-h-0 !px-4 !py-1.5 text-sm'}">{b.desklineAt ? 'Häkchen entfernen' : 'Als erfasst markieren'}</button>
+		</form>
 		<dl class="mt-4 grid gap-2">
 			{#each deskline as [label, value] (label)}
 				<div class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-[14px] bg-wash/60 px-3 py-1.5">

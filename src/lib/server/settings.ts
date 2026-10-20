@@ -130,6 +130,8 @@ export const DEFAULTS = {
 		email: 'hallo@alphuette-kiental.ch',
 		whatsapp: '',
 		iban: '',
+		// Deskline (feratel) link where guests enter their own details for the Gästekarte
+		precheckin: '',
 		lat: 46.5691,
 		lon: 7.7283
 	},
