@@ -33,7 +33,7 @@ export async function put(key: string, body: Uint8Array, type: string) {
 		return writeFile(local(key), body);
 	}
 	const res = await s3.fetch(url(key), { method: 'PUT', body: body as BodyInit, headers: { 'content-type': type } });
-	if (!res.ok) throw new Error(`S3 put ${key}: ${res.status}`);
+	if (!res.ok) throw new Error(`S3 put ${key}: ${res.status} ${(await res.text()).slice(0, 300)}`);
 }
 
 export async function get(key: string): Promise<Uint8Array | null> {
