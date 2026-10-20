@@ -1,13 +1,14 @@
-import { mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
 import { UPLOAD_DIR } from '$app/env/private';
 import { sql } from './db.ts';
+import { del, get, list, put } from './storage.ts';
 
-// Copies of the database as gzipped JSON on the volume, next to the photos: one a night, one before
-// every restore, and any Tom makes by hand. Photo files are not in it; deleted photos sit 30 days in the trash.
-// ponytail: same volume as the photos; the download button is the off-site copy. Push to the bucket once its writes work.
-export const DIR = `${dirname(UPLOAD_DIR)}/backups`;
+// Copies of the database as gzipped JSON in the bucket (backups/…), next to the photos: one a night,
+// one before every restore, and any Tom makes by hand. Photo files are not in it; deleted photos sit
+// 30 days in the trash. The download button is the off-site copy.
+const PREFIX = 'backups/';
 const TABLES = ['settings', 'seasons', 'hikes', 'photos', 'reviews', 'bookings', 'messages'] as const;
 const NAME = /^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})_(automatisch|manuell|vorher|hochgeladen)\.json\.gz$/;
 
@@ -35,23 +36,27 @@ export async function createBackup(reason: Reason) {
 	}
 	const at = new Date().toISOString();
 	const name = `${at.slice(0, 19).replace(/:/g, '-')}_${reason}.json.gz`;
-	await mkdir(DIR, { recursive: true });
-	await writeFile(`${DIR}/${name}`, gzipSync(JSON.stringify({ at, tables } satisfies Dump)));
+	await put(PREFIX + name, gzipSync(JSON.stringify({ at, tables } satisfies Dump)));
 	return name;
 }
 
 export async function listBackups() {
-	const names = (await readdir(DIR).catch(() => [] as string[])).filter((n) => NAME.test(n)).sort().reverse();
-	return Promise.all(
-		names.map(async (name) => {
+	return (await list(PREFIX))
+		.map(({ key, size }) => ({ name: key.slice(PREFIX.length), size }))
+		.filter(({ name }) => NAME.test(name))
+		.sort((a, b) => b.name.localeCompare(a.name))
+		.map(({ name, size }) => {
 			const [, at, reason] = name.match(NAME)!;
-			return { name, at: at.replace(/T(\d\d)-(\d\d)-(\d\d)$/, 'T$1:$2:$3Z'), reason: reason as Reason, size: (await stat(`${DIR}/${name}`)).size };
-		})
-	);
+			return { name, at: at.replace(/T(\d\d)-(\d\d)-(\d\d)$/, 'T$1:$2:$3Z'), reason: reason as Reason, size };
+		});
 }
 
 export const isBackupName = (name: string) => NAME.test(name);
-export const readBackup = (name: string) => readFile(`${DIR}/${name}`);
+export async function readBackup(name: string) {
+	const file = await get(PREFIX + name);
+	if (!file) throw new Error(`Sicherung ${name} fehlt`);
+	return file;
+}
 
 const parse = (gz: Uint8Array) => {
 	const dump = JSON.parse(gunzipSync(gz).toString('utf8')) as Dump;
@@ -63,8 +68,7 @@ const parse = (gz: Uint8Array) => {
 export async function addBackup(file: Uint8Array) {
 	const dump = parse(file);
 	const name = `${dump.at.slice(0, 19).replace(/:/g, '-')}_hochgeladen.json.gz`;
-	await mkdir(DIR, { recursive: true });
-	await writeFile(`${DIR}/${name}`, file);
+	await put(PREFIX + name, file);
 	return name;
 }
 
@@ -103,5 +107,21 @@ export async function nightlyBackup() {
 	const today = now.toISOString().slice(0, 10);
 	if (now.getUTCHours() >= 1 && !list.some((b) => b.reason === 'automatisch' && b.at.startsWith(today))) await createBackup('automatisch');
 	const cutoff = new Date(now.getTime() - 30 * 86400_000).toISOString();
-	for (const b of (await listBackups()).slice(10)) if (b.at < cutoff) await rm(`${DIR}/${b.name}`, { force: true });
+	for (const b of (await listBackups()).slice(10)) if (b.at < cutoff) await del(PREFIX + b.name);
+}
+
+/**
+ * One-off: backups made while they still lived on the volume (/data/backups) go into the bucket.
+ * Files already there are skipped. ponytail: delete this once the volume is detached.
+ */
+export async function importOldBackups() {
+	const dir = `${dirname(UPLOAD_DIR)}/backups`;
+	const have = new Set((await listBackups()).map((b) => b.name));
+	let n = 0;
+	for (const name of await readdir(dir).catch(() => [] as string[])) {
+		if (!NAME.test(name) || have.has(name)) continue;
+		await put(PREFIX + name, await readFile(`${dir}/${name}`));
+		n++;
+	}
+	return n;
 }

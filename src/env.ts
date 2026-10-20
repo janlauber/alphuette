@@ -37,7 +37,7 @@ export const variables = defineEnvVars({
 	// Bucket, named as a Rook/klickops bucket provides it. S3_ENDPOINT overrides host and port.
 	S3_ENDPOINT: { schema: optional },
 	GEOIP_DB: { schema: optional, description: 'Path to a city mmdb file (DB-IP lite) for analytics places' },
-	UPLOAD_DIR: { schema: (v) => v || '.data/uploads', description: 'Folder for photos when no bucket is set' },
+	UPLOAD_DIR: { schema: (v) => v || '.data/uploads', description: 'Folder for photos and backups when no bucket is set' },
 	BUCKET_HOST: { schema: optional },
 	BUCKET_PORT: { schema: optional },
 	BUCKET_NAME: { schema: optional },

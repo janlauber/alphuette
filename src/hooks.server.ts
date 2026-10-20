@@ -6,6 +6,7 @@ import { loadSigningKey } from '#lib/server/signing.ts';
 import { record } from '#lib/server/analytics.ts';
 import { maintenance } from '#lib/server/maintenance.ts';
 import { seedEnglish } from '#lib/server/sitetexts.ts';
+import { importOldBackups } from '#lib/server/backup.ts';
 import { report } from '#lib/server/monitor.ts';
 
 export const init: ServerInit = async () => {
@@ -13,6 +14,9 @@ export const init: ServerInit = async () => {
 	await migrate();
 	await loadSigningKey();
 	await seedEnglish();
+	void importOldBackups()
+		.then((n) => n && console.log(`backups: ${n} Sicherungen vom Volume in den Bucket kopiert`))
+		.catch((e) => report(e, 'Sicherungen in den Bucket kopieren'));
 	maintenance();
 	setInterval(maintenance, 3600_000);
 };
