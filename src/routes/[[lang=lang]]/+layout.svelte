@@ -29,17 +29,17 @@
 
 <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-white">{t.skip}</a>
 
-<div class="still flex min-h-dvh flex-col">
+<div class="flex min-h-dvh flex-col">
 <header class="sticky top-0 z-30 border-b-2 border-line bg-paper/95 backdrop-blur">
 	<div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
 		<a href={localize(data.lang, '/')} class="group flex items-center gap-2 text-brand no-underline">
 			<Huettli mini class="size-9 transition-transform group-hover:-rotate-6 sm:size-10" />
-			<span class="font-logo text-[1.15rem] font-bold leading-none tracking-tight sm:text-[1.3rem]">Alphütte<span class="hidden font-semibold opacity-70 sm:inline">&nbsp;Blüemlisalpblick</span></span>
+			<span class="text-[1.15rem] font-bold leading-none tracking-tight sm:text-[1.3rem]">Alphütte<span class="hidden font-semibold opacity-70 sm:inline">&nbsp;Blüemlisalpblick</span></span>
 		</a>
 		<nav class="flex items-center gap-0.5 text-[14px] font-semibold sm:gap-1 sm:text-[15px]">
 			{#each links as l (l.href)}
 				{@const active = path.startsWith(l.href)}
-				<a href={localize(data.lang, l.href)} class="px-1.5 py-1.5 underline-offset-[0.35em] min-[400px]:px-2.5 sm:px-3 {active ? 'text-brand underline' : 'no-underline hover:underline'}" aria-current={active ? 'page' : undefined}>{l.label}</a>
+				<a href={localize(data.lang, l.href)} class="rounded-full border-2 px-1.5 py-1.5 no-underline transition-colors min-[400px]:px-2.5 sm:px-3 {active ? 'border-brand text-brand' : 'border-transparent hover:bg-wash'}" aria-current={active ? 'page' : undefined}>{l.label}</a>
 			{/each}
 			<details bind:this={langMenu} class="group relative">
 				<summary

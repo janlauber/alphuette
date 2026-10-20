@@ -1,7 +1,5 @@
 <script lang="ts">
 	import '@fontsource-variable/outfit';
-	import '@fontsource-variable/sofia-sans';
-	import '@fontsource-variable/sofia-sans-extra-condensed';
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { afterNavigate } from '$app/navigation';

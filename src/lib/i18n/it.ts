@@ -338,24 +338,5 @@ export const it: Dict = {
 		messageOriginal: 'Originale in tedesco:',
 		linksSubject: 'Le tue prenotazioni per l’Alphütte',
 		linksText: (list) => `Ecco i link alle tue prenotazioni:\n\n${list}\n\nSe non li hai richiesti, ignora questa e-mail.`,
-	},
-	still: {
-		day: 'Una giornata alla baita',
-		parts: { afternoon: 'Pomeriggio', evening: 'Sera', night: 'Notte', morning: 'Mattina', day: 'Di giorno' },
-		arrive: { title: 'Arrivare', text: (time) => `Dalle ${time} la baita è tua.` },
-		fire: { title: 'Accendere il fuoco', text: 'Si cucina sulla stufa a legna o fuori al caminetto.' },
-		night: { title: 'Luce dal sole', text: 'La corrente solare basta per la luce e per ricaricare. Si dorme sul soppalco o nel soggiorno.' },
-		water: { title: 'Acqua dalla sorgente', text: 'Potabile, e calda quando il sole ha scaldato il boiler.' },
-		hike: { title: 'Escursioni dalla porta', text: 'I sentieri partono proprio dalla baita.' },
-		clock: 'Una giornata come orologio: mezzanotte in basso, mezzogiorno in alto',
-		season: 'La stagione a colpo d’occhio',
-		yours: 'la tua settimana',
-		scale: 'Tutti i profili alla stessa scala',
-		train: 'Stazione di Reichenbach',
-		bus: (line, min) => (min ? `${line}, ${min} min` : line),
-		walk: 'a piedi',
-		hut: 'Baita',
-		arrivalMore: 'Tutto sull’arrivo',
-		stay: 'Chi viene?'
 	}
 };

@@ -3,14 +3,11 @@
 	import Stepper from './Stepper.svelte';
 	import { addDays, checkStay, chf, isTaken, toIso, weekday, type Range, type Season } from '#lib/booking.ts';
 	import { dict, type Lang } from '#lib/i18n.ts';
-	import { seen } from '#lib/seen.ts';
 
-	// `strip` shows the whole season as one row of bars (wide screens), `list` as tiles per month.
 	let {
 		seasons,
 		taken,
 		lang,
-		view = 'list',
 		checkIn = $bindable(''),
 		checkOut = $bindable(''),
 		onpick
@@ -18,7 +15,6 @@
 		seasons: Season[];
 		taken: Range[];
 		lang: Lang;
-		view?: 'list' | 'strip';
 		checkIn?: string;
 		checkOut?: string;
 		onpick?: () => void;
@@ -77,44 +73,7 @@
 	const day = (iso: string) => new Date(iso + 'T00:00:00Z').toLocaleDateString(t.locale, { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 </script>
 
-{#if weekly && view === 'strip'}
-	<div>
-		{#if !free}<p class="mb-3 font-semibold">{t.weeks.none}</p>{/if}
-		<div class="overflow-x-auto pb-2">
-			<div {@attach seen} class="strip grid min-w-[36rem] items-end gap-x-[3px] gap-y-2" style="grid-template-columns: repeat({all.length}, minmax(0, 1fr))">
-				{#each all as w, i (w.start)}
-					{@const selected = !!checkIn && w.start >= checkIn && w.end <= checkOut}
-					<button
-						type="button"
-						disabled={w.taken}
-						aria-pressed={selected}
-						aria-label="{day(w.start)} {t.weeks.until(day(w.end))}, {w.taken ? t.weeks.taken : chf(w.price)}"
-						title="{day(w.start)} {t.weeks.until(day(w.end))}"
-						onclick={() => pick(w)}
-						style="--i: {i}"
-						class="bar h-24 origin-bottom transition-[background-color,height] duration-200 {selected ? 'h-28 bg-brand' : w.taken ? 'taken cursor-not-allowed' : 'cursor-pointer bg-accent hover:h-28 hover:bg-accent-dark'}"
-					></button>
-				{/each}
-				{#each months as m (m.name)}
-					<span class="border-t-2 border-brand pt-1 text-sm font-semibold first-letter:uppercase" style="grid-column: span {m.weeks.length}">{m.name.split(' ')[0]}</span>
-				{/each}
-			</div>
-		</div>
-		<p class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
-			<span class="flex items-center gap-2"><span class="size-3 bg-accent"></span>{t.weeks.free}</span>
-			<span class="flex items-center gap-2"><span class="taken size-3"></span>{t.weeks.taken}</span>
-			<span class="flex items-center gap-2"><span class="size-3 bg-brand"></span>{t.still.yours}</span>
-		</p>
-		{#if checkIn && checkOut}
-			<div class="mt-5 border-y-2 border-brand">
-				<Stepper label={t.weeks.length} hint={t.weeks.range(day(checkIn), day(checkOut))} bind:value={weeks.value} min={1} max={most} {lang} />
-				{#if count === most && most < 8}<p class="-mt-1 pb-2.5 text-xs font-semibold text-accent-dark">{t.weeks.maxed}</p>{/if}
-			</div>
-		{:else}
-			<p class="mt-5 text-muted">{t.weeks.hint}</p>
-		{/if}
-	</div>
-{:else if weekly}
+{#if weekly}
 	<div>
 		{#if checkIn && checkOut}
 			<!-- step 2 stays in view while the list scrolls -->
@@ -161,18 +120,5 @@
 	/* taken weeks are hatched, so they read as "not available" at a glance */
 	.taken {
 		background: repeating-linear-gradient(-45deg, var(--color-off) 0 6px, #fff 6px 12px);
-	}
-	/* the bars grow out of the month line, one after the other, the first time the strip is seen */
-	.strip:global([data-unseen]) > .bar {
-		transform: scaleY(0);
-	}
-	.strip:not([data-unseen]) > .bar {
-		animation: grow 600ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
-		animation-delay: calc(var(--i) * 18ms);
-	}
-	@keyframes grow {
-		from {
-			transform: scaleY(0);
-		}
 	}
 </style>

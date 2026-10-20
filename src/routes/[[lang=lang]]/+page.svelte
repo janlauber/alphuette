@@ -1,6 +1,8 @@
 <script lang="ts">
+	import BedDouble from '@lucide/svelte/icons/bed-double';
 	import Bus from '@lucide/svelte/icons/bus';
 	import Car from '@lucide/svelte/icons/car';
+	import Images from '@lucide/svelte/icons/images';
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import MountainSnow from '@lucide/svelte/icons/mountain-snow';
 	import Plus from '@lucide/svelte/icons/plus';
@@ -8,13 +10,11 @@
 	import Ticket from '@lucide/svelte/icons/ticket';
 	import Users from '@lucide/svelte/icons/users';
 	import BookingPanel from '#lib/components/BookingPanel.svelte';
-	import DayRing from '#lib/components/DayRing.svelte';
 	import Departures from '#lib/components/Departures.svelte';
 	import Gallery from '#lib/components/Gallery.svelte';
-	import HikeLines from '#lib/components/HikeLines.svelte';
+	import HikeCard from '#lib/components/HikeCard.svelte';
 	import Huettli from '#lib/components/Huettli.svelte';
 	import HeroMotion from '#lib/components/HeroMotion.svelte';
-	import RouteLine from '#lib/components/RouteLine.svelte';
 	import Seo from '#lib/components/Seo.svelte';
 	import Stars from '#lib/components/Stars.svelte';
 	import Weather from '#lib/components/Weather.svelte';
@@ -29,7 +29,7 @@
 	const c = $derived(data.content);
 	const hero = $derived(data.photos[0]);
 	let gallery = $state<Gallery>();
-	// three small photos next to the title: inside, outside, winter if there are any
+	// three small photos in the title image: inside, outside, winter if there are any
 	const thumbs = $derived.by(() => {
 		const all = data.photos.map((photo, index) => ({ photo, index })).slice(1);
 		const first = (c: string) => all.find((x) => x.photo.category === c);
@@ -101,143 +101,125 @@
 	{jsonld}
 />
 
-{#snippet heading(text: string, id?: string)}
-	<h2 {id} class="text-[clamp(2.5rem,5.2vw,4.2rem)] font-light text-brand">{text}</h2>
-{/snippet}
-
-{#snippet details(title: string, html: string)}
-	<details class="group border-t-2 border-brand py-4">
-		<summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold">
-			<span class="text-balance">{title}</span><span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
-		</summary>
-		<div class="richtext mt-3 max-w-[40rem]">{@html html}</div>
-	</details>
-{/snippet}
-
-<!-- Title image: the hut, moving slowly like a drone flight -->
+<!-- Hero: the hut, moving slowly like a drone flight -->
 {#if hero}
-	<HeroMotion photo={hero} labels={{ pause: t.hero.pause, play: t.hero.play }} />
-	<Gallery bind:this={gallery} photos={data.photos} lang={data.lang} title={data.hutName} />
-{/if}
-
-<!-- Under the picture: the name small, what it is large, the next step on the right -->
-<div class="mx-auto max-w-6xl px-5 pt-8 sm:px-6 sm:pt-10">
-	<div class="flex flex-wrap items-end justify-between gap-x-14 gap-y-8">
-		<div class="min-w-0 flex-[1_1_34rem]">
-			<h1>
-				<span class="block font-text text-base font-semibold text-muted">{data.hutName}</span>
-				<span class="mt-3 block text-[clamp(2.7rem,6.4vw,5.8rem)] font-light leading-[0.94] text-brand">{c.tagline}</span>
-			</h1>
-			<ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-muted">
-				<li class="flex items-center gap-2"><MapPin size={18} strokeWidth={2} aria-hidden="true" />{t.hero.whole}</li>
-				<li class="flex items-center gap-2"><Users size={18} strokeWidth={2} aria-hidden="true" />{t.stats.guests(data.rates.maxGuests)}</li>
-				<li class="flex items-center gap-2"><MountainSnow size={18} strokeWidth={2} aria-hidden="true" />{t.stats.altitude}</li>
-			</ul>
-		</div>
-		<div class="flex flex-[0_1_19rem] flex-col items-start gap-4">
-			<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-				<a href="#buchen" class="btn-primary">{t.card.pick}</a>
-				{#if next}<p class="text-muted">{t.card.from} <strong class="text-ink">{chf(next.weekly ?? next.nightly)}</strong> {next.weekly ? t.card.perWeek : t.card.perNight}</p>{/if}
-			</div>
+	<HeroMotion photo={hero} labels={{ pause: t.hero.pause, play: t.hero.play }}>
+		<p class="flex items-center gap-1.5 text-sm font-semibold text-white/90 sm:text-base"><MapPin size={16} strokeWidth={2.5} class="shrink-0" aria-hidden="true" />{t.hero.whole}</p>
+		<h1 class="mt-2 text-[2.4rem] leading-[1.02] !text-white sm:text-[3.4rem] lg:text-[4.2rem]">{data.hutName}</h1>
+		<p class="mt-3 max-w-[48ch] text-lg text-white/90 sm:text-xl">{c.tagline}</p>
+		<div class="mt-5 flex flex-wrap items-center gap-3">
+			<a href="#buchen" class="btn-primary !border-ink !shadow-[0_4px_0_var(--color-ink)]">{t.card.pick}</a>
 			{#if data.photos.length > 1}
-				<div class="flex items-center gap-3">
-					<ul class="flex gap-1.5">
-						{#each thumbs as th (th.photo.id)}
-							<li>
-								<button type="button" onclick={() => gallery?.open(th.index)} class="block size-14 overflow-hidden rounded-[3px] transition hover:-translate-y-0.5" aria-label={t.gallery.open(th.photo.alt)}>
-									<img src="/bilder/photos/{th.photo.key}-480.webp" alt="" loading="lazy" class="size-full object-cover" style="background: url({th.photo.lqip}) center / cover" />
-								</button>
-							</li>
-						{/each}
-					</ul>
-					<button type="button" onclick={() => gallery?.open(0)} class="font-semibold text-brand underline">{t.hero.all(data.photos.length)}</button>
-				</div>
+	<div class="flex items-center gap-4 lg:ml-auto">
+						<ul class="flex">
+							{#each thumbs as th, i (th.photo.id)}
+								<li class="-ml-3 first:ml-0">
+									<button
+										type="button"
+										onclick={() => gallery?.open(th.index)}
+										class="block size-16 overflow-hidden rounded-[16px] border-[3px] border-white shadow-[0_4px_0_rgb(0_0_0/0.25)] transition hover:z-10 hover:-translate-y-1 hover:rotate-0 sm:size-20 {['-rotate-6', 'rotate-2', 'rotate-6'][i]}"
+										aria-label={t.gallery.open(th.photo.alt)}
+									>
+										<img src="/bilder/photos/{th.photo.key}-480.webp" alt="" loading="lazy" class="size-full object-cover" style="background: url({th.photo.lqip}) center / cover" />
+									</button>
+								</li>
+							{/each}
+						</ul>
+						<button type="button" onclick={() => gallery?.open(0)} class="btn-line !border-white !bg-transparent !text-white !shadow-none hover:!bg-white/10">
+							<Images size={18} strokeWidth={2.5} aria-hidden="true" />{t.hero.all(data.photos.length)}
+						</button>
+					</div>
 			{/if}
 			{#if data.reviews.count}
-				<a href="#gaestebuch" class="inline-flex items-center gap-2 text-sm font-semibold text-ink no-underline">
+				<a href="#gaestebuch" class="inline-flex items-center gap-2 text-sm font-semibold text-white no-underline">
 					<Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} />
+					<span>{data.reviews.avg.toLocaleString(t.locale)}</span>
 					<span class="underline">{t.review.count(data.reviews.count)}</span>
 				</a>
 			{/if}
 		</div>
-	</div>
-</div>
-
-<!-- Tom and the hut in his words -->
-<section class="mx-auto mt-24 grid max-w-6xl gap-x-16 gap-y-6 px-5 sm:mt-32 sm:px-6 md:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-	<div class="flex items-center gap-3.5 self-start">
-		<span class="grid size-13 shrink-0 place-items-center rounded-full bg-brand text-xl font-bold text-white" aria-hidden="true">{hostFirst[0]}</span>
-		<div>
-			<p class="font-bold">{t.host.title(hostFirst)}</p>
-			<p class="text-muted">{t.host.lives(data.host.city)}</p>
-		</div>
-	</div>
-	<div class="richtext max-w-[38rem] text-[1.3rem] leading-relaxed">{@html textToHtml(c.intro)}</div>
-</section>
-
-<!-- A day at the hut, as a clock -->
-<section class="mx-auto mt-28 max-w-6xl px-5 sm:mt-36 sm:px-6">
-	{@render heading(t.still.day)}
-	<div class="mt-6 md:mt-12"><DayRing lang={data.lang} checkIn={data.rates.checkIn} /></div>
-</section>
-
-<!-- What is there, where you sleep, and what is simple -->
-<section class="mx-auto mt-20 grid max-w-6xl gap-x-16 gap-y-8 px-5 sm:px-6 md:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-	{@render heading(t.sections.amenities)}
-	<ul class="grid grid-cols-2 gap-x-6 gap-y-5 self-end sm:grid-cols-3">
-		{#each data.amenities as a (a.label)}
-			{@const Icon = iconFor(a.icon)}
-			<li class="flex items-center gap-2.5 leading-tight"><Icon size={24} strokeWidth={1.75} class="shrink-0 text-brand" aria-hidden="true" />{a.label}</li>
-		{/each}
-	</ul>
-
-	<h3 class="mt-10 text-[2.2rem] text-brand">{t.sections.sleeping}</h3>
-	<div class="md:mt-10">
-		<div class="richtext max-w-[38rem]">{@html textToHtml(c.sleeping)}</div>
-		<p class="mt-4 flex flex-wrap gap-x-6 gap-y-1 font-semibold text-brand">
-			<span>{t.facts.checkIn(data.rates.checkIn)}</span>
-			<span>{t.facts.checkOut(data.rates.checkOut)}</span>
-		</p>
-	</div>
-
-	<div class="relative mt-10 flex items-start gap-4">
-		<h3 class="text-[2.2rem] text-brand">{t.sections.goodToKnow}</h3>
-		<Huettli face="wink" pose="stand" animate class="-mt-4 w-16 shrink-0 text-brand [--paper:var(--color-paper)]" />
-	</div>
-	<div class="richtext max-w-[38rem] md:mt-10">{@html textToHtml(c.good_to_know)}</div>
-</section>
-
-<!-- Booking: the whole season at a glance -->
-<section id="buchen" class="mt-28 border-y-2 border-brand py-16 sm:mt-36 sm:py-20">
-	<div class="mx-auto max-w-6xl px-5 sm:px-6">
-		<div class="mb-8">{@render heading(t.card.pick)}</div>
-		<BookingPanel wide seasons={data.seasons} taken={data.taken} rates={data.rates} lang={data.lang} bind:checkIn bind:checkOut bind:guests />
-	</div>
-</section>
-
-{#if data.hikes.length}
-	<section class="mx-auto mt-28 max-w-6xl px-5 sm:mt-36 sm:px-6">
-		<div class="mb-8 flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
-			{@render heading(t.sections.hikes)}
-			<a href={localize(data.lang, '/wanderungen')} class="shrink-0 font-bold text-brand underline">{t.hikes.more}</a>
-		</div>
-		<HikeLines hikes={data.hikes.slice(0, 5)} lang={data.lang} />
-	</section>
+	</HeroMotion>
+	<Gallery bind:this={gallery} photos={data.photos} lang={data.lang} title={data.hutName} />
 {/if}
 
-<!-- Getting there: the route as a line, the next buses, the map -->
-<section class="mx-auto mt-28 max-w-6xl px-5 sm:mt-36 sm:px-6">
-	{@render heading(t.sections.arrival)}
-	<div class="mt-10">
-		{#await data.buses}
-			<RouteLine lang={data.lang} buses={null} />
-		{:then buses}
-			<RouteLine lang={data.lang} {buses} />
-		{/await}
+<div class="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] px-5 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-x-16 lg:pt-14">
+	<!-- Part 1: what the hut is -->
+	<div class="lg:col-start-1">
+		<ul class="flex flex-wrap gap-2">
+			<li class="pill"><Users size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.guests(data.rates.maxGuests)}</li>
+			<li class="pill"><BedDouble size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.rooms}</li>
+			<li class="pill"><MountainSnow size={18} strokeWidth={2.25} aria-hidden="true" />{t.stats.altitude}</li>
+		</ul>
+
+		<div class="mt-7 flex items-center gap-3.5">
+			<span class="grid size-13 shrink-0 place-items-center rounded-full bg-brand text-xl font-bold text-white" aria-hidden="true">{hostFirst[0]}</span>
+			<div>
+				<p class="font-bold">{t.host.title(hostFirst)}</p>
+				<p class="text-muted">{t.host.lives(data.host.city)}</p>
+			</div>
+		</div>
+
+		<div class="richtext mt-6 text-[1.12rem] leading-relaxed">{@html textToHtml(c.intro)}</div>
+
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.amenities}</h2>
+			<ul class="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+				{#each data.amenities as a (a.label)}
+					{@const Icon = iconFor(a.icon)}
+					<li class="flex items-center gap-2.5 rounded-[18px] border-2 border-line px-3 py-3 text-[15px] font-medium leading-tight transition-colors hover:border-brand">
+						<Icon size={22} strokeWidth={2} class="shrink-0 text-brand" aria-hidden="true" />{a.label}
+					</li>
+				{/each}
+			</ul>
+		</section>
 	</div>
-	<div class="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
-		<div>
-			<div class="aspect-[4/3] overflow-hidden border-2 border-brand bg-wash sm:aspect-[16/9]">
+
+	<!-- Booking: sticky card on desktop, its own section on phones -->
+	<aside id="buchen" class="mt-14 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0">
+		<div class="card-strong p-5 sm:p-6 lg:sticky lg:top-24">
+			<h2 class="mb-4 text-[1.9rem]">{t.card.pick}</h2>
+			<BookingPanel seasons={data.seasons} taken={data.taken} rates={data.rates} lang={data.lang} bind:checkIn bind:checkOut bind:guests />
+		</div>
+	</aside>
+
+	<!-- Part 2: details -->
+	<div class="lg:col-start-1">
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.sleeping}</h2>
+			<div class="richtext mt-4">{@html textToHtml(c.sleeping)}</div>
+			<p class="mt-4 flex flex-wrap gap-2 text-sm">
+				<span class="pill">{t.facts.checkIn(data.rates.checkIn)}</span>
+				<span class="pill">{t.facts.checkOut(data.rates.checkOut)}</span>
+			</p>
+		</section>
+
+		<section class="reveal relative mt-14 rounded-[28px] bg-accent-wash p-6 pr-24 sm:pr-32">
+			<h2 class="text-[1.6rem]">{t.sections.goodToKnow}</h2>
+			<div class="richtext mt-3">{@html textToHtml(c.good_to_know)}</div>
+			<Huettli face="wink" pose="stand" class="absolute -top-6 right-3 w-20 text-brand [--paper:var(--color-accent-wash)] sm:w-24" />
+		</section>
+
+		{#if data.reviews.count}
+			<section id="gaestebuch" class="reveal mt-14">
+				<h2 class="text-[2rem]">{t.sections.reviews}</h2>
+				<p class="mt-2 flex items-center gap-2"><Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} /> <span class="text-muted">{t.review.count(data.reviews.count)}</span></p>
+				<div class="snap-row -mx-5 mt-5 flex snap-x gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0">
+					{#each data.reviews.reviews as r (r.id)}
+						<article class="card flex w-[82%] shrink-0 snap-start flex-col gap-2 p-5 sm:w-[340px]">
+							<Quote size={26} strokeWidth={2} class="text-brand" aria-hidden="true" />
+							<p class="line-clamp-6 whitespace-pre-line">{r.body}</p>
+							<Stars value={r.rating} size={14} label={t.review.stars(r.rating)} />
+							<p class="mt-auto text-sm font-bold">{r.name}{#if r.stay}<span class="font-normal text-muted">, {fmtDate(r.stay, data.lang, { weekday: undefined, day: undefined })}</span>{/if}</p>
+							{#if r.reply}<p class="rounded-[16px] bg-wash p-3 text-sm"><span class="font-bold">{t.review.reply}:</span> {r.reply}</p>{/if}
+						</article>
+					{/each}
+				</div>
+			</section>
+		{/if}
+
+		<section class="reveal mt-14">
+			<h2 class="text-[2rem]">{t.sections.location}</h2>
+			<div class="mt-5 aspect-[4/3] overflow-hidden rounded-[28px] border-2 border-brand bg-wash sm:aspect-[16/9]">
 				<iframe
 					title={t.sections.location}
 					src="https://map.geo.admin.ch/#/embed?lang={data.lang}&center={lv.e},{lv.n}&z=6&bgLayer=ch.swisstopo.pixelkarte-farbe&topic=ech&layers=&crosshair=point"
@@ -247,73 +229,83 @@
 				></iframe>
 			</div>
 			<p class="mt-2 flex items-start gap-2 text-sm text-muted"><MapPin size={16} class="mt-0.5 shrink-0" aria-hidden="true" />{t.map.note}</p>
-		</div>
-		<div>
+
+			<h3 class="mt-10 text-[1.4rem]">{t.sections.arrival}</h3>
+			<ul class="mt-4 grid gap-4">
+				{#each arrival as a (a.text)}
+					<li class="flex gap-3.5">
+						<span class="grid size-11 shrink-0 place-items-center rounded-full border-2 border-brand text-brand"><a.icon size={20} strokeWidth={2.25} aria-hidden="true" /></span>
+						<p class="pt-2">{#if a.label}<strong>{a.label}.</strong> {/if}{a.text}</p>
+					</li>
+				{/each}
+			</ul>
 			{#await data.buses then buses}
-				{#if buses}<Departures list={buses.list} winter={buses.winter} lang={data.lang} route="toHut" />{/if}
+				{#if buses}
+					<div class="card mt-6 p-5">
+						<Departures list={buses.list} winter={buses.winter} lang={data.lang} route="toHut" />
+					</div>
+				{/if}
 			{/await}
-			<details class="group mt-6 border-t-2 border-brand pt-4">
-				<summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
-					{t.still.arrivalMore}<span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
-				</summary>
-				<ul class="mt-4 grid gap-4">
-					{#each arrival as a (a.text)}
-						<li class="flex gap-3">
-							<a.icon size={20} strokeWidth={2} class="mt-1 shrink-0 text-brand" aria-hidden="true" />
-							<p>{#if a.label}<strong>{a.label}.</strong> {/if}{a.text}</p>
-						</li>
-					{/each}
-				</ul>
-			</details>
-		</div>
-	</div>
-</section>
-
-{#await data.weather then weather}
-	{#if weather?.length}
-		<section class="mx-auto mt-28 max-w-6xl px-5 sm:mt-36 sm:px-6">
-			<div class="mb-8">{@render heading(t.sections.weather)}</div>
-			<Weather days={weather} lang={data.lang} />
 		</section>
-	{/if}
-{/await}
 
-{#if data.reviews.count}
-	<section id="gaestebuch" class="mx-auto mt-28 max-w-6xl px-5 sm:mt-36 sm:px-6">
-		{@render heading(t.sections.reviews)}
-		<p class="mt-3 flex items-center gap-2"><Stars value={data.reviews.avg} label={t.review.stars(data.reviews.avg)} /> <span class="text-muted">{t.review.count(data.reviews.count)}</span></p>
-		<div class="snap-row -mx-5 mt-6 flex snap-x gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0">
-			{#each data.reviews.reviews as r (r.id)}
-				<article class="card flex w-[82%] shrink-0 snap-start flex-col gap-2 p-5 sm:w-[340px]">
-					<Quote size={26} strokeWidth={2} class="text-brand" aria-hidden="true" />
-					<p class="line-clamp-6 whitespace-pre-line">{r.body}</p>
-					<Stars value={r.rating} size={14} label={t.review.stars(r.rating)} />
-					<p class="mt-auto text-sm font-bold">{r.name}{#if r.stay}<span class="font-normal text-muted">, {fmtDate(r.stay, data.lang, { weekday: undefined, day: undefined })}</span>{/if}</p>
-					{#if r.reply}<p class="bg-wash p-3 text-sm"><span class="font-bold">{t.review.reply}:</span> {r.reply}</p>{/if}
-				</article>
+		{#await data.weather then weather}
+			{#if weather?.length}
+				<section class="reveal mt-14">
+					<h2 class="text-[2rem]">{t.sections.weather}</h2>
+					<div class="mt-5"><Weather days={weather} lang={data.lang} /></div>
+				</section>
+			{/if}
+		{/await}
+
+		{#if data.hikes.length}
+			<section class="reveal mt-14">
+				<div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+					<h2 class="text-[2rem]">{t.sections.hikes}</h2>
+					<a href={localize(data.lang, '/wanderungen')} class="shrink-0 font-bold text-brand underline">{t.hikes.more}</a>
+				</div>
+				<div class="snap-row -mx-5 mt-3 flex snap-x gap-3 overflow-x-auto px-5 pb-3 pt-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0">
+					{#each data.hikes.slice(0, 4) as hike (hike.slug)}
+						<div class="w-[80%] shrink-0 snap-start sm:w-auto"><HikeCard {hike} lang={data.lang} /></div>
+					{/each}
+				</div>
+			</section>
+		{/if}
+
+		<section class="reveal mt-14 grid gap-3">
+			{#each [{ title: t.sections.rules, html: textToHtml(c.rules) }, { title: t.sections.payment, html: textToHtml(c.payment) }] as d (d.title)}
+				<details class="group rounded-[22px] border-2 border-line px-5 py-4 open:border-brand">
+					<summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold">
+						{d.title}<span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
+					</summary>
+					<div class="richtext mt-3">{@html d.html}</div>
+				</details>
 			{/each}
-		</div>
-	</section>
-{/if}
+		</section>
 
-<!-- The fine print, closed until opened -->
-<section class="mx-auto mb-12 mt-28 grid max-w-6xl gap-x-16 gap-y-6 px-5 sm:mt-36 sm:px-6 md:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-	{@render heading(t.sections.faq)}
-	<div class="border-b-2 border-brand">
-		{@render details(t.sections.rules, textToHtml(c.rules))}
-		{@render details(t.sections.payment, textToHtml(c.payment))}
-		{#each data.faq as f (f.q)}
-			{@render details(f.q, textToHtml(f.a))}
-		{/each}
+		{#if data.faq.length}
+			<section class="reveal mt-14">
+				<h2 class="text-[2rem]">{t.sections.faq}</h2>
+				<div class="mt-5 grid gap-3">
+					{#each data.faq as f (f.q)}
+						<details class="group rounded-[22px] border-2 border-line px-5 py-4 open:border-brand">
+							<summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
+								<span class="text-balance">{f.q}</span><span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
+							</summary>
+							<p class="mt-2 whitespace-pre-line text-muted">{f.a}</p>
+						</details>
+					{/each}
+				</div>
+			</section>
+		{/if}
 	</div>
-</section>
+</div>
 
 <!-- Phones: price and next step always in reach -->
 <div class="fixed inset-x-0 bottom-0 z-20 border-t-2 border-brand bg-paper/95 px-5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
 	<div class="flex items-center justify-between gap-4">
 		<div class="min-w-0">
 			{#if q?.ok}
-				<p class="text-lg font-bold text-ink">{chf(q.total)}</p>
+				<p class="w-fit rounded-md bg-accent-soft px-1.5 text-lg font-bold">{chf(q.total)}</p>
 				<p class="truncate text-sm text-muted">{fmtDate(checkIn, data.lang, { year: undefined, month: 'short' })} – {fmtDate(checkOut, data.lang, { year: undefined, month: 'short' })}</p>
 			{:else if next}
 				<p class="text-lg font-bold text-ink">{chf(next.weekly ?? next.nightly)} <span class="text-base font-normal text-muted">{next.weekly ? t.card.perWeek : t.card.perNight}</span></p>
