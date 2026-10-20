@@ -31,8 +31,22 @@ export type Booking = {
 	updatedAt: Date;
 };
 
-// Guest links and reply addresses are signed with APP_SECRET, so the database holds no secrets.
-const sign = (purpose: string, ref: string) => createHmac('sha256', APP_SECRET).update(`${purpose}:${ref}`).digest();
+// Guest links and reply addresses are signed, so no tokens are stored.
+let signingKey = APP_SECRET ?? '';
+
+/** Key from APP_SECRET, else one generated once and kept in the database. Called at startup. */
+export async function loadSigningKey() {
+	if (signingKey) return;
+	await sql`insert into settings (key, value) values ('signing_key', ${sql.json(randomBytes(32).toString('base64url'))})
+		on conflict (key) do nothing`;
+	const [row] = await sql`select value from settings where key = 'signing_key'`;
+	signingKey = row.value;
+}
+
+const sign = (purpose: string, ref: string) => {
+	if (!signingKey) throw new Error('signing key not loaded');
+	return createHmac('sha256', signingKey).update(`${purpose}:${ref}`).digest();
+};
 const safeEqual = (a: Buffer, b: Buffer) => a.length === b.length && timingSafeEqual(a, b);
 
 export const guestToken = (ref: string) => `${ref}-${sign('guest', ref).subarray(0, 18).toString('base64url')}`;

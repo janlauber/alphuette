@@ -2,9 +2,11 @@ import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { dev } from '$app/env';
 import { migrate } from '#lib/server/db.ts';
 import { sessionEmail } from '#lib/server/auth.ts';
+import { loadSigningKey } from '#lib/server/bookings.ts';
 
 export const init: ServerInit = async () => {
 	await migrate();
+	await loadSigningKey();
 };
 
 const isPrivate = (path: string) => /^\/(en\/)?(admin|buchung)(\/|$)/.test(path);

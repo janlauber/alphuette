@@ -2,23 +2,29 @@ import { AwsClient } from 'aws4fetch';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import {
-	S3_ACCESS_KEY_ID,
-	S3_BUCKET,
-	S3_ENDPOINT,
-	S3_REGION,
-	S3_SECRET_ACCESS_KEY
+	AWS_ACCESS_KEY_ID,
+	AWS_SECRET_ACCESS_KEY,
+	BUCKET_HOST,
+	BUCKET_NAME,
+	BUCKET_PORT,
+	BUCKET_REGION,
+	S3_ENDPOINT
 } from '$app/env/private';
 
-// S3 in production; a local folder when S3_ENDPOINT is not set (development).
-const s3 = S3_ENDPOINT
+// S3 in production (variable names as a Rook/klickops bucket provides them);
+// a local folder when no bucket is configured (development).
+const endpoint =
+	S3_ENDPOINT?.replace(/\/$/, '') ??
+	(BUCKET_HOST ? `${BUCKET_PORT === '443' ? 'https' : 'http'}://${BUCKET_HOST}:${BUCKET_PORT ?? '80'}` : null);
+const s3 = endpoint
 	? new AwsClient({
-			accessKeyId: S3_ACCESS_KEY_ID!,
-			secretAccessKey: S3_SECRET_ACCESS_KEY!,
+			accessKeyId: AWS_ACCESS_KEY_ID!,
+			secretAccessKey: AWS_SECRET_ACCESS_KEY!,
 			service: 's3',
-			region: S3_REGION
+			region: BUCKET_REGION
 		})
 	: null;
-const url = (key: string) => `${S3_ENDPOINT!.replace(/\/$/, '')}/${S3_BUCKET}/${key}`;
+const url = (key: string) => `${endpoint}/${BUCKET_NAME}/${key}`;
 const local = (key: string) => `.data/uploads/${key}`;
 
 export async function put(key: string, body: Uint8Array, type: string) {

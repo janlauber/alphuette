@@ -8,7 +8,7 @@ SvelteKit 3, Tailwind 4, Postgres, S3 für Fotos, Mails über Resend.
 ```bash
 npm install
 npm run db:start      # Postgres in .data/pg auf Port 5433
-cp .env.example .env  # APP_SECRET setzen: openssl rand -base64 36
+cp .env.example .env
 npm run dev
 ```
 
@@ -29,12 +29,15 @@ npm run check         # Typen
 - `src/routes/admin/`: Buchungen, Kalender, Gäste, Fotos, Preise, Inhalte.
 - `docs/recherche.md`: Fakten mit Quellen (Anreise, Kurtaxe, Wanderungen).
 
-Gäste haben kein Konto. Ihr Link `/buchung/<ref>-<signatur>` ist mit `APP_SECRET` signiert.
-Wer `APP_SECRET` ändert, macht alle Gäste-Links ungültig.
+Gäste haben kein Konto. Ihr Link `/buchung/<ref>-<signatur>` ist signiert, mit `APP_SECRET` oder,
+falls nicht gesetzt, mit einem Schlüssel, den die App beim ersten Start erzeugt und in der Datenbank ablegt.
+Wer den Schlüssel ändert, macht alle Gäste-Links ungültig.
 
 ## Betrieb
 
-Das `Dockerfile` baut ein Node-Image auf Port 3000. Nötige Variablen stehen in `.env.example`.
+Das `Dockerfile` baut ein Node-Image auf Port 3000. Nötig sind `DATABASE_URL`, `SITE_URL` und `ADMIN_EMAILS`.
+Fotos liegen im Bucket, sobald `BUCKET_HOST`, `BUCKET_NAME`, `AWS_ACCESS_KEY_ID` und `AWS_SECRET_ACCESS_KEY`
+gesetzt sind (so liefert sie ein klickops-Bucket). `S3_ENDPOINT` überschreibt Host und Port.
 
 Mail-Antworten im Nachrichtenverlauf brauchen Resend Inbound:
 1. In Resend eine Empfangs-Domain einrichten, z. B. `antwort.alphuette-kiental.ch` (MX-Record).
