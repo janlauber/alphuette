@@ -24,6 +24,7 @@ const s3 = endpoint
 			region: BUCKET_REGION
 		})
 	: null;
+if (s3) console.log(`storage: bucket ${BUCKET_NAME} at ${endpoint}, region ${BUCKET_REGION}`);
 const url = (key: string) => `${endpoint}/${BUCKET_NAME}/${key}`;
 const local = (key: string) => `.data/uploads/${key}`;
 
