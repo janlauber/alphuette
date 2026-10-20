@@ -344,6 +344,25 @@ const de = {
 		messageOriginal: 'Original auf Deutsch:',
 		linksSubject: 'Deine Buchungen für die Alphütte',
 		linksText: (list: string) => `Hier sind die Links zu deinen Buchungen:\n\n${list}\n\nWenn du das nicht angefordert hast, kannst du diese Mail ignorieren.`,
+	},
+	still: {
+		day: 'Ein Tag im Hüttli',
+		parts: { afternoon: 'Nachmittag', evening: 'Abend', night: 'Nacht', morning: 'Morgen', day: 'Tagsüber' },
+		arrive: { title: 'Ankommen', text: (time: string) => `Ab ${time} Uhr gehört das Hüttli dir.` },
+		fire: { title: 'Feuer machen', text: 'Gekocht wird auf dem Holzherd oder draussen am Cheminée.' },
+		night: { title: 'Licht von der Sonne', text: 'Der Solarstrom reicht für Licht und zum Laden. Geschlafen wird auf der Galerie oder im Stübli.' },
+		water: { title: 'Wasser aus der Quelle', text: 'Trinkbar, und warm, wenn die Sonne den Boiler geheizt hat.' },
+		hike: { title: 'Wandern ab der Tür', text: 'Die Wanderwege beginnen direkt beim Hüttli.' },
+		clock: 'Ein Tag als Uhr: Mitternacht unten, Mittag oben',
+		season: 'Die Saison auf einen Blick',
+		yours: 'deine Woche',
+		scale: 'Alle Höhenprofile im gleichen Massstab',
+		train: 'Bahnhof Reichenbach',
+		bus: (line: string, min: number | null) => (min ? `${line}, ${min} Min.` : line),
+		walk: 'zu Fuss',
+		hut: 'Hüttli',
+		arrivalMore: 'Alles zur Anreise',
+		stay: 'Wer kommt mit?'
 	}
 };
 
@@ -670,6 +689,25 @@ const en: Dict = {
 		messageOriginal: 'Original in German:',
 		linksSubject: 'Your bookings for the Alphütte',
 		linksText: (list) => `Here are the links to your bookings:\n\n${list}\n\nIf you did not ask for this, ignore this email.`,
+	},
+	still: {
+		day: 'A day at the hut',
+		parts: { afternoon: 'Afternoon', evening: 'Evening', night: 'Night', morning: 'Morning', day: 'During the day' },
+		arrive: { title: 'Arrive', text: (time) => `From ${time}, the hut is yours.` },
+		fire: { title: 'Light the fire', text: 'Cook on the wood stove or outside at the fireplace.' },
+		night: { title: 'Light from the sun', text: 'Solar power is enough for lights and charging. You sleep in the loft or in the parlour.' },
+		water: { title: 'Water from the spring', text: 'Safe to drink, and warm once the sun has heated the boiler.' },
+		hike: { title: 'Hiking from the door', text: 'The trails start right at the hut.' },
+		clock: 'A day as a clock: midnight at the bottom, noon at the top',
+		season: 'The season at a glance',
+		yours: 'your week',
+		scale: 'All elevation profiles on the same scale',
+		train: 'Reichenbach station',
+		bus: (line, min) => (min ? `${line}, ${min} min` : line),
+		walk: 'on foot',
+		hut: 'Hut',
+		arrivalMore: 'Everything about getting here',
+		stay: 'Who is coming?'
 	}
 };
 

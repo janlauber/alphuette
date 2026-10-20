@@ -1,9 +1,10 @@
 @import 'tailwindcss';
 
 /* Design "Linie": dark fir green lines like the Hüttli mascot, and one fresh meadow green for what matters most.
-   Confirmed is solid fir green, waiting is light meadow green, taken or cancelled is grey, only form errors are red. */
+   Confirmed is solid fir green, waiting is light meadow green, taken or cancelled is grey, only form errors are red.
+   The guest pages add "Still" on top (class .still): raw paper, tall light type, square corners. */
 @theme {
-	--color-paper: #fcfdf9;
+	--color-paper: #f2f3ee;
 	--color-brand: #2f5b3c;
 	--color-brand-dark: #1e3d2a;
 	--color-ink: #17251c;
@@ -36,6 +37,9 @@
 
 	--font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
 	--font-serif: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-text: 'Sofia Sans Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Sofia Sans Extra Condensed Variable', 'Arial Narrow', ui-sans-serif, sans-serif;
+	--font-logo: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
 
 	--animate-bob: bob 0.32s ease-in-out infinite alternate;
 	--animate-float: float 4s ease-in-out infinite alternate;
@@ -218,7 +222,7 @@
 		display: block;
 		width: 100%;
 		min-height: 3.2rem;
-		border: 2px solid #c9c5f6;
+		border: 2px solid #c3cdbb;
 		background: #fff;
 		border-radius: 16px;
 		padding: 0.7rem 0.95rem;
@@ -228,10 +232,10 @@
 			box-shadow 120ms;
 	}
 	.field::placeholder {
-		color: #9a97bf;
+		color: #87938a;
 	}
 	.field:hover {
-		border-color: #a6a0f2;
+		border-color: #93a68b;
 	}
 	.field:focus {
 		outline: none;
@@ -331,6 +335,52 @@
 .chip-off {
 	background: var(--color-off);
 	color: var(--color-off-text);
+}
+
+/* "Still" on the guest pages: the text font, tall light headings, buttons without the solid shadow. */
+@layer base {
+	.still {
+		font-family: var(--font-text);
+		font-size: 1.0625rem;
+	}
+	.still :is(h1, h2, h3) {
+		font-family: var(--font-display);
+		font-weight: 400;
+		letter-spacing: 0;
+		line-height: 1;
+	}
+}
+@layer components {
+	.still :is(.btn-primary, .btn-gelb, .btn-blue, .btn-line) {
+		border-radius: 3px;
+		box-shadow: none;
+	}
+	.still :is(.btn-primary, .btn-gelb) {
+		background: var(--color-brand);
+		color: #fff;
+	}
+	.still :is(.btn-primary, .btn-gelb, .btn-blue, .btn-line):hover:not(:disabled) {
+		translate: none;
+		box-shadow: none;
+	}
+	.still :is(.btn-primary, .btn-gelb, .btn-blue):hover:not(:disabled) {
+		background: var(--color-brand-dark);
+	}
+	.still :is(.btn-primary, .btn-gelb, .btn-blue, .btn-line):active:not(:disabled) {
+		translate: 0 1px;
+		box-shadow: none;
+	}
+	.still .field {
+		border-radius: 3px;
+	}
+}
+/* Square corners: the rounded values of the older design are flattened on the guest pages
+   (unlayered, so it wins over the utility classes). Round things like avatars use rounded-full and stay round. */
+.still :is(.card, .card-strong, .pill, [class*='rounded-[']) {
+	border-radius: 3px;
+}
+.still .card-strong {
+	box-shadow: none;
 }
 
 /* Horizontal scrollers without visible scrollbar on touch devices */
