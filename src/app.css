@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-kalk: #f1f2ec;
+	--color-paper: #fbfbf8;
+	--color-tanne: #1e2b26;
+	--color-moos: #3d5246;
+	--color-stein: #5e665f;
+	--color-linie: #d6d9d0;
+	--color-gelb: #f5c400;
+	--color-rot: #c3261c;
+	--font-serif: 'Newsreader Variable', Georgia, serif;
+	--font-sans: 'Source Sans 3 Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	html {
+		background: var(--color-kalk);
+		color: var(--color-tanne);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		scroll-padding-top: 5rem;
+	}
+	body {
+		font-size: 1.0625rem;
+		line-height: 1.55;
+	}
+	h1,
+	h2,
+	h3 {
+		font-family: var(--font-serif);
+		font-weight: 420;
+		line-height: 1.12;
+		letter-spacing: -0.012em;
+		text-wrap: balance;
+	}
+	a {
+		text-underline-offset: 0.18em;
+		text-decoration-thickness: 1px;
+	}
+	:focus-visible {
+		outline: 2px solid var(--color-tanne);
+		outline-offset: 2px;
+	}
+	::selection {
+		background: var(--color-gelb);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		::before,
+		::after {
+			animation: none !important;
+			transition: none !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+/* Text that Tom edits in the admin, rendered by textToHtml */
+.richtext p + p,
+.richtext p + ul,
+.richtext ul + p {
+	margin-top: 0.85em;
+}
+.richtext ul {
+	display: grid;
+	gap: 0.35em;
+}
+.richtext li {
+	position: relative;
+	padding-left: 1.1em;
+}
+.richtext li::before {
+	content: '';
+	position: absolute;
+	left: 0.1em;
+	top: 0.68em;
+	width: 0.42em;
+	height: 0.42em;
+	background: var(--color-moos);
+}
+
+/* Yellow button in the colour of Swiss hiking signs */
+.btn-gelb {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	background: var(--color-gelb);
+	color: var(--color-tanne);
+	font-weight: 650;
+	padding: 0.8rem 1.25rem;
+	border-radius: 3px;
+	transition: background-color 120ms;
+}
+.btn-gelb:hover {
+	background: #e8b800;
+}
+.btn-gelb:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+.btn-line {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border: 1px solid var(--color-tanne);
+	padding: 0.55rem 1rem;
+	border-radius: 3px;
+	font-weight: 600;
+}
+.btn-line:hover {
+	background: var(--color-tanne);
+	color: var(--color-kalk);
+}
+
+.field {
+	display: block;
+	width: 100%;
+	border: 1px solid #b9beb4;
+	background: white;
+	border-radius: 3px;
+	padding: 0.6rem 0.75rem;
+}
+.field:focus {
+	outline: 2px solid var(--color-tanne);
+	outline-offset: 0;
+	border-color: var(--color-tanne);
+}
+.field[aria-invalid='true'] {
+	border-color: var(--color-rot);
+}
+.label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 0.3rem;
+}
+.hint {
+	color: var(--color-stein);
+	font-weight: 400;
+}

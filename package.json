@@ -1,0 +1,40 @@
+{
+  "name": "alphuette-kiental",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node build",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "node --test src/lib/booking.test.ts",
+    "db:start": "sh scripts/dev-db.sh"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-node": "^6.0.0",
+    "@sveltejs/kit": "^3.1.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "svelte": "^5.57.2",
+    "svelte-check": "^4.7.7",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/source-sans-3": "^5.3.1",
+    "aws4fetch": "^1.0.20",
+    "postgres": "^3.4.9",
+    "sharp": "^0.35.5",
+    "swissqrbill": "^4.4.2"
+  },
+  "imports": {
+    "#lib/*": "./src/lib/*"
+  }
+}

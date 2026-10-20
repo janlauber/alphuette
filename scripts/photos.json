@@ -1,0 +1,234 @@
+[
+  {
+    "file": "20221127_093533-scaled.jpg",
+    "alt_de": "Holzhütte am Wiesenhang neben grossem Laubbaum, dahinter bewaldete Berge mit Felsgipfeln",
+    "alt_en": "Wooden hut on a meadow slope beside a large deciduous tree, wooded mountains and rocky peaks behind",
+    "category": "aussen",
+    "quality": 5,
+    "hero": true
+  },
+  {
+    "file": "20200404_142453-scaled.jpg",
+    "alt_de": "Hütte mit Solarpanel auf dem Dach, Holzzaun und Kiesplatz, vorne ein Brunnentrog",
+    "alt_en": "Hut with a solar panel on the roof, wooden fence and gravel yard, a water trough in front",
+    "category": "aussen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200718_120927-scaled.jpg",
+    "alt_de": "Hütte im Sommer mit eingezäunter Terrasse und Gartencheminée, Kiesweg zum Eingang",
+    "alt_en": "Hut in summer with a fenced terrace and outdoor fireplace, gravel path to the entrance",
+    "category": "aussen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200718_121000-scaled.jpg",
+    "alt_de": "Hütte von der Seite mit Holzstapel und grossem Laubbaum, dahinter Tal und Wolken",
+    "alt_en": "Side view of the hut with a woodpile and a large deciduous tree, valley and clouds behind",
+    "category": "aussen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200401_122931-scaled.jpg",
+    "alt_de": "Blick von der Hütte über Weide und Tannen zu verschneiten Gipfeln",
+    "alt_en": "View from the hut across pasture and fir trees to snow-covered peaks",
+    "category": "umgebung",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200405_090542-scaled.jpg",
+    "alt_de": "Spitzer verschneiter Gipfel, kahler Baum und Weide mit Brunnentrog und Weg",
+    "alt_en": "Pointed snowy peak, bare tree and pasture with a water trough and path",
+    "category": "umgebung",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200715_194544-scaled.jpg",
+    "alt_de": "Gepflasterte Terrasse mit Sonnenschirm, Tisch, Stuhl, Sichtschutz und Gartencheminée",
+    "alt_en": "Paved terrace with parasol, table, chair, privacy screen and outdoor fireplace",
+    "category": "aussen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200405_091853-scaled.jpg",
+    "alt_de": "Tasse auf rundem Gartentisch, dahinter Holzzaun und verschneite Berge im Gegenlicht",
+    "alt_en": "Mug on a round garden table, wooden fence and snowy mountains in backlight",
+    "category": "aussen",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20190529_150652-scaled.jpg",
+    "alt_de": "Gedeckte Holzlaube mit Sitzbank, Blick auf einen bewaldeten Hang",
+    "alt_en": "Covered wooden balcony with a bench, view of a wooded slope",
+    "category": "aussen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200718_124533-scaled.jpg",
+    "alt_de": "Stube mit Holztäfer, Esstisch mit Stühlen, Sitzbank und rot-weiss karierten Vorhängen",
+    "alt_en": "Living room with wood panelling, dining table, chairs, bench and red-white checked curtains",
+    "category": "innen",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "IMG-20190528-WA0043.jpg",
+    "alt_de": "Eingangsraum mit Holzleiter zur Schlafgalerie, weisser Kommode und Plattenboden",
+    "alt_en": "Entrance room with a wooden ladder to the sleeping loft, white chest of drawers, tiled floor",
+    "category": "innen",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20200718_124741-scaled.jpg",
+    "alt_de": "Holzherd mit Ofenrohr und Brennholz, Leiter zur Galerie, alte Holztür",
+    "alt_en": "Wood-fired cooking stove with flue pipe and firewood, ladder to the loft, old wooden door",
+    "category": "kueche",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20201225_105208_resized-scaled.jpg",
+    "alt_de": "Holzherd mit brennendem Feuer und offener Feuerraumtür",
+    "alt_en": "Wood-fired cooking stove with a burning fire and open firebox door",
+    "category": "kueche",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20200718_124726-scaled.jpg",
+    "alt_de": "Küche mit Chromstahl-Doppelspülbecken, Wasserhahn, Schränken und aufgehängten Tassen",
+    "alt_en": "Kitchen with stainless steel double sink, tap, cupboards and hanging mugs",
+    "category": "kueche",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20190529_145407-scaled.jpg",
+    "alt_de": "Küchenecke mit Arbeitsfläche, Schränken und gemauerter Ablage, darunter Holzbriketts",
+    "alt_en": "Kitchen corner with worktop, cupboards and a masonry counter with wood briquettes underneath",
+    "category": "kueche",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20200718_124542-scaled.jpg",
+    "alt_de": "Breite Liegefläche mit roter Bettwäsche und Kissen in der Stube, daneben der Esstisch",
+    "alt_en": "Wide bed with red bedding and pillows in the living room, dining table beside it",
+    "category": "schlafen",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "IMG-20190528-WA0031.jpg",
+    "alt_de": "Schlafgalerie unter dem Dach mit Matratzen, Geländer und hellem Holztäfer",
+    "alt_en": "Sleeping loft under the roof with mattresses, railing and light wood panelling",
+    "category": "schlafen",
+    "quality": 2,
+    "hero": false
+  },
+  {
+    "file": "20200718_124735-scaled.jpg",
+    "alt_de": "Ecke im Eingangsraum mit Kommode, Laterne, Orchidee und Wandregal mit Geschirr",
+    "alt_en": "Corner of the entrance room with chest of drawers, lantern, orchid and shelf with crockery",
+    "category": "detail",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "IMG-20190528-WA0027.jpg",
+    "alt_de": "Holztür des Aussen-WCs mit herzförmigem Ausschnitt",
+    "alt_en": "Wooden door of the outdoor toilet with a heart-shaped cut-out",
+    "category": "detail",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "IMG-20190528-WA0028.jpg",
+    "alt_de": "Aussen-WC mit Keramikschüssel, Deckel mit Kuhmuster und Regal mit WC-Papier",
+    "alt_en": "Outdoor toilet with ceramic bowl, cow-print lid and a shelf with toilet paper",
+    "category": "detail",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20190528_151704-scaled.jpg",
+    "alt_de": "Solartechnik an der Holzwand: Laderegler, Batterie und Sicherungskasten",
+    "alt_en": "Solar equipment on the wooden wall: charge controller, battery and fuse box",
+    "category": "detail",
+    "quality": 2,
+    "hero": false
+  },
+  {
+    "file": "IMG-20190528-WA0033.jpg",
+    "alt_de": "Blick durch eine alte Balkentür in den Vorratsraum mit Kisten und Kommode",
+    "alt_en": "View through an old timber doorway into a storage room with boxes and a cabinet",
+    "category": "detail",
+    "quality": 2,
+    "hero": false
+  },
+  {
+    "file": "20200405_120150-scaled.jpg",
+    "alt_de": "Hütte auf offener Weide von oben, dahinter Felsberge und bewaldete Hänge",
+    "alt_en": "The hut on an open pasture seen from above, rocky mountains and wooded slopes behind",
+    "category": "umgebung",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20201226_124059_resized-scaled.jpg",
+    "alt_de": "Winterblick von der Hütte über verschneite Hänge und Tannen zu Schneegipfeln",
+    "alt_en": "Winter view from the hut over snowy slopes and fir trees to snow-capped peaks",
+    "category": "winter",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20201213_113605_resized-scaled.jpg",
+    "alt_de": "Tief verschneiter Hang mit grossem Laubbaum, Wolken über den Bergen",
+    "alt_en": "Deep snow on the slope with a large deciduous tree, clouds over the mountains",
+    "category": "winter",
+    "quality": 4,
+    "hero": false
+  },
+  {
+    "file": "20220403_100923_resized-scaled.jpg",
+    "alt_de": "Hütte im Tiefschnee bei Nebel, Äste eines Baums im Vordergrund",
+    "alt_en": "The hut in deep snow and fog, tree branches in the foreground",
+    "category": "winter",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20220220_100124-scaled.jpg",
+    "alt_de": "Verschneite Bergkette im Gegenlicht, Tannen im Vordergrund",
+    "alt_en": "Snow-covered mountain range in backlight, fir trees in the foreground",
+    "category": "winter",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20220403_101138_resized-scaled.jpg",
+    "alt_de": "Schneeschuhe im Neuschnee auf der Terrasse, Geländer und verschneite Bäume",
+    "alt_en": "Snowshoes in fresh snow on the terrace, railing and snow-covered trees",
+    "category": "winter",
+    "quality": 3,
+    "hero": false
+  },
+  {
+    "file": "20220403_111011_resized-scaled.jpg",
+    "alt_de": "Verschneite Terrasse mit Zaun, Sichtschutz und zugeklapptem Sonnenschirm",
+    "alt_en": "Snow-covered terrace with fence, privacy screen and closed parasol",
+    "category": "winter",
+    "quality": 2,
+    "hero": false
+  }
+]
