@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	// small font subsets stay files: the CSP allows fonts only from 'self', not data: URLs
+	build: { assetsInlineLimit: (file) => (file.endsWith('.woff2') ? false : undefined) },
 	plugins: [
 		tailwindcss(),
 		sveltekit({
