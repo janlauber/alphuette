@@ -26,14 +26,21 @@ const s3 =
 	endpoint && bucket && AWS_ACCESS_KEY_ID && AWS_SECRET_ACCESS_KEY
 		? new AwsClient({ accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY, service: 's3', region: S3_REGION ?? BUCKET_REGION })
 		: null;
+const url = (key: string) => `${endpoint}/${bucket}/${key}`;
+/** The S3 error code from an error response, e.g. AccessDenied. */
+const s3Code = async (res: Response) => (await res.text()).match(/<Code>(\w+)<\/Code>/)?.[1] ?? '';
+
 if (s3) {
-	// Startup check, so a broken bucket shows up in the log right away.
-	s3.fetch(`${endpoint}/${bucket}?list-type=2&max-keys=1`)
-		.then(async (r) => console.log(`storage: bucket ${bucket}: list ${r.status} ${r.ok ? '' : (await r.text()).slice(0, 200)}`))
+	// Startup check, so a broken bucket shows up in the log right away: can we list, and can we write?
+	const probe = url('probe/write-check');
+	Promise.all([s3.fetch(`${endpoint}/${bucket}?list-type=2&max-keys=1`), s3.fetch(probe, { method: 'PUT', body: 'ok' })])
+		.then(async ([list, write]) => {
+			console.log(`storage: bucket ${bucket}: list ${list.status} ${list.ok ? '' : await s3Code(list)}, write ${write.status} ${write.ok ? '' : await s3Code(write)}`);
+			if (write.ok) await s3.fetch(probe, { method: 'DELETE' });
+		})
 		.catch((e) => console.error('storage: bucket unreachable', e));
 } else if (endpoint) console.warn('storage: bucket endpoint set but name or credentials missing, using', UPLOAD_DIR);
 
-const url = (key: string) => `${endpoint}/${bucket}/${key}`;
 const local = (key: string) => `${UPLOAD_DIR}/${key}`;
 
 async function putLocal(key: string, body: Uint8Array) {
@@ -46,7 +53,7 @@ export async function put(key: string, body: Uint8Array, type: string) {
 	const res = await s3.fetch(url(key), { method: 'PUT', body: body as BodyInit, headers: { 'content-type': type } }).catch((e) => e as Error);
 	if (res instanceof Response && res.ok) return;
 	// only status and S3 code, so all refusals count as one error instead of one per request id
-	const why = res instanceof Response ? `${res.status} ${(await res.text()).match(/<Code>(\w+)<\/Code>/)?.[1] ?? ''}`.trim() : String(res);
+	const why = res instanceof Response ? `${res.status} ${await s3Code(res)}`.trim() : String(res);
 	await import('./monitor.ts').then((m) => m.report(new Error(`Bucket nimmt kein Foto an (${why}), liegt jetzt auf dem Volume`), 'Fotos speichern', { alert: false }));
 	await putLocal(key, body);
 }
