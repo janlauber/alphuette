@@ -17,7 +17,7 @@ export async function addPhoto(file: Uint8Array, alt = { de: '', en: '' }) {
 	const key = randomUUID();
 	for (const w of widths) {
 		const out = await sharp(base).resize({ width: w, withoutEnlargement: true }).webp({ quality: 78 }).toBuffer();
-		await put(variantKey(key, w), out, 'image/webp');
+		await put(variantKey(key, w), out);
 	}
 	const lqip = await sharp(base).resize(24).webp({ quality: 30 }).toBuffer();
 	const [{ max }] = await sql`select coalesce(max(sort), 0) + 1 as max from photos`;

@@ -17,6 +17,8 @@ import {
 // Photos live in the local folder (UPLOAD_DIR, a volume in production) and, when a bucket is
 // configured, in S3. Reads try the folder first, so files written before a bucket existed keep
 // working; writes go to the bucket and fall back to the folder when the bucket refuses them.
+// No PUT sends a content-type: our Ceph RGW treats such a request as anonymous and answers 403.
+// The objects are stored as binary, which is fine: /bilder sets the response type itself.
 // ponytail: two places on purpose; copy the folder into the bucket once its writes work, then drop the fallback.
 const endpoint =
 	S3_ENDPOINT?.replace(/\/$/, '') ??
@@ -33,7 +35,7 @@ const s3Code = async (res: Response) => (await res.text()).match(/<Code>(\w+)<\/
 if (s3) {
 	// Startup check, so a broken bucket shows up in the log right away: can we list, and can we write?
 	const probe = url('probe/write-check');
-	Promise.all([s3.fetch(`${endpoint}/${bucket}?list-type=2&max-keys=1`), s3.fetch(probe, { method: 'PUT', body: 'ok' })])
+	Promise.all([s3.fetch(`${endpoint}/${bucket}?list-type=2&max-keys=1`), s3.fetch(probe, { method: 'PUT', body: new TextEncoder().encode('ok') })])
 		.then(async ([list, write]) => {
 			console.log(`storage: bucket ${bucket}: list ${list.status} ${list.ok ? '' : await s3Code(list)}, write ${write.status} ${write.ok ? '' : await s3Code(write)}`);
 			if (write.ok) await s3.fetch(probe, { method: 'DELETE' });
@@ -48,9 +50,9 @@ async function putLocal(key: string, body: Uint8Array) {
 	await writeFile(local(key), body);
 }
 
-export async function put(key: string, body: Uint8Array, type: string) {
+export async function put(key: string, body: Uint8Array) {
 	if (!s3) return putLocal(key, body);
-	const res = await s3.fetch(url(key), { method: 'PUT', body: body as BodyInit, headers: { 'content-type': type } }).catch((e) => e as Error);
+	const res = await s3.fetch(url(key), { method: 'PUT', body: body as BodyInit }).catch((e) => e as Error);
 	if (res instanceof Response && res.ok) return;
 	// only status and S3 code, so all refusals count as one error instead of one per request id
 	const why = res instanceof Response ? `${res.status} ${await s3Code(res)}`.trim() : String(res);
@@ -72,7 +74,7 @@ export async function copyToBucket() {
 	for (const f of await readdir(local('photos')).catch(() => [] as string[])) {
 		const key = `photos/${f}`;
 		if ((await s3.fetch(url(key), { method: 'HEAD' })).ok) continue;
-		const res = await s3.fetch(url(key), { method: 'PUT', body: (await readFile(local(key))) as BodyInit, headers: { 'content-type': 'image/webp' } });
+		const res = await s3.fetch(url(key), { method: 'PUT', body: (await readFile(local(key))) as BodyInit });
 		if (!res.ok) throw new Error(`Bucket nimmt ${key} nicht an (${res.status} ${await s3Code(res)})`);
 		n++;
 	}
