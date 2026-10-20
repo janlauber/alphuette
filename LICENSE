@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-The MIT License covers the source code only. The texts, photos, logo and
-mascot of the Alphütte Blüemlisalpblick (default texts in
-src/lib/server/settings.ts, files in static/ and the photos on
-alphuette-kiental.ch) are not licensed for reuse.
