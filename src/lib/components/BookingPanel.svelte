@@ -36,7 +36,7 @@
 		</p>
 	{/if}
 
-	<div class="lg:max-h-[min(46vh,420px)] lg:overflow-y-auto lg:pr-1">
+	<div class="lg:-mx-1 lg:max-h-[min(50vh,460px)] lg:overflow-y-auto lg:px-1 lg:pb-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-width:thin]">
 		<WeekPicker {seasons} {taken} {lang} bind:checkIn bind:checkOut onpick={() => track('week_selected')} />
 	</div>
 	{#if checkIn}

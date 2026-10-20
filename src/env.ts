@@ -39,6 +39,9 @@ export const variables = defineEnvVars({
 	BUCKET_HOST: { schema: optional },
 	BUCKET_PORT: { schema: optional },
 	BUCKET_NAME: { schema: optional },
+	// the same, as a klickops service binding names them
+	S3_BUCKET: { schema: optional },
+	S3_REGION: { schema: optional },
 	BUCKET_REGION: { schema: (v) => v || 'us-east-1' },
 	AWS_ACCESS_KEY_ID: { schema: optional },
 	AWS_SECRET_ACCESS_KEY: { schema: optional }

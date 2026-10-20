@@ -49,7 +49,7 @@
 		if (!h.geometry) return '';
 		const es = h.geometry.map((p) => p[0]), ns = h.geometry.map((p) => p[1]);
 		const span = Math.max(Math.max(...es) - Math.min(...es), Math.max(...ns) - Math.min(...ns));
-		const z = span < 2500 ? 9 : span < 5000 ? 8 : span < 10000 ? 7 : 6;
+		const z = span < 2500 ? 8 : span < 5000 ? 7 : span < 10000 ? 6 : 5;
 		const kml = `${data.siteUrl}/wanderungen/${h.slug}/route.kml`;
 		return `https://map.geo.admin.ch/#/map?lang=${data.lang}&center=${Math.round((Math.max(...es) + Math.min(...es)) / 2)},${Math.round((Math.max(...ns) + Math.min(...ns)) / 2)}&z=${z}&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.swisstlm3d-wanderwege;KML|${kml}`;
 	});
