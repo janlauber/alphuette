@@ -97,7 +97,6 @@
 	path="/"
 	lang={data.lang}
 	siteUrl={data.siteUrl}
-	image={hero ? `${data.siteUrl}/bilder/photos/${hero.key}-1600.webp` : ''}
 	{jsonld}
 />
 

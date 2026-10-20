@@ -9,9 +9,8 @@
 		path,
 		lang,
 		siteUrl,
-		image = '',
 		jsonld = null
-	}: { title: string; description: string; path: string; lang: Lang; siteUrl: string; image?: string; jsonld?: object | null } =
+	}: { title: string; description: string; path: string; lang: Lang; siteUrl: string; jsonld?: object | null } =
 		$props();
 	const ld = $derived(jsonld ? JSON.stringify(jsonld).replace(/</g, '\\u003c') : '');
 </script>
@@ -29,10 +28,11 @@
 	<meta property="og:description" content={description} />
 	<meta property="og:url" content={siteUrl + localize(lang, path)} />
 	<meta property="og:locale" content={OG_LOCALE[lang]} />
-	{#if image}
-		<meta property="og:image" content={image} />
-		<meta name="twitter:card" content="summary_large_image" />
-	{/if}
+	<meta property="og:image" content="{siteUrl}/og.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
 	{#if ld}
 		{@html `<script type="application/ld+json">${ld}</script>`}
 	{/if}
