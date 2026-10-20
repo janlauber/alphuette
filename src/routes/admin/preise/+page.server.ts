@@ -1,6 +1,8 @@
 import { fail } from '@sveltejs/kit';
 import { sql } from '#lib/server/db.ts';
-import { getSettings, setSetting } from '#lib/server/settings.ts';
+import { getSeasons, getSettings, setSetting } from '#lib/server/settings.ts';
+import { takenRanges } from '#lib/server/bookings.ts';
+import { priceHints, weeksAhead, HINT_LABEL } from '#lib/pricing.ts';
 import { changeRow, changeSettings, done, log } from '#lib/server/activity.ts';
 import { chf } from '#lib/booking.ts';
 import { fmtDate } from '#lib/i18n.ts';
@@ -14,11 +16,37 @@ const seasons = () =>
 	sql<SeasonRow[]>`select id, name, start_date as start, end_date as end, nightly_rp as nightly, weekly_rp as weekly, min_nights, changeover
 		from seasons where end_date >= current_date - 365 order by start_date`;
 
+/** How often each week was picked in the booking calendar in the last 30 days (value: first night as days since 1970). */
+const views = async () =>
+	Object.fromEntries(
+		(await sql<{ v: number; n: number }[]>`
+			select value::int as v, count(*)::int as n from events
+			where kind = 'event' and name = 'week_selected' and value > 10000 and ts > now() - interval '30 days' group by 1`).map((r) => [
+			new Date(r.v * 86_400_000).toISOString().slice(0, 10),
+			r.n
+		])
+	);
+
+/** The suggestions as Tom sees them, and the weeks that have their own price. */
+async function pricing() {
+	const today = new Date().toISOString().slice(0, 10);
+	const [current, taken, seen, dismissed, own] = await Promise.all([
+		getSeasons(),
+		takenRanges(),
+		views(),
+		sql<{ key: string }[]>`select key from price_hints_dismissed`,
+		sql<{ id: number; start: string; weekly: number; reason: string }[]>`select id, start_date as start, weekly_rp as weekly, reason from week_prices where start_date >= current_date order by start_date`
+	]);
+	const hints = priceHints(current, taken, today, seen, dismissed.map((d) => d.key));
+	const weeks = weeksAhead(current, taken, today).map((w) => ({ start: w.start, price: w.price, regular: w.season.weekly ?? 0, free: w.free, views: seen[w.start] ?? 0 }));
+	return { hints: hints.map((h) => ({ ...h, label: HINT_LABEL[h.kind] })), own, weeks };
+}
+
 export const load = async () => {
-	const [list, settings] = await Promise.all([seasons(), getSettings()]);
+	const [list, settings, prices] = await Promise.all([seasons(), getSettings(), pricing()]);
 	// offered for at most two years ahead, not ever further
 	const plan = planNextYear(list);
-	return { seasons: list, rates: settings.rates, plan: plan && plan.year <= new Date().getFullYear() + 2 ? plan : null };
+	return { seasons: list, rates: settings.rates, plan: plan && plan.year <= new Date().getFullYear() + 2 ? plan : null, ...prices };
 };
 
 /** "650", "650.50" or "650,5" in CHF to Rappen; null if empty. */
@@ -29,7 +57,44 @@ const rp = (v: FormDataEntryValue | null) => {
 const iso = (v: FormDataEntryValue | null) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null);
 const day = (d: string) => fmtDate(d, 'de', { weekday: undefined });
 
+/** Sets or replaces the own price of one week; returns the activity id for undo. */
+async function setWeek(start: string, weekly: number, reason: string, actor: string) {
+	const [old] = await sql<{ id: number; weekly: number }[]>`select id, weekly_rp as weekly from week_prices where start_date = ${start}`;
+	const title = `Woche ab ${day(start)}: ${chf(weekly)}${old ? ` statt ${chf(old.weekly)}` : ''}`;
+	if (old) return changeRow('week_prices', old.id, { actor, area: AREA, title, link }, () => sql`update week_prices set weekly_rp = ${weekly}, reason = ${reason} where id = ${old.id}`);
+	const [row] = await sql`insert into week_prices (start_date, weekly_rp, reason) values (${start}, ${weekly}, ${reason}) returning id`;
+	return log({ actor, area: AREA, title, link, target: `week_prices:${row.id}`, undo: { table: 'week_prices', id: row.id, before: null } });
+}
+
 export const actions = {
+	week: async ({ request, locals }) => {
+		const f = await request.formData();
+		const start = iso(f.get('start'));
+		const weekly = rp(f.get('weekly'));
+		if (!start || weekly === null) return fail(400, { weekError: 'Bitte Woche und Preis angeben.' });
+		const a = await setWeek(start, weekly, 'von Hand', locals.admin!);
+		return done(`Woche ab ${day(start)} kostet jetzt ${chf(weekly)}`, a);
+	},
+	weekReset: async ({ request, locals }) => {
+		const id = Number((await request.formData()).get('id'));
+		const [w] = await sql<{ start: string }[]>`select start_date as start from week_prices where id = ${id}`;
+		if (!w) return;
+		const a = await changeRow('week_prices', id, { actor: locals.admin!, area: AREA, title: `Woche ab ${day(w.start)} wieder zum Saisonpreis`, link }, () => sql`delete from week_prices where id = ${id}`);
+		return done('Wieder zum Saisonpreis', a);
+	},
+	hintTake: async ({ request, locals }) => {
+		const key = String((await request.formData()).get('key'));
+		// computed again here, so the price comes from the rules and not from the form
+		const hint = (await pricing()).hints.find((h) => h.key === key);
+		if (!hint) return fail(400, { weekError: 'Dieser Vorschlag gilt nicht mehr. Die Seite ist jetzt aktuell.' });
+		const a = await setWeek(hint.start, hint.suggested, hint.label, locals.admin!);
+		return done(`Übernommen: Woche ab ${day(hint.start)} für ${chf(hint.suggested)}`, a);
+	},
+	hintDismiss: async ({ request }) => {
+		const key = String((await request.formData()).get('key'));
+		await sql`insert into price_hints_dismissed (key) values (${key.slice(0, 80)}) on conflict do nothing`;
+		return done('Vorschlag ausgeblendet');
+	},
 	season: async ({ request, locals }) => {
 		const f = await request.formData();
 		const id = Number(f.get('id')) || null;

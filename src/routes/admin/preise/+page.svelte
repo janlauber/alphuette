@@ -282,6 +282,63 @@
 		</aside>
 	</div>
 
+	<section class="mt-14" aria-labelledby="wochen">
+		<h2 id="wochen" class="text-2xl">Einzelne Wochen</h2>
+		<p class="mt-1 max-w-[64ch] text-muted">Eine Woche kann einen eigenen Preis haben, zum Beispiel günstiger, wenn sie kurz vorher noch frei ist. Die Vorschläge kommen aus den Buchungen und Besuchen. Es ändert sich nichts, bis du einen übernimmst.</p>
+
+		{#if data.hints.length}
+			<ul class="mt-4 grid gap-3">
+				{#each data.hints as h (h.key)}
+					<li class="card flex flex-wrap items-center justify-between gap-x-6 gap-y-3 p-4">
+						<div class="min-w-0 flex-[1_1_22rem]">
+							<p class="flex flex-wrap items-center gap-2"><span class="chip {h.suggested > h.current ? 'chip-ok' : 'chip-wait'}">{h.label}</span><span class="font-bold">Woche ab {d(h.start)}</span></p>
+							<p class="mt-1 text-sm text-muted">{h.reason}</p>
+						</div>
+						<div class="flex flex-wrap items-center gap-3">
+							<p class="tabular-nums"><s class="text-muted">{chf(h.current)}</s> <strong class="text-lg">{chf(h.suggested)}</strong></p>
+							<form method="POST" action="?/hintTake" use:enhance><input type="hidden" name="key" value={h.key} /><button class="btn-primary !min-h-0 !px-4 !py-1.5 text-sm">Übernehmen</button></form>
+							<form method="POST" action="?/hintDismiss" use:enhance><input type="hidden" name="key" value={h.key} /><button class="text-sm font-semibold text-brand underline">Nicht jetzt</button></form>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="card mt-4 p-4 text-muted">Im Moment kein Vorschlag. Die Website rechnet bei jedem Besuch dieser Seite neu.</p>
+		{/if}
+
+		<div class="mt-6 grid gap-4 lg:grid-cols-2">
+			<div class="card p-4">
+				<h3 class="text-lg">Wochen mit eigenem Preis</h3>
+				{#if data.own.length}
+					<ul class="mt-2 divide-y-2 divide-line">
+						{#each data.own as w (w.id)}
+							<li class="flex flex-wrap items-center justify-between gap-2 py-2">
+								<span><strong>Ab {d(w.start)}</strong> <span class="text-sm text-muted">{w.reason}</span></span>
+								<span class="flex items-center gap-3 tabular-nums">
+									<strong>{chf(w.weekly)}</strong>
+									<form method="POST" action="?/weekReset" use:enhance><input type="hidden" name="id" value={w.id} /><button class="text-sm font-semibold text-brand underline">Zurück zum Saisonpreis</button></form>
+								</span>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<p class="mt-2 text-muted">Keine. Alle Wochen kosten den Saisonpreis.</p>
+				{/if}
+			</div>
+			<form method="POST" action="?/week" use:enhance class="card grid content-start gap-3 p-4">
+				<h3 class="text-lg">Eine Woche selber festlegen</h3>
+				<label class="label">Woche
+					<select name="start" class="field mt-1 font-normal">
+						{#each data.weeks.filter((w) => w.free) as w (w.start)}<option value={w.start}>ab {d(w.start)}, jetzt {chf(w.price)}{w.views ? `, ${w.views}-mal angeschaut` : ''}</option>{/each}
+					</select>
+				</label>
+				<label class="label">Preis für diese Woche in CHF <input name="weekly" inputmode="decimal" class="field mt-1 font-normal" placeholder="z. B. 590" /></label>
+				{#if form && 'weekError' in form && form.weekError}<p class="font-semibold text-danger">{form.weekError}</p>{/if}
+				<button class="btn-line justify-self-start">Speichern</button>
+			</form>
+		</div>
+	</section>
+
 	<section class="mt-14" aria-labelledby="extras">
 		<div class="flex flex-wrap items-end justify-between gap-3">
 			<div>

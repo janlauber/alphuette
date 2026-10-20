@@ -9,6 +9,7 @@ export type Season = {
 	weekly: number | null; // price for 7 nights, applied per full week
 	minNights: number;
 	changeover: number | null; // 0 = Sunday … 6 = Saturday, null = any day
+	weeks?: Record<string, number>; // own price for single weeks, by their first night
 };
 
 export type Rates = {
@@ -40,6 +41,9 @@ export const nightsBetween = (a: string, b: string) => Math.round((toTime(b) - t
 
 export const seasonOf = (night: string, seasons: Season[]) =>
 	seasons.find((s) => s.start <= night && night < s.end);
+
+/** What the 7 nights from start cost: the week's own price, else the season's weekly price. */
+export const weekPrice = (s: Season, start: string) => s.weeks?.[start] ?? s.weekly ?? s.nightly * 7;
 
 export const isTaken = (night: string, taken: Range[]) =>
 	taken.some((r) => r.start <= night && night < r.end);
@@ -76,15 +80,18 @@ export function quote(
 	if (g.linen < 0 || g.linen > people) return { ok: false, error: 'guests' };
 
 	const nights = nightsBetween(checkIn, checkOut);
-	// Group consecutive nights by season, so a weekly price applies per full week inside one season.
-	const runs = new Map<Season, number>();
-	for (let i = 0; i < nights; i++) {
-		const s = seasonOf(addDays(checkIn, i), seasons)!;
-		runs.set(s, (runs.get(s) ?? 0) + 1);
-	}
+	// A full week inside one season costs its weekly price (or the week's own price); other nights the nightly price.
 	let stay = 0;
-	for (const [s, n] of runs) {
-		stay += s.weekly === null ? n * s.nightly : Math.floor(n / 7) * s.weekly + (n % 7) * s.nightly;
+	for (let i = 0; i < nights; ) {
+		const night = addDays(checkIn, i);
+		const s = seasonOf(night, seasons)!;
+		if (s.weekly !== null && i + 7 <= nights && seasonOf(addDays(night, 6), seasons) === s) {
+			stay += weekPrice(s, night);
+			i += 7;
+		} else {
+			stay += s.nightly;
+			i++;
+		}
 	}
 
 	const lines: QuoteLine[] = [{ key: 'stay', qty: nights, amount: stay }];

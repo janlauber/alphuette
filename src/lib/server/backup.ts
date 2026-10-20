@@ -6,7 +6,7 @@ import { del, get, list, put } from './storage.ts';
 // one before every restore, and any Tom makes by hand. Photo files are not in it; deleted photos sit
 // 30 days in the trash. The download button is the off-site copy.
 const PREFIX = 'backups/';
-const TABLES = ['settings', 'seasons', 'hikes', 'photos', 'reviews', 'bookings', 'messages'] as const;
+const TABLES = ['settings', 'seasons', 'week_prices', 'hikes', 'photos', 'reviews', 'bookings', 'messages'] as const;
 const NAME = /^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})_(automatisch|manuell|vorher|hochgeladen)\.json\.gz$/;
 
 export const REASONS = { automatisch: 'Automatisch in der Nacht', manuell: 'Von Hand', vorher: 'Vor einer Wiederherstellung', hochgeladen: 'Hochgeladen' };
@@ -15,7 +15,7 @@ export type Reason = keyof typeof REASONS;
 /** What can be put back, and from which tables and settings. Bookings and messages stay as they are. */
 export const AREAS = {
 	inhalte: { label: 'Texte und Infos', tables: [], settings: ['name', 'host', 'content', 'amenities'] },
-	preise: { label: 'Preise und Saisons', tables: ['seasons'], settings: ['rates'] },
+	preise: { label: 'Preise und Saisons', tables: ['seasons', 'week_prices'], settings: ['rates'] },
 	wanderungen: { label: 'Wanderungen', tables: ['hikes'], settings: [] },
 	fotos: { label: 'Fotos (Reihenfolge, Texte, Papierkorb)', tables: ['photos'], settings: [] },
 	gaestebuch: { label: 'Gästebuch', tables: ['reviews'], settings: [] }
@@ -57,6 +57,8 @@ export async function readBackup(name: string) {
 
 const parse = (gz: Uint8Array) => {
 	const dump = JSON.parse(gunzipSync(gz).toString('utf8')) as Dump;
+	// tables added later (week_prices) are simply empty in older backups
+	for (const t of TABLES) dump.tables[t] ??= [];
 	if (!dump?.tables || !TABLES.every((t) => Array.isArray(dump.tables[t]))) throw new Error('not a backup');
 	return dump;
 };

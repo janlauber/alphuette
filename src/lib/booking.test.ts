@@ -44,3 +44,10 @@ test('rules', () => {
 	assert.equal(quote('2027-07-03', '2027-07-10', { adults: 6, children: 1, infants: 0, linen: 0 }, [summer], rates).ok, false);
 	assert.equal(quote('2027-07-03', '2027-07-10', { adults: 0, children: 2, infants: 0, linen: 0 }, [summer], rates).ok, false);
 });
+
+test('a week with its own price costs that, the other weeks the season price', () => {
+	const special = { ...summer, weeks: { '2027-07-10': 550_00 } };
+	const q = quote('2027-07-03', '2027-07-17', { ...family, linen: 0 }, [special], rates);
+	assert.ok(q.ok);
+	assert.equal(q.lines.find((l) => l.key === 'stay')!.amount, 650_00 + 550_00);
+});

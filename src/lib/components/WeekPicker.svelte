@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Calendar from './Calendar.svelte';
 	import Stepper from './Stepper.svelte';
-	import { addDays, checkStay, chf, isTaken, toIso, weekday, type Range, type Season } from '#lib/booking.ts';
+	import { addDays, checkStay, chf, isTaken, toIso, weekday, weekPrice, type Range, type Season } from '#lib/booking.ts';
 	import { dict, type Lang } from '#lib/i18n.ts';
 
 	let {
@@ -17,14 +17,14 @@
 		lang: Lang;
 		checkIn?: string;
 		checkOut?: string;
-		onpick?: () => void;
+		onpick?: (start: string) => void;
 	} = $props();
 	const t = $derived(dict[lang]);
 
 	// Saturday-to-Saturday seasons get week tiles; anything else falls back to the day calendar.
 	const weekly = $derived(seasons.length > 0 && seasons.every((s) => s.changeover !== null && s.minNights % 7 === 0));
 
-	type Week = { start: string; end: string; taken: boolean; price: number };
+	type Week = { start: string; end: string; taken: boolean; price: number; regular: number };
 	const months = $derived.by(() => {
 		const today = toIso(Date.now());
 		const out: { name: string; weeks: Week[] }[] = [];
@@ -33,7 +33,7 @@
 			while (weekday(d) !== s.changeover) d = addDays(d, 1);
 			for (; addDays(d, 7) <= s.end; d = addDays(d, 7)) {
 				const nights = Array.from({ length: 7 }, (_, i) => addDays(d, i));
-				const week = { start: d, end: addDays(d, 7), taken: nights.some((n) => isTaken(n, taken)), price: s.weekly ?? s.nightly * 7 };
+				const week = { start: d, end: addDays(d, 7), taken: nights.some((n) => isTaken(n, taken)), price: weekPrice(s, d), regular: s.weekly ?? s.nightly * 7 };
 				const name = new Date(d + 'T00:00:00Z').toLocaleDateString(t.locale, { timeZone: 'UTC', month: 'long', year: 'numeric' });
 				if (out.at(-1)?.name !== name) out.push({ name, weeks: [] });
 				out.at(-1)!.weeks.push(week);
@@ -59,7 +59,7 @@
 		const n = Math.max(1, Math.min(count || 1, run(w.start)));
 		checkIn = w.start;
 		checkOut = addDays(w.start, 7 * n);
-		onpick?.();
+		onpick?.(w.start);
 	}
 	const weeks = {
 		get value() {
@@ -105,7 +105,7 @@
 						{:else if first}
 							<span class="chip mt-1.5 bg-white text-brand">{t.weeks.arrival}</span>
 						{:else}
-							<span class="mt-1.5 flex items-center gap-1.5 text-sm font-bold {selected ? 'text-white' : 'text-ink'}"><span class="size-2 rounded-full {selected ? 'bg-white' : 'bg-brand'}"></span>{chf(w.price)}</span>
+							<span class="mt-1.5 flex items-center gap-1.5 text-sm font-bold {selected ? 'text-white' : 'text-ink'}"><span class="size-2 rounded-full {selected ? 'bg-white' : 'bg-brand'}"></span>{#if w.price < w.regular}<s class="font-normal opacity-70">{chf(w.regular)}</s>{/if}{chf(w.price)}</span>
 						{/if}
 					</button>
 				{/each}

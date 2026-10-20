@@ -2,7 +2,7 @@
 	import Quote from './Quote.svelte';
 	import Stepper from './Stepper.svelte';
 	import WeekPicker from './WeekPicker.svelte';
-	import { chf, type Guests, type Range, type Rates, type Season } from '#lib/booking.ts';
+	import { chf, toTime, type Guests, type Range, type Rates, type Season } from '#lib/booking.ts';
 	import { dict, localize, type Lang } from '#lib/i18n.ts';
 	import { track } from '#lib/track.ts';
 
@@ -37,7 +37,7 @@
 	{/if}
 
 	<div class="lg:-mx-1 lg:max-h-[min(50vh,460px)] lg:overflow-y-auto lg:px-1 lg:pb-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-width:thin]">
-		<WeekPicker {seasons} {taken} {lang} bind:checkIn bind:checkOut onpick={() => track('week_selected')} />
+		<WeekPicker {seasons} {taken} {lang} bind:checkIn bind:checkOut onpick={(start) => track('week_selected', toTime(start) / 86_400_000)} />
 	</div>
 	{#if checkIn}
 		<button type="button" class="self-start text-sm font-semibold text-brand underline" onclick={() => ((checkIn = ''), (checkOut = ''))}>{t.card.clear}</button>

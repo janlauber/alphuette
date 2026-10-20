@@ -192,10 +192,16 @@ export async function setSetting<K extends keyof Stored>(key: K, value: Stored[K
 }
 
 export async function getSeasons(): Promise<(Season & { id: number })[]> {
-	return sql`
-		select id, name, start_date as start, end_date as end, nightly_rp as nightly, weekly_rp as weekly,
-			min_nights, changeover
-		from seasons where end_date >= current_date order by start_date`;
+	const [seasons, weeks] = await Promise.all([
+		sql<(Season & { id: number })[]>`
+			select id, name, start_date as start, end_date as end, nightly_rp as nightly, weekly_rp as weekly,
+				min_nights, changeover
+			from seasons where end_date >= current_date order by start_date`,
+		sql<{ start: string; weekly: number }[]>`select start_date as start, weekly_rp as weekly from week_prices where start_date >= current_date - 7`
+	]);
+	// weeks with their own price ride along with their season, so every price calculation sees them
+	for (const s of seasons) s.weeks = Object.fromEntries(weeks.filter((w) => s.start <= w.start && w.start < s.end).map((w) => [w.start, w.weekly]));
+	return seasons;
 }
 
 export { parseFaq } from '#lib/text.ts';
