@@ -4,6 +4,8 @@
 	import { page } from '$app/state';
 	import CalendarPlus from '@lucide/svelte/icons/calendar-plus';
 	import MailCheck from '@lucide/svelte/icons/mail-check';
+	import Plus from '@lucide/svelte/icons/plus';
+	import GuidePhoto from '#lib/components/GuidePhoto.svelte';
 	import Huettli, { type Face } from '#lib/components/Huettli.svelte';
 	import Receipt from '@lucide/svelte/icons/receipt';
 	import Star from '@lucide/svelte/icons/star';
@@ -98,6 +100,33 @@
 			<div class="richtext mt-4">{@html textToHtml(data.guestInfo)}</div>
 			<h3 class="mt-8 text-[1.4rem]">{t.sections.arrival}</h3>
 			<div class="richtext mt-2">{@html textToHtml(data.arrival)}</div>
+		</section>
+	{/if}
+	{#if data.guides.length}
+		<section>
+			<h2 class="text-[1.9rem]">{t.booking.guides}</h2>
+			<div class="mt-4 grid gap-3">
+				{#each data.guides as g (g.id)}
+					<details class="group rounded-[22px] border-2 border-line px-5 py-4 open:border-brand">
+						<summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold [&::-webkit-details-marker]:hidden">
+							{g.title}<span class="grid size-8 shrink-0 place-items-center rounded-full border-2 border-brand text-brand transition group-open:rotate-45 group-open:bg-brand group-open:text-white"><Plus size={16} strokeWidth={3} aria-hidden="true" /></span>
+						</summary>
+						<ol class="mt-4 grid gap-6">
+							{#each g.steps as s, i (i)}
+								<li class="grid gap-3">
+									{#if s.photo}<GuidePhoto src="{page.url.pathname}/anleitung/{s.photo}" marks={s.marks} alt={s.marks.map((m) => m.label).filter(Boolean).join(', ')} />{/if}
+									{#if s.text}
+										<div class="flex gap-3">
+											{#if g.steps.length > 1}<span class="grid size-7 shrink-0 place-items-center rounded-full bg-wash text-sm font-bold text-brand" aria-hidden="true">{i + 1}</span>{/if}
+											<div class="richtext min-w-0">{@html textToHtml(s.text)}</div>
+										</div>
+									{/if}
+								</li>
+							{/each}
+						</ol>
+					</details>
+				{/each}
+			</div>
 		</section>
 	{/if}
 	{#if data.booking.status === 'bestaetigt'}

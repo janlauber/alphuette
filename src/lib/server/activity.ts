@@ -2,7 +2,7 @@ import { sql } from './db.ts';
 
 // The admin's change log. Every change Tom makes is written here in plain words, and most of
 // them carry a snapshot from before, so "Rückgängig" can put things back.
-const TABLES = ['photos', 'hikes', 'seasons', 'week_prices', 'reviews', 'bookings', 'mail_templates'] as const;
+const TABLES = ['photos', 'hikes', 'seasons', 'week_prices', 'reviews', 'bookings', 'mail_templates', 'guides'] as const;
 export type Table = (typeof TABLES)[number];
 export type Undo = { settings: Record<string, string | null> } | { table: Table; id: number; before: string | null };
 export type Entry = { actor: string; area: string; title: string; link?: string; target?: string; undo?: Undo };

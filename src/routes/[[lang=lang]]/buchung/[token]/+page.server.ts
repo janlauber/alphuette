@@ -3,6 +3,7 @@ import { addMessage, bookingByToken, confirmEmail, messagesOf, withdraw } from '
 import { addReview, reviewOf } from '#lib/server/reviews.ts';
 import { getSettings } from '#lib/server/settings.ts';
 import { listPhotos } from '#lib/server/images.ts';
+import { guidesFor } from '#lib/server/guides.ts';
 import { limited } from '#lib/server/limit.ts';
 
 async function booking(token: string) {
@@ -20,9 +21,9 @@ const listItems = (text: string) =>
 export const load = async ({ params, parent }) => {
 	const { lang } = await parent();
 	const b = await booking(params.token);
-	const [settings, messages, review, photos] = await Promise.all([getSettings(), messagesOf(b.id), reviewOf(b.id), listPhotos(lang)]);
-	const content = settings.content[lang];
 	const confirmed = b.status === 'bestaetigt';
+	const [settings, messages, review, photos, guides] = await Promise.all([getSettings(), messagesOf(b.id), reviewOf(b.id), listPhotos(lang), confirmed ? guidesFor(lang) : []]);
+	const content = settings.content[lang];
 	const today = new Date().toISOString().slice(0, 10);
 	return {
 		booking: {
@@ -42,6 +43,7 @@ export const load = async ({ params, parent }) => {
 		// the guest only needs Tom's messages in their language; their own stay as written
 		messages: messages.map(({ id, author, body, translation, createdAt }) => ({ id, author, body, translation: author === 'host' ? translation : null, createdAt })),
 		guestInfo: confirmed ? content.guest_info || settings.content.de.guest_info : '',
+		guides,
 		arrival: content.arrival,
 		packing: confirmed || b.status === 'angefragt' ? listItems(content.packing) : [],
 		rates: { checkIn: settings.rates.checkIn, checkOut: settings.rates.checkOut },

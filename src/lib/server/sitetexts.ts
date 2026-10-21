@@ -1,17 +1,19 @@
 import { sql } from './db.ts';
 import { DEFAULTS, stored, type Content } from './settings.ts';
 import { hikeTexts } from './hikes.ts';
+import { guideTexts, listGuides } from './guides.ts';
 import { weatherTexts } from './weather.ts';
 import { fill, hash } from './translate.ts';
 
 /** Every German text the site shows in other languages. */
 export async function siteTexts() {
 	const s = await stored();
-	const [hikes, photos, mails, replies] = await Promise.all([
+	const [hikes, photos, mails, replies, guides] = await Promise.all([
 		sql`select de, season_de, transit_de, highlights_de, tips_de from hikes`,
 		sql`select alt_de from photos where deleted_at is null`,
 		sql`select subject, body from mail_templates where audience = 'gast'`,
-		sql`select reply from reviews where approved and reply is not null`
+		sql`select reply from reviews where approved and reply is not null`,
+		listGuides()
 	]);
 	return [
 		...Object.values(s.content.de),
@@ -20,7 +22,8 @@ export async function siteTexts() {
 		...photos.map((p) => p.altDe as string),
 		...weatherTexts(),
 		...mails.flatMap((m) => [m.subject as string, m.body as string]),
-		...replies.map((r) => r.reply as string)
+		...replies.map((r) => r.reply as string),
+		...guideTexts(guides)
 	];
 }
 

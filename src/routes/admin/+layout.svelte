@@ -20,6 +20,7 @@
 	import Tag from '@lucide/svelte/icons/tag';
 	import Banknote from '@lucide/svelte/icons/banknote';
 	import ScrollText from '@lucide/svelte/icons/scroll-text';
+	import KeyRound from '@lucide/svelte/icons/key-round';
 	import Wallet from '@lucide/svelte/icons/wallet';
 	import Users from '@lucide/svelte/icons/users';
 	import X from '@lucide/svelte/icons/x';
@@ -47,6 +48,7 @@
 			items: [
 				{ href: '/admin/inhalte', label: 'Texte und Infos', icon: FileText },
 				{ href: '/admin/hausregeln', label: 'Hausregeln', icon: ScrollText },
+				{ href: '/admin/anleitungen', label: 'Anleitungen für Gäste', icon: KeyRound },
 				{ href: '/admin/preise', label: 'Preise und Saisons', icon: Tag },
 				{ href: '/admin/gastgeber', label: 'Gastgeber und Zahlung', icon: Wallet },
 				{ href: '/admin/fotos', label: 'Fotos', icon: Images },

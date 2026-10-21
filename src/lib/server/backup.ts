@@ -6,7 +6,7 @@ import { del, get, list, put } from './storage.ts';
 // one before every restore, and any Tom makes by hand. Photo files are not in it; deleted photos sit
 // 30 days in the trash. The download button is the off-site copy.
 const PREFIX = 'backups/';
-const TABLES = ['settings', 'seasons', 'week_prices', 'hikes', 'photos', 'reviews', 'bookings', 'messages'] as const;
+const TABLES = ['settings', 'seasons', 'week_prices', 'hikes', 'photos', 'reviews', 'bookings', 'messages', 'guides'] as const;
 const NAME = /^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})_(automatisch|manuell|vorher|hochgeladen)\.json\.gz$/;
 
 export const REASONS = { automatisch: 'Automatisch in der Nacht', manuell: 'Von Hand', vorher: 'Vor einer Wiederherstellung', hochgeladen: 'Hochgeladen' };
@@ -18,7 +18,8 @@ export const AREAS = {
 	preise: { label: 'Preise und Saisons', tables: ['seasons', 'week_prices'], settings: ['rates'] },
 	wanderungen: { label: 'Wanderungen', tables: ['hikes'], settings: [] },
 	fotos: { label: 'Fotos (Reihenfolge, Texte, Papierkorb)', tables: ['photos'], settings: [] },
-	gaestebuch: { label: 'Gästebuch', tables: ['reviews'], settings: [] }
+	gaestebuch: { label: 'Gästebuch', tables: ['reviews'], settings: [] },
+	anleitungen: { label: 'Anleitungen für Gäste', tables: ['guides'], settings: [] }
 } as const;
 export type Area = keyof typeof AREAS;
 

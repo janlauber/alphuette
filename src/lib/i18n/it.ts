@@ -186,6 +186,7 @@ export const it: Dict = {
 		paid: (d) => `Pagato il ${d}`,
 		open: 'Non ancora pagato',
 		info: 'Informazioni per il tuo soggiorno',
+		guides: 'Come funziona la baita',
 		packing: 'Cosa portare',
 		packingHint: 'Le spunte restano solo su questo dispositivo.',
 		withdraw: 'Ritira la richiesta',

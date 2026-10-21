@@ -190,6 +190,7 @@ export const fr: Dict = {
 		paid: (d) => `Payé le ${d}`,
 		open: 'Pas encore payé',
 		info: 'Infos pour ton séjour',
+		guides: 'Comment ça marche au chalet',
 		packing: 'Liste de bagages',
 		packingHint: 'Les coches restent seulement sur cet appareil.',
 		withdraw: 'Retirer la demande',
