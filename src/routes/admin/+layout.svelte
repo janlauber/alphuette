@@ -21,6 +21,7 @@
 	import Banknote from '@lucide/svelte/icons/banknote';
 	import ScrollText from '@lucide/svelte/icons/scroll-text';
 	import KeyRound from '@lucide/svelte/icons/key-round';
+	import BookOpenText from '@lucide/svelte/icons/book-open-text';
 	import Wallet from '@lucide/svelte/icons/wallet';
 	import Users from '@lucide/svelte/icons/users';
 	import X from '@lucide/svelte/icons/x';
@@ -36,6 +37,7 @@
 			label: 'Alltag',
 			items: [
 				{ href: '/admin', label: 'Übersicht', icon: House },
+				{ href: '/admin/handbuch', label: 'Handbuch', icon: BookOpenText },
 				{ href: '/admin/buchungen', label: 'Buchungen', icon: Inbox, badge: data.open + data.unread },
 				{ href: '/admin/kalender', label: 'Kalender', icon: CalendarDays },
 				{ href: '/admin/finanzen', label: 'Finanzen', icon: Banknote, badge: data.overdue },
