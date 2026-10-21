@@ -1,17 +1,19 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createHash } from 'node:crypto';
-import { ANTHROPIC_API_KEY } from '$app/env/private';
+import { ANTHROPIC_API_KEY, DEEPL_API_KEY } from '$app/env/private';
 import { sql } from './db.ts';
+import { byLine, protect, unprotect } from '#lib/deepl.ts';
 import type { Lang } from '#lib/i18n.ts';
 
 // Tom writes German. English, French and Italian come from the translations table, keyed by the
-// German text and filled by Claude whenever a text is new. Without an API key, pages fall back to German.
+// German text and filled by DeepL whenever a text is new. Without a key, pages fall back to German.
+// Messages between guests and Tom are translated by Claude (translateMessage).
 const client = ANTHROPIC_API_KEY ? new Anthropic({ apiKey: ANTHROPIC_API_KEY }) : null;
 export const TARGETS = ['en', 'fr', 'it'] as const;
 const NAMES: Record<Lang, string> = { de: 'German', en: 'English', fr: 'French', it: 'Italian' };
 // keyed by the trimmed German text, so a stray space or newline never loses a translation
 export const hash = (s: string) => createHash('md5').update(s.trim()).digest('hex');
-export const canTranslate = !!client;
+export const canTranslate = !!DEEPL_API_KEY;
 
 const SYSTEM = `You translate for the website of a small alpine hut for rent, "Alphütte Blüemlisalpblick" in Lengschwendi, Kiental, canton of Bern, Switzerland. The host is Tom.
 - Keep the tone plain, warm and short, like the original. Address the reader informally (German "du": "tu" in French and Italian, "you" in English).
@@ -51,28 +53,51 @@ export const setManual = (de: string, lang: Lang, text: string) =>
 	sql`insert into translations (hash, lang, text, manual) values (${hash(de)}, ${lang}, ${text}, true)
 		on conflict (hash, lang) do update set text = excluded.text, manual = true, at = now()`;
 
+const DEEPL_LANG = { en: 'EN-GB', fr: 'FR', it: 'IT' } as const;
+// free keys end in ":fx" and have their own address
+const DEEPL_URL = DEEPL_API_KEY?.endsWith(':fx') ? 'https://api-free.deepl.com/v2/translate' : 'https://api.deepl.com/v2/translate';
+
+/** Lines of German text in `lang`, same order. "du" stays "tu" in French and Italian (formality less). */
+async function deepl(lines: string[], lang: (typeof TARGETS)[number]) {
+	const out: string[] = [];
+	// at most 50 lines per request, and well under the 128 KiB request limit
+	for (let i = 0; i < lines.length; ) {
+		const batch: string[] = [];
+		for (let size = 0; i < lines.length && batch.length < 50 && (size < 30_000 || !batch.length); i++) size += lines[i].length, batch.push(lines[i]);
+		const res = await fetch(DEEPL_URL, {
+			method: 'POST',
+			headers: { authorization: `DeepL-Auth-Key ${DEEPL_API_KEY}`, 'content-type': 'application/json' },
+			body: JSON.stringify({
+				text: batch.map(protect),
+				source_lang: 'DE',
+				target_lang: DEEPL_LANG[lang],
+				formality: 'prefer_less',
+				tag_handling: 'xml',
+				ignore_tags: ['x']
+			})
+		});
+		if (!res.ok) throw new Error(`DeepL ${res.status}: ${(await res.text()).slice(0, 200)}`);
+		const { translations } = (await res.json()) as { translations: { text: string }[] };
+		if (translations?.length !== batch.length) throw new Error(`DeepL: got ${translations?.length} of ${batch.length}`);
+		out.push(...translations.map((t) => unprotect(t.text)));
+	}
+	return out;
+}
+
 let busy: Promise<void> | null = null;
 
 /** Translates German texts that have no translation yet, in all languages. One run at a time. */
 export function fill(texts: string[]) {
-	if (!client) return Promise.resolve();
+	if (!DEEPL_API_KEY) return Promise.resolve();
 	const run = async () => {
 		const unique = [...new Set(texts.map((t) => t.trim()).filter(Boolean))];
 		for (const lang of TARGETS) {
 			const have = new Set((await sql`select hash from translations where lang = ${lang} and hash = any(${unique.map(hash)})`).map((r) => r.hash));
 			const missing = unique.filter((t) => !have.has(hash(t)));
-			// ponytail: batches of about 6000 characters keep each answer well under max_tokens
-			for (let i = 0; i < missing.length; ) {
-				const batch: string[] = [];
-				for (let size = 0; i < missing.length && (size < 6000 || !batch.length); i++) size += missing[i].length, batch.push(missing[i]);
-				const res = await ask<{ translations: string[] }>(
-					`Translate each of these ${batch.length} texts from German to ${NAMES[lang]}. Return the translations in the same order.\n\n${JSON.stringify(batch)}`,
-					{ type: 'object', properties: { translations: { type: 'array', items: { type: 'string' } } }, required: ['translations'], additionalProperties: false }
-				);
-				if (res.translations?.length !== batch.length) throw new Error(`translate: got ${res.translations?.length} of ${batch.length}`);
-				for (const [j, de] of batch.entries())
-					await sql`insert into translations (hash, lang, text) values (${hash(de)}, ${lang}, ${res.translations[j]}) on conflict do nothing`;
-			}
+			if (!missing.length) continue;
+			const { parts, join } = byLine(missing);
+			const done = join(await deepl(parts, lang));
+			for (const [j, de] of missing.entries()) await sql`insert into translations (hash, lang, text) values (${hash(de)}, ${lang}, ${done[j]}) on conflict do nothing`;
 		}
 	};
 	busy = (busy ?? Promise.resolve()).then(run).catch((e) => import('./monitor.ts').then((m) => m.report(e, 'Übersetzung')));

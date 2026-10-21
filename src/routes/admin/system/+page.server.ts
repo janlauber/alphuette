@@ -1,4 +1,4 @@
-import { ANTHROPIC_API_KEY, REPLY_DOMAIN, RESEND_API_KEY, RESEND_WEBHOOK_SECRET } from '$app/env/private';
+import { ANTHROPIC_API_KEY, DEEPL_API_KEY, REPLY_DOMAIN, RESEND_API_KEY, RESEND_WEBHOOK_SECRET } from '$app/env/private';
 import { sql } from '#lib/server/db.ts';
 import { listBackups } from '#lib/server/backup.ts';
 import { bucketCheck } from '#lib/server/storage.ts';
@@ -33,7 +33,8 @@ export const load = async () => {
 		{ label: 'Wartung (stündlich)', ok: lastMaintenance ? hours(lastMaintenance) < 2 : null, text: lastMaintenance ? `zuletzt vor ${Math.round(hours(lastMaintenance) * 60)} Minuten` : 'seit dem Start noch nicht fertig' },
 		{ label: 'Mails senden', ok: !!RESEND_API_KEY, text: RESEND_API_KEY ? 'Resend ist eingerichtet' : 'RESEND_API_KEY fehlt, Mails stehen nur im Log' },
 		{ label: 'Mails empfangen', ok: !!(RESEND_WEBHOOK_SECRET && REPLY_DOMAIN), text: RESEND_WEBHOOK_SECRET && REPLY_DOMAIN ? `Antworten an @${REPLY_DOMAIN}` : 'RESEND_WEBHOOK_SECRET oder REPLY_DOMAIN fehlt' },
-		{ label: 'Übersetzung', ok: !!ANTHROPIC_API_KEY && missing === 0, text: !ANTHROPIC_API_KEY ? 'ANTHROPIC_API_KEY fehlt' : missing ? `${missing} Übersetzungen stehen noch aus` : 'alle Texte übersetzt' },
+		{ label: 'Übersetzung der Website', ok: !!DEEPL_API_KEY && missing === 0, text: !DEEPL_API_KEY ? 'DEEPL_API_KEY fehlt' : missing ? `${missing} Übersetzungen stehen noch aus` : 'alle Texte übersetzt' },
+		{ label: 'Übersetzung der Nachrichten', ok: !!ANTHROPIC_API_KEY, text: ANTHROPIC_API_KEY ? 'Claude übersetzt Nachrichten zwischen Gästen und dir' : 'ANTHROPIC_API_KEY fehlt, Nachrichten bleiben wie geschrieben' },
 		{ label: 'Speicher für Fotos und Sicherungen', ...bucket }
 	];
 	return { checks, errors, owner: owner() };
