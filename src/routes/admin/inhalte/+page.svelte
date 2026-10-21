@@ -66,10 +66,6 @@
 		</ul>
 	{/snippet}
 
-	{#if !data.canTranslate}
-		<p class="mb-6 rounded-[14px] bg-accent-wash px-4 py-3 text-sm">Die automatische Übersetzung ist noch nicht eingerichtet. Bis dahin zeigt die Website Deutsch, wo eine Übersetzung fehlt.</p>
-	{/if}
-
 	<nav class="mb-8 flex flex-wrap gap-2" aria-label="Abschnitte">
 		{#each GROUPS as [g] (g)}<a href="#{g}" class="pill no-underline">{g}</a>{/each}
 		<a href="#ausstattung" class="pill no-underline">Ausstattung</a>

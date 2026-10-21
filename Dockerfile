@@ -3,7 +3,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npm run build && npm prune --omit=dev && node scripts/geoip.mjs geo/dbip-city-lite.mmdb
+# the translation models (about 350 MB) come into the image, so the server never downloads them
+RUN npm run build && npm prune --omit=dev && node scripts/geoip.mjs geo/dbip-city-lite.mmdb && node scripts/translate.mjs --download
 
 FROM node:24-slim
 WORKDIR /app
@@ -19,6 +20,8 @@ COPY --from=build /app/build build
 COPY --from=build /app/node_modules node_modules
 COPY --from=build /app/package.json ./
 COPY --from=build /app/geo geo
+COPY --from=build /app/models models
+COPY scripts/translate.mjs scripts/translate.mjs
 COPY migrations migrations
 USER node
 EXPOSE 3000

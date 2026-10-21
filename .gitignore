@@ -9,3 +9,4 @@ node_modules
 
 # raw videos and other large originals, never committed
 media/
+/models

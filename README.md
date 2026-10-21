@@ -28,6 +28,7 @@ npm run check         # Typen
 - `src/routes/[[lang=lang]]/`: öffentliche Seiten auf Deutsch (`/`) und Englisch (`/en`).
 - `src/routes/admin/`: Buchungen, Kalender, Gäste, Fotos, Preise, Inhalte.
 - `docs/recherche.md`: Fakten mit Quellen (Anreise, Kurtaxe, Wanderungen).
+- `scripts/translate.mjs`: übersetzt die Texte der Website ins Englische, Französische und Italienische, mit kleinen Opus-MT-Modellen auf dem eigenen Server, ohne Konto oder Schlüssel. Die Modelle (etwa 350 MB) lädt der Docker-Build ins Image, lokal landen sie beim ersten Lauf in `models/`.
 
 Gäste haben kein Konto. Ihr Link `/buchung/<ref>-<signatur>` ist signiert, mit `APP_SECRET` oder,
 falls nicht gesetzt, mit einem Schlüssel, den die App beim ersten Start erzeugt und in der Datenbank ablegt.

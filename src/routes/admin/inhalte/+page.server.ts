@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { DEFAULTS, setSetting, stored, type Amenity, type Content } from '#lib/server/settings.ts';
-import { canTranslate, lookup, setManual, TARGETS } from '#lib/server/translate.ts';
+import { lookup, setManual, TARGETS } from '#lib/server/translate.ts';
 import { syncTranslations } from '#lib/server/sitetexts.ts';
 import { ICONS } from '#lib/icons.ts';
 import { changeSettings, done, log } from '#lib/server/activity.ts';
@@ -32,7 +32,7 @@ export const load = async () => {
 	const translations = Object.fromEntries(
 		Object.entries(de).map(([k, v]) => [k, Object.fromEntries(TARGETS.map((l) => [l, v.trim() ? (tr.get(l)?.get(v) ?? null) : '']))])
 	) as Record<keyof Content, Record<(typeof TARGETS)[number], string | null>>;
-	return { content: de, translations, amenities: s.amenities.map(({ icon, de }) => ({ icon, de })), icons: Object.keys(ICONS), fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[], canTranslate };
+	return { content: de, translations, amenities: s.amenities.map(({ icon, de }) => ({ icon, de })), icons: Object.keys(ICONS), fields: Object.keys(DEFAULTS.content.de) as (keyof Content)[] };
 };
 
 
