@@ -36,10 +36,18 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const res = await resolve(event, { transformPageChunk: ({ html }) => html.replace('%lang%', lang) });
 	// Full page loads count as views on the server, so no ad blocker can hide them.
 	const html = res.headers.get('content-type')?.startsWith('text/html');
-	if (html && res.status === 200 && event.request.method === 'GET' && !isPrivate(path) && !path.startsWith('/admin')) {
+	// Requests from inside the cluster have no x-forwarded-for, adapter-node throws on them, and they are no visitors.
+	const ip = (() => {
+		try {
+			return event.getClientAddress();
+		} catch {
+			return '';
+		}
+	})();
+	if (ip && html && res.status === 200 && event.request.method === 'GET' && !isPrivate(path) && !path.startsWith('/admin')) {
 		record(
 			{ kind: 'view', path, referrer: event.request.headers.get('referer'), url: event.url },
-			event.getClientAddress(),
+			ip,
 			event.request.headers.get('user-agent') ?? '',
 			event.url.hostname,
 			lang

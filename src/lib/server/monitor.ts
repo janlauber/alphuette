@@ -17,7 +17,8 @@ export async function report(error: unknown, place: string, { alert = true } = {
 		const where = cleanPath(place).slice(0, 200);
 		const message = e.message.slice(0, 1000) || e.name;
 		const stack = (e.stack ?? '').split('\n').slice(0, 15).join('\n');
-		const fingerprint = createHash('sha1').update(where + '|' + message.replace(/\d+/g, 'n')).digest('hex');
+		// every word with a digit (counts, request ids, file hashes) is the same, so one outage stays one row
+		const fingerprint = createHash('sha1').update(where + '|' + message.replace(/\w*\d\w*/g, 'n')).digest('hex');
 		const [row] = await sql`
 			insert into app_errors (fingerprint, place, message, stack) values (${fingerprint}, ${where}, ${message}, ${stack})
 			on conflict (fingerprint) do update set count = app_errors.count + 1, last_at = now(), stack = excluded.stack, resolved_at = null
