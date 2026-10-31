@@ -22,3 +22,13 @@ test('guests asking about the hut get through', () => {
 	];
 	for (const m of ham) assert.equal(spamCheck(m).spam, false, m.subject);
 });
+
+test('a brand-new sender domain counts, an old one does not', () => {
+	const pitch = { subject: 'Kurze Frage', text: 'Hallo, wir haben ein Angebot für Sie.' };
+	assert.equal(spamCheck({ ...pitch, domainAge: 5 }).spam, true);
+	assert.deepEqual(spamCheck({ ...pitch, domainAge: 5 }).reasons, ['Domain erst vor 5 Tagen registriert']);
+	assert.equal(spamCheck({ ...pitch, domainAge: 60 }).spam, false);
+	assert.equal(spamCheck({ subject: 'Hi', text: 'I like your website.', domainAge: 60 }).spam, true);
+	assert.equal(spamCheck({ ...pitch, domainAge: 4000 }).spam, false);
+	assert.equal(spamCheck({ ...pitch, domainAge: null }).spam, false);
+});

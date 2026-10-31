@@ -12,7 +12,8 @@ const RULES: [weight: number, reason: string, pattern: RegExp][] = [
 	[1, 'Spricht von «your website»', /\byour (website|business|company|brand)\b/i]
 ];
 
-export function spamCheck(mail: { subject: string; text: string }) {
+/** domainAge: days since the sender's domain was registered, if known. Spam domains are mostly days or weeks old. */
+export function spamCheck(mail: { subject: string; text: string; domainAge?: number | null }) {
 	const subject = mail.subject ?? '';
 	const all = `${subject}\n${mail.text ?? ''}`;
 	const reasons: string[] = [];
@@ -21,5 +22,7 @@ export function spamCheck(mail: { subject: string; text: string }) {
 		if (pattern.test(reason === 'Website-Adresse im Betreff' ? subject : all)) (score += weight), reasons.push(reason);
 	}
 	if ((all.match(/https?:\/\//g) ?? []).length >= 3) (score += 1), reasons.push('Viele Links');
+	const age = mail.domainAge;
+	if (age != null && age < 90) (score += age < 30 ? 3 : 2), reasons.push(`Domain erst vor ${age} Tagen registriert`);
 	return { spam: score >= 3, reasons };
 }

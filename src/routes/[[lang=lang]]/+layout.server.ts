@@ -1,5 +1,6 @@
 import { SITE_URL } from '$app/env/private';
 import { getSettings } from '#lib/server/settings.ts';
+import { hide } from '#lib/hidemail.ts';
 import type { Lang } from '#lib/i18n.ts';
 
 export const load = async ({ params }) => {
@@ -8,7 +9,8 @@ export const load = async ({ params }) => {
 	return {
 		lang: (params.lang ?? 'de') as Lang,
 		hutName: s.name,
-		host: { name, street, zip, city, email, whatsapp },
+		// the address only encoded, see MailLink
+		host: { name, street, zip, city, mail: hide(email), whatsapp },
 		siteUrl: SITE_URL
 	};
 };

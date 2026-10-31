@@ -4,6 +4,7 @@
 	import Huettli from '#lib/components/Huettli.svelte';
 	import Panorama from '#lib/components/Panorama.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
+	import MailLink from '#lib/components/MailLink.svelte';
 	import { dict, LANG_NAMES, LANGS, localize, unlocalize } from '#lib/i18n.ts';
 
 	let { data, children } = $props();
@@ -86,7 +87,7 @@
 			<div>
 				<p class="font-bold">{t.footer.contact}</p>
 				<p class="mt-2 opacity-80">{data.host.name}</p>
-				<a href="mailto:{data.host.email}" class="underline">{data.host.email}</a>
+				<MailLink hidden={data.host.mail} class="underline" />
 				{#if whatsapp}<a href={whatsapp} class="mt-1 block underline" rel="noopener" target="_blank">{t.footer.whatsapp}</a>{/if}
 			</div>
 			<nav class="flex flex-col gap-1.5 font-semibold sm:items-end">

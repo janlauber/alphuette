@@ -1,9 +1,12 @@
 <script lang="ts">
 	import Seo from '#lib/components/Seo.svelte';
+	import MailLink from '#lib/components/MailLink.svelte';
 	import type { Lang } from '#lib/i18n.ts';
 
 	let { data } = $props();
-	const contact = $derived(`${data.host.name}, ${data.host.street ? data.host.street + ', ' : ''}${data.host.zip} ${data.host.city}, ${data.host.email}`);
+	// stands for the address in the texts; the paragraphs put a MailLink in its place
+	const MAIL = '\u0000mail\u0000';
+	const contact = $derived(`${data.host.name}, ${data.host.street ? data.host.street + ', ' : ''}${data.host.zip} ${data.host.city}, ${MAIL}`);
 
 	// [heading, ...paragraphs]
 	type Page = { title: string; intro: string; sections: string[][] };
@@ -154,7 +157,7 @@
 			]
 		})
 	};
-	const text = $derived(TEXT[data.lang](contact, data.host.email));
+	const text = $derived(TEXT[data.lang](contact, MAIL));
 </script>
 
 <Seo title={text.title} description={data.hutName} path="/datenschutz" lang={data.lang} siteUrl={data.siteUrl} />
@@ -164,6 +167,6 @@
 	<p class="mt-6">{text.intro}</p>
 	{#each text.sections as [heading, ...paragraphs] (heading)}
 		<h2>{heading}</h2>
-		{#each paragraphs as p, i (i)}<p>{p}</p>{/each}
+		{#each paragraphs as p, i (i)}<p>{#each p.split(MAIL) as part, j (j)}{#if j}<MailLink hidden={data.host.mail} />{/if}{part}{/each}</p>{/each}
 	{/each}
 </div>

@@ -2,6 +2,7 @@ import { ADMIN_EMAILS, SITE_URL } from '$app/env/private';
 import { sql } from './db.ts';
 import { sendMail } from './mail.ts';
 import { spamCheck } from '#lib/mailfilter.ts';
+import { domainAge } from './rdap.ts';
 
 // Mail to hallo@ and other addresses of the domain. Known senders (Tom, guests with a booking,
 // senders Tom let through) are forwarded as they are. Unknown ones are checked: spam stays in the
@@ -32,7 +33,7 @@ export function forward(inbox: string[], sender: string, mail: Received, unknown
 export async function receive(inbox: string[], sender: string, mail: Received) {
 	const kind = await senderKind(sender, inbox);
 	if (kind === 'known') return forward(inbox, sender, mail);
-	const { spam, reasons } = kind === 'blocked' ? { spam: true, reasons: ['Absender gesperrt'] } : spamCheck({ subject: mail.subject, text: mail.full });
+	const { spam, reasons } = kind === 'blocked' ? { spam: true, reasons: ['Absender gesperrt'] } : spamCheck({ subject: mail.subject, text: mail.full, domainAge: await domainAge(sender) });
 	await sql`insert into unknown_mails (sender, from_full, recipient, subject, body, attachments, reasons, held, forwarded_at)
 		values (${sender}, ${mail.from}, ${mail.to}, ${mail.subject}, ${mail.full.slice(0, 50_000)}, ${mail.attachments}, ${reasons}, ${spam}, ${spam ? null : sql`now()`})`;
 	if (!spam) await forward(inbox, sender, mail, true);
