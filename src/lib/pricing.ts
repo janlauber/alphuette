@@ -34,7 +34,7 @@ export function weeksAhead(seasons: Season[], taken: Range[], today: string): We
 }
 
 /**
- * views: how often each week (by first night) was picked in the booking calendar in the last 30 days.
+ * views: how many visitors picked each week (by first night) in the booking calendar in the last 30 days.
  * dismissed: keys Tom said no to.
  */
 export function priceHints(seasons: Season[], taken: Range[], today: string, views: Record<string, number> = {}, dismissed: string[] = []): Hint[] {
@@ -56,7 +56,7 @@ export function priceHints(seasons: Season[], taken: Range[], today: string, vie
 		const after = takenStart.has(addDays(w.start, 7)) || isTaken(addDays(w.start, 7), taken);
 		if (days <= 21) add('kurz', w, 0.85, `Beginnt in ${days} Tagen und ist noch frei. Mit 15 % weniger findet sich eher noch jemand.`);
 		else if (before && after) add('luecke', w, 0.9, 'Die einzige freie Woche zwischen zwei Buchungen. Mit 10 % weniger wird sie eher gebucht.');
-		else if ((views[w.start] ?? 0) >= 8) add('liegen', w, 0.95, `In den letzten 30 Tagen ${views[w.start]}-mal angeschaut, aber nicht angefragt. Vielleicht hilft ein etwas tieferer Preis.`);
+		else if ((views[w.start] ?? 0) >= 8) add('liegen', w, 0.95, `In den letzten 30 Tagen von ${views[w.start]} Leuten angeschaut, aber nicht angefragt. Vielleicht hilft ein etwas tieferer Preis.`);
 		else if ((month === 7 || (month === 8 && day <= 14)) && days > 30) add('hoch', w, 1.1, 'Sommerferien in den meisten Kantonen: diese Wochen sind am gefragtesten.');
 		else if (inSeason.length >= 4 && booked / inSeason.length >= 0.6 && days > 30) add('gefragt', w, 1.1, `Schon ${booked} von ${inSeason.length} Wochen dieser Saison sind gebucht. Die übrigen vertragen etwas mehr.`);
 	}

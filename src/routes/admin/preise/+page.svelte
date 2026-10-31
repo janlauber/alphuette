@@ -329,7 +329,7 @@
 				<h3 class="text-lg">Eine Woche selber festlegen</h3>
 				<label class="label">Woche
 					<select name="start" class="field mt-1 font-normal">
-						{#each data.weeks.filter((w) => w.free) as w (w.start)}<option value={w.start}>ab {d(w.start)}, jetzt {chf(w.price)}{w.views ? `, ${w.views}-mal angeschaut` : ''}</option>{/each}
+						{#each data.weeks.filter((w) => w.free) as w (w.start)}<option value={w.start}>ab {d(w.start)}, jetzt {chf(w.price)}{w.views ? `, von ${w.views === 1 ? 'einer Person' : `${w.views} Leuten`} angeschaut` : ''}</option>{/each}
 					</select>
 				</label>
 				<label class="label">Preis für diese Woche in CHF <input name="weekly" inputmode="decimal" class="field mt-1 font-normal" placeholder="z. B. 590" /></label>

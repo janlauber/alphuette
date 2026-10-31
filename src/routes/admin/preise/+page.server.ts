@@ -16,11 +16,11 @@ const seasons = () =>
 	sql<SeasonRow[]>`select id, name, start_date as start, end_date as end, nightly_rp as nightly, weekly_rp as weekly, min_nights, changeover
 		from seasons where end_date >= current_date - 365 order by start_date`;
 
-/** How often each week was picked in the booking calendar in the last 30 days (value: first night as days since 1970). */
+/** How many visitors picked each week in the booking calendar in the last 30 days (value: first night as days since 1970). */
 const views = async () =>
 	Object.fromEntries(
 		(await sql<{ v: number; n: number }[]>`
-			select value::int as v, count(*)::int as n from events
+			select value::int as v, count(distinct visitor)::int as n from events
 			where kind = 'event' and name = 'week_selected' and value > 10000 and ts > now() - interval '30 days' group by 1`).map((r) => [
 			new Date(r.v * 86_400_000).toISOString().slice(0, 10),
 			r.n
