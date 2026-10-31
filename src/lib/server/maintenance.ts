@@ -14,6 +14,7 @@ export async function maintenance() {
 	try {
 		await sql`delete from bookings where status = 'unbestaetigt' and created_at < now() - interval '30 minutes'`;
 		await pruneEvents();
+		await sql`delete from unknown_mails where at < now() - interval '30 days'`;
 		await fillProfiles();
 		await purgePhotos();
 		await nightlyBackup();

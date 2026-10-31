@@ -1,7 +1,8 @@
-import { ADMIN_EMAILS, MAIL_FROM, SITE_URL } from '$app/env/private';
+import { ADMIN_EMAILS, MAIL_FROM } from '$app/env/private';
 import { addMessage, bookingByReplyAddress } from '#lib/server/bookings.ts';
 import { receivedText, sendMail, verifyWebhook } from '#lib/server/mail.ts';
 import { hostInbox } from '#lib/server/settings.ts';
+import { receive } from '#lib/server/inbox.ts';
 import { report } from '#lib/server/monitor.ts';
 
 const done = () => new Response(null, { status: 204 });
@@ -9,7 +10,7 @@ const bare = (address: string) => address.toLowerCase().replace(/^.*</, '').repl
 
 /**
  * Resend inbound. A reply to a booking's thread address becomes a message in that thread;
- * anything else sent to the domain (hallo@ and so on) is forwarded to the addresses set in the admin.
+ * anything else sent to the domain (hallo@ and so on) goes through the spam check in inbox.ts.
  */
 export const POST = async ({ request }) => {
 	const raw = await request.text();
@@ -51,11 +52,6 @@ export const POST = async ({ request }) => {
 		return done();
 	}
 
-	await sendMail({
-		to: inbox,
-		replyTo: from,
-		subject: mail.subject || '(ohne Betreff)',
-		text: `Weitergeleitet von ${new URL(SITE_URL).host}\nVon: ${mail.from}\nAn: ${mail.to}${mail.attachments ? `\nAnhänge: ${mail.attachments} (nicht mitgeschickt, im Resend-Konto)` : ''}\n\n${mail.full.slice(0, 50_000)}`
-	});
+	await receive(inbox, from, mail);
 	return done();
 };

@@ -41,6 +41,7 @@
 <AdminPage title="Mails" intro="Wohin Mails an die Hütte gehen, und welche Mails die Website selbst an Gäste schickt.">
 	{#snippet help()}
 		<ul>
+			<li>Mails von Gästen mit Buchung kommen direkt zu dir. Von unbekannten Adressen bleibt Werbung unter «Unbekannte Absender» hängen, der Rest kommt mit «[Unbekannt]» im Betreff. «Absender sperren» hält weitere Mails dieser Adresse zurück, «Absender erlauben» lässt sie immer durch.</li>
 			<li>Hake ab, welche Mails rausgehen sollen, und tippe auf «Speichern».</li>
 			<li>Gäste bekommen die Mails in ihrer Sprache. Die Vorschau zeigt sie auf Deutsch mit einem erfundenen Gast.</li>
 			<li>Die Texte zur Anreise kommen aus <a href="/admin/inhalte">Texte und Infos</a> («Anreise» und «Infos nur für bestätigte Gäste»).</li>
@@ -67,6 +68,46 @@
 				<button class="btn-blue">Speichern</button>
 			</div>
 		</form>
+	</section>
+
+	<section id="unbekannt" class="mb-10 scroll-mt-24">
+		<h2 class="text-2xl">Unbekannte Absender</h2>
+		<p class="mt-1 max-w-[65ch] text-muted">Mails von Adressen ohne Buchung. Sieht eine nach Werbung aus, bleibt sie hier. Die anderen kommen mit «[Unbekannt]» im Betreff zu dir. Nach 30 Tagen verschwinden sie von hier.</p>
+		{#if form?.senderError}<p class="mt-3 rounded-[14px] bg-danger-wash px-4 py-3 font-semibold text-danger" role="alert">{form.senderError}</p>{/if}
+		{#if data.unknown.length}
+			<ul class="mt-3 grid gap-2">
+				{#each data.unknown as m (m.id)}
+					<li>
+						<details class="card group px-4 py-3">
+							<summary class="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-1 [&::-webkit-details-marker]:hidden">
+								<span class="chip {m.held && !m.forwardedAt ? 'chip-wait' : 'chip-ok'}">{m.held && !m.forwardedAt ? 'Aussortiert' : 'Weitergeleitet'}</span>
+								<span class="min-w-0 flex-1 truncate font-semibold">{m.subject || '(ohne Betreff)'}</span>
+								<span class="text-sm text-muted">{m.sender}, {when(m.at)}</span>
+							</summary>
+							{#if m.reasons.length}<p class="mt-3 text-sm text-muted">Warum aussortiert: {m.reasons.join(', ')}</p>{/if}
+							<p class="mt-3 max-h-72 overflow-auto whitespace-pre-wrap rounded-[12px] bg-wash p-3 text-sm">{m.body}</p>
+							<div class="mt-3 flex flex-wrap items-center gap-2">
+								{#if m.held && !m.forwardedAt}
+									<form method="POST" action="?/release" use:enhance><input type="hidden" name="id" value={m.id} /><button class="btn-line !min-h-0 !px-4 !py-1.5 text-sm">Doch weiterleiten</button></form>
+								{/if}
+								{#if m.allowed !== false}
+									<form method="POST" action="?/sender" use:enhance><input type="hidden" name="address" value={m.sender} /><input type="hidden" name="allowed" value="0" /><button class="text-sm font-semibold text-danger underline">Absender sperren</button></form>
+								{:else}
+									<span class="chip">gesperrt</span>
+								{/if}
+								{#if m.allowed !== true}
+									<form method="POST" action="?/sender" use:enhance><input type="hidden" name="address" value={m.sender} /><input type="hidden" name="allowed" value="1" /><button class="text-sm font-semibold text-brand underline">Absender erlauben</button></form>
+								{:else}
+									<span class="chip chip-ok">erlaubt</span>
+								{/if}
+							</div>
+						</details>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="mt-2 text-muted">Noch keine.</p>
+		{/if}
 	</section>
 
 	<div class="mb-4 flex flex-wrap items-end justify-between gap-3">

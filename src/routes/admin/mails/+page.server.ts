@@ -1,7 +1,8 @@
 import { fail } from '@sveltejs/kit';
 import { ADMIN_EMAILS, MAIL_FROM, REPLY_DOMAIN, SITE_URL } from '$app/env/private';
 import { sql } from '#lib/server/db.ts';
-import { getSettings, setSetting, stored } from '#lib/server/settings.ts';
+import { getSettings, hostInbox, setSetting, stored } from '#lib/server/settings.ts';
+import { forward } from '#lib/server/inbox.ts';
 import { compose, exampleBooking, PLACEHOLDERS, templates, TRIGGERS, values, type Template, type Trigger } from '#lib/server/reminders.ts';
 import { sendMail } from '#lib/server/mail.ts';
 import { syncTranslations } from '#lib/server/sitetexts.ts';
@@ -16,10 +17,13 @@ const link = '/admin/mails';
 // a made-up stay three weeks from now, only for the preview and the test mail
 
 export const load = async () => {
-	const [s, list, sent] = await Promise.all([
+	const [s, list, sent, unknown] = await Promise.all([
 		getSettings(),
 		templates(),
-		sql<{ kind: string; at: Date; id: number; name: string }[]>`select m.kind, m.at, b.id, b.name from booking_mails m join bookings b on b.id = m.booking_id order by m.at desc limit 20`
+		sql<{ kind: string; at: Date; id: number; name: string }[]>`select m.kind, m.at, b.id, b.name from booking_mails m join bookings b on b.id = m.booking_id order by m.at desc limit 20`,
+		sql<{ id: number; at: Date; sender: string; subject: string; body: string; reasons: string[]; held: boolean; forwardedAt: Date | null; allowed: boolean | null }[]>`
+			select u.id, u.at, u.sender, u.subject, u.body, u.reasons, u.held, u.forwarded_at, s.allowed
+			from unknown_mails u left join mail_senders s on s.address = u.sender order by u.at desc limit 50`
 	]);
 	const labels = new Map(list.map((t) => [t.key ?? `tpl:${t.id}`, t.label]));
 	return {
@@ -31,7 +35,8 @@ export const load = async () => {
 		triggers: TRIGGERS,
 		placeholders: PLACEHOLDERS,
 		example: values(exampleBooking(), 'de', s),
-		sent: sent.map((r) => ({ ...r, label: labels.get(r.kind) ?? r.kind }))
+		sent: sent.map((r) => ({ ...r, label: labels.get(r.kind) ?? r.kind })),
+		unknown
 	};
 };
 
@@ -39,7 +44,29 @@ export const load = async () => {
 const own = () => [mailDomain, new URL(SITE_URL).hostname.replace(/^www\./, ''), REPLY_DOMAIN].filter(Boolean).map((d) => '@' + d!.toLowerCase());
 const str = (f: FormData, k: string, max: number) => String(f.get(k) ?? '').replace(/\r/g, '').trim().slice(0, max);
 
+const setSender = (address: string, allowed: boolean) =>
+	sql`insert into mail_senders (address, allowed) values (${address}, ${allowed}) on conflict (address) do update set allowed = excluded.allowed, at = now()`;
+
 export const actions = {
+	// a mail the filter kept back goes out after all, and its sender counts as known from now on
+	release: async ({ request, locals }) => {
+		const [m] = await sql`select * from unknown_mails where id = ${Number((await request.formData()).get('id'))}`;
+		if (!m) return fail(404, { senderError: 'Diese Mail gibt es nicht mehr.' });
+		await forward(await hostInbox(), m.sender, { from: m.fromFull, to: m.recipient, subject: m.subject, full: m.body, attachments: m.attachments });
+		await sql`update unknown_mails set forwarded_at = now() where id = ${m.id}`;
+		await setSender(m.sender, true);
+		await log({ actor: locals.admin!, area: AREA, title: `Mail von ${m.sender} doch weitergeleitet, Absender erlaubt`, link });
+		return done(`Weitergeleitet. Mails von ${m.sender} kommen ab jetzt direkt.`);
+	},
+	sender: async ({ request, locals }) => {
+		const f = await request.formData();
+		const address = String(f.get('address') ?? '').trim().toLowerCase();
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) return fail(400, { senderError: 'Das ist keine E-Mail-Adresse.' });
+		const allowed = f.get('allowed') === '1';
+		await setSender(address, allowed);
+		await log({ actor: locals.admin!, area: AREA, title: `Absender ${address} ${allowed ? 'erlaubt' : 'gesperrt'}`, link });
+		return done(allowed ? `Mails von ${address} kommen ab jetzt direkt zu dir.` : `Mails von ${address} bleiben ab jetzt hier.`);
+	},
 	forward: async ({ request, locals }) => {
 		const values = (await request.formData()).getAll('forward').map(String);
 		const list = [...new Set(values.flatMap((v) => v.split(/[\s,;]+/)).map((a) => a.trim().toLowerCase()).filter(Boolean))].slice(0, 10);
